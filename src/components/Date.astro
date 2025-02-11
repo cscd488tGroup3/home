@@ -1,0 +1,77 @@
+---
+
+---
+
+<script>
+
+    const allTheMonths = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    const allTheDays = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ];
+    
+    
+    // Get and store current date and time with `new Date()` object
+    const dateNow = new Date();
+    // Check-Check: See all `Date()` methods and properties
+    console.log( dateNow );
+    
+    const gotMonth = dateNow.getMonth();
+    // Get current day of the month
+    let gotDayOfMonth = dateNow.getDate();
+    // Get current year
+    const gotYear = dateNow.getFullYear();
+    // Get current day of the week
+    const gotDayOfWeek = dateNow.getDay();
+    
+    // Check-Check: Is the data correct? 
+    console.log(gotMonth, gotDayOfMonth, gotYear, gotDayOfWeek);
+    
+
+    // Get the month
+    const month = document.querySelector(".month");
+    // Get day of the month
+    const dayOfMonth = document.querySelector(".dayOfMonth");
+    // Get year
+    const year = document.querySelector('.year');
+    // Get Day of Week
+    const dayOfWeek = document.querySelector('.dayOfWeek');
+    
+    
+    // Set the month
+    month.textContent = allTheMonths[gotMonth];
+    // Set day of the month
+    dayOfMonth.textContent = gotDayOfMonth.toString();
+    // Set the year
+    year.textContent = gotYear.toString();
+    // Set the day of the week
+    dayOfWeek.textContent = allTheDays[gotDayOfWeek];
+    </script>
+    
+    <!-- HTML -->
+    <section class="backdrop-blur-md bg-white/50">
+        <h1>DATE</h1>
+        <time>
+          <data class="month">Month</data>
+          <data class="dayOfMonth">00</data> <data class="year">0000</data>
+          <data class="dayOfWeek">SMTWTFS</data>
+        </time>
+      </section>
