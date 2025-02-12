@@ -5,6 +5,8 @@ import "../styles/index.css";
 // Components
 import Date from '../components/Date.astro';
 import Time from '../components/Time.astro';
+import City from '../components/CityInput.astro';
+import Weather from '../components/Weather.astro';
 ---
 
 <!DOCTYPE html>
@@ -18,13 +20,13 @@ import Time from '../components/Time.astro';
 	<h1>Hello, World!</h1>
 	<p>Welcome to your new Astro project.</p>
 
-	<!-- City Input -->
-	<label for="city">Enter your city:</label>
-	<input type="text" id="city" name="city" />
-
 	<!-- Date -->
 	<Date />
 	<!-- Time -->
 	<Time />
+	<!-- City -->
+	<City />
+	<!-- Weather -->
+	<Weather />
 </body>
 </html>
