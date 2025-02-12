@@ -1,57 +1,80 @@
 ---
+
 ---
 
-<script is:raw>
+<script>
+    /************
+    Dynamic Data
+    ************/
     // define `theClockApp` stored in function to be ran
     const theClockApp = () => {
-        // Get and store current date and time with `new Date()` object
-        const timeNow = new Date();
+      
+      // Get and store current date and time with `new Date()` object
+      const timeNow = new Date();
+      // Check-Check: See all `Date()` methods and properties
+      // console.log( timeNow );
+      
+      // Get current hours
+      let gotHours = timeNow.getHours();
+      // Get current minutes
+      let gotMinutes = timeNow.getMinutes();
+      // Get current seconds
+      let gotSeconds = timeNow.getSeconds();
+      
+      // Check-Check: Is the data correct? 
+      // console.log(gotHours, gotMinutes, gotSeconds);
+      
+      /************
+      Format Data
+      ************/
+      // Get AM or PM
+      const gotAmOrPM = gotHours >= 12 ? 'PM':'AM';
+      // Get 12 hour format
+      gotHours = gotHours % 12 || 12;
+      // Optionally, append zero to single digit hours
+      gotHours = gotHours < 10 ? `0${gotHours}` : gotHours;   
+      // Optionally, append zero to single digit minutes
+      gotMinutes = gotMinutes < 10 ? `0${gotMinutes}` : gotMinutes;
+      // Optionally, append zero to single digit seconds
+      gotSeconds = gotSeconds < 10 ? `0${gotSeconds}` : gotSeconds;
+      
+      /************
+      Get DOM Elements
+      ************/
+      // Get Hours
+      const hours = document.querySelector(".hours");
+      // Get minutes
+      const minutes = document.querySelector(".minutes");
+      // Get seconds
+      const seconds = document.querySelector(".seconds");
+      // Get AM or PM
+      const amOrPM = document.querySelector('.amOrPM');
+      
+      /************
+      Set DOM Elements
+      ************/
+      // Set the hours
+      hours.textContent = gotHours;
+      // Set the minutes
+      minutes.textContent = gotMinutes;
+      // Set the seconds
+      seconds.textContent = gotSeconds;
+      // Set AM or PM
+      amOrPM.textContent = gotAmOrPM;
         
-        // Get current hours
-        let gotHours = timeNow.getHours();
-        // Get current minutes
-        let gotMinutes = timeNow.getMinutes();
-        // Get current seconds
-        let gotSeconds = timeNow.getSeconds();
-        
-        // Get AM or PM
-        const gotAmOrPM = gotHours >= 12 ? 'PM' : 'AM';
-        // Get 12 hour format
-        gotHours = gotHours % 12 || 12;
-        // Optionally, append zero to single digit hours
-        const formattedHours = gotHours < 10 ? `0${gotHours}` : gotHours;
-        // Optionally, append zero to single digit minutes
-        const formattedMinutes = gotMinutes < 10 ? `0${gotMinutes}` : gotMinutes;
-        // Optionally, append zero to single digit seconds
-        const formattedSeconds = gotSeconds < 10 ? `0${gotSeconds}` : gotSeconds;
-        
-        // Get Hours
-        const hours = document.querySelector(".hours");
-        // Get minutes
-        const minutes = document.querySelector(".minutes");
-        // Get seconds
-        const seconds = document.querySelector(".seconds");
-        // Get AM or PM
-        const amOrPM = document.querySelector('.amOrPM');
-        
-        // Set the hours
-        if (hours) hours.textContent = formattedHours.toString();
-        // Set the minutes
-        if (minutes) minutes.textContent = formattedMinutes.toString();
-        // Set the seconds
-        if (seconds) seconds.textContent = formattedSeconds.toString();
-        // Set AM or PM
-        if (amOrPM) amOrPM.textContent = gotAmOrPM;
-    }
+      }
+      
+      /************
+      Run App
+      ************/
+      // Re-run `theClockApp` every 1 second (1000 ms)
+      setInterval(theClockApp, 1000);
+    </script>
     
-    // Re-run theClockApp every 1 second (1000 ms)
-    setInterval(theClockApp, 1000);
-</script>
-
-<section class="backdrop-blur-md bg-white/50">
-    <h1>TIME</h1>
-    <time>
+    <section class="backdrop-blur-md bg-white/50">
+      <h1>TIME</h1>
+      <time>
         <data class="hours">HH</data>_<data class="minutes">MM</data><data class="seconds">SS</data>
         <data class="amOrPM">AM/PM</data>
-    </time>
-</section>
+      </time>
+    </section>
