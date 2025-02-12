@@ -6,3 +6,8 @@ div {
     border: 2px solid black;
     padding: 5px;
 }
+Date, Time{
+    display: block;
+    text-align: center;
+    margin: 10px auto;
+}
