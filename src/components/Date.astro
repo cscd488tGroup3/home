@@ -42,9 +42,8 @@
     // Get current day of the week
     const gotDayOfWeek = dateNow.getDay();
     
-    // Check-Check: Is the data correct? 
     console.log(gotMonth, gotDayOfMonth, gotYear, gotDayOfWeek);
-    
+  
 
     // Get the month
     const month = document.querySelector(".month");
@@ -55,15 +54,22 @@
     // Get Day of Week
     const dayOfWeek = document.querySelector('.dayOfWeek');
     
-    
     // Set the month
-    month.textContent = allTheMonths[gotMonth];
+    if (month) {
+        month.textContent = allTheMonths[gotMonth];
+    }
     // Set day of the month
-    dayOfMonth.textContent = gotDayOfMonth.toString();
+    if (dayOfMonth) {
+        dayOfMonth.textContent = gotDayOfMonth.toString();
+    }
     // Set the year
-    year.textContent = gotYear.toString();
+    if (year) {
+        year.textContent = gotYear.toString();
+    }
     // Set the day of the week
-    dayOfWeek.textContent = allTheDays[gotDayOfWeek];
+    if (dayOfWeek) {
+        dayOfWeek.textContent = allTheDays[gotDayOfWeek];
+    }
     </script>
     
     <!-- HTML -->
