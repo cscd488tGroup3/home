@@ -1,10 +1,15 @@
 ---
+import "../styles/global.css";
+import "../styles/index.css";
+
 //import Welcome from '../components/Welcome.astro';
 //import Layout from '../layouts/Layout.astro';
-import "../styles/global.css";
-
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+
+const now = new Date();
+const date = now.toLocaleDateString();
+const time = now.toLocaleTimeString();
 ---
 
 <!-- <Layout>
@@ -21,5 +26,9 @@ import "../styles/global.css";
 <body>
 	<h1>Hello, World!</h1>
 	<p>Welcome to your new Astro project.</p>
+	<div>
+		<p>Current Date: {date}</p>
+		<p>Current Time: {time}</p>
+	</div>
 </body>
 </html>
