@@ -1,0 +1,40 @@
+div {
+    margin-top: 20px;
+    text-align: center;
+}
+#city {
+    border: 2px solid black;
+    padding: 5px;
+}
+Date, Time{
+    display: block;
+    text-align: center;
+    margin: 10px auto;
+}
+.nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.nav-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+}
+.btn {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+.nav-link {
+    text-decoration: none;
+    color: inherit;
+    padding: 10px 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.nav-link:hover {
+    background-color: #f0f0f0;
+}

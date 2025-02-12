@@ -1,0 +1,62 @@
+---
+---
+
+<script>
+    // API KEY
+    const API_KEY = import.meta.env.PUBLIC_API_KEY;
+    
+    // API endpoint URL
+    const queryEndpoint = 'https://api.openweathermap.org/data/2.5/weather';
+    
+    // Units for Farenheit
+    const queryUnits = 'imperial';
+    
+    // Function to fetch weather data
+    const fetchWeather = (city) => {
+      const url = `${queryEndpoint}?q=${city}&appid=${API_KEY}&units=${queryUnits}`;
+    
+      // Get DOM Elements
+      const cityElement = document.querySelector('.city');
+      const tempElement = document.querySelector('.temp');
+      const feelsLikeElement = document.querySelector('.feels_like');
+      const weatherDescriptionElement = document.querySelector('.weather-description');
+      const iconElement = document.querySelector('.icon');
+    
+      // Using fetch to get data
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Set DOM Elements
+          cityElement.textContent = data.name;
+          tempElement.textContent = data.main.temp;
+          feelsLikeElement.textContent = data.main.feels_like;
+          iconElement.setAttribute('src', `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
+          weatherDescriptionElement.textContent = data.weather[0].description;
+        });
+    };
+    
+    // Event listener for city input
+    document.addEventListener('DOMContentLoaded', () => {
+      const cityInput = document.getElementById('cityNameInput');
+      cityInput.addEventListener('input', (event) => {
+        const city = (event.target as HTMLInputElement).value;
+        if (city) {
+          fetchWeather(city);
+        }
+      });
+      // Fetch weather for default city
+      fetchWeather('Spokane');
+    });
+    </script>
+  
+  <!-- Weather -->
+  <section class="backdrop-blur-md bg-white/50">
+        <br>City:
+        <data class="city">City</data>
+        <br>Temp: 
+        <data class="temp">Temp</data>°F
+        <br>Feels Like: 
+        <data class="feels_like">Feels Like</data>°F
+        <br>Weather: 
+        <data class="weather-description">Weather</data>
+  </section>

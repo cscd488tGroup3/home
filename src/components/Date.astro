@@ -31,7 +31,7 @@
     
     // Get and store current date and time with `new Date()` object
     const dateNow = new Date();
-    // Check-Check: See all `Date()` methods and properties
+    
     console.log( dateNow );
     
     const gotMonth = dateNow.getMonth();
@@ -42,9 +42,8 @@
     // Get current day of the week
     const gotDayOfWeek = dateNow.getDay();
     
-    // Check-Check: Is the data correct? 
     console.log(gotMonth, gotDayOfMonth, gotYear, gotDayOfWeek);
-    
+  
 
     // Get the month
     const month = document.querySelector(".month");
@@ -55,23 +54,30 @@
     // Get Day of Week
     const dayOfWeek = document.querySelector('.dayOfWeek');
     
-    
     // Set the month
-    month.textContent = allTheMonths[gotMonth];
+    if (month) {
+        month.textContent = allTheMonths[gotMonth];
+    }
     // Set day of the month
-    dayOfMonth.textContent = gotDayOfMonth.toString();
+    if (dayOfMonth) {
+        dayOfMonth.textContent = gotDayOfMonth.toString();
+    }
     // Set the year
-    year.textContent = gotYear.toString();
+    if (year) {
+        year.textContent = gotYear.toString();
+    }
     // Set the day of the week
-    dayOfWeek.textContent = allTheDays[gotDayOfWeek];
+    if (dayOfWeek) {
+        dayOfWeek.textContent = allTheDays[gotDayOfWeek];
+    }
     </script>
     
     <!-- HTML -->
     <section class="backdrop-blur-md bg-white/50">
-        <h1>DATE</h1>
+        <!-- <h1 style="text-align: center;">Today's Date:</h1> -->
         <time>
-          <data class="month">Month</data>
-          <data class="dayOfMonth">00</data> <data class="year">0000</data>
           <data class="dayOfWeek">SMTWTFS</data>
+          <data class="month">Month</data>
+            <data class="dayOfMonth">00</data>, <data class="year">0000</data>
         </time>
       </section>

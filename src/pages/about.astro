@@ -1,5 +1,10 @@
 ---
-title: "About Us"
+import "../styles/global.css";
+import "../styles/about.css";
+
+
+import City from "../components/CityInput.astro";
+import Weather from "../components/Weather.astro";
 ---
 
 <!DOCTYPE html>
@@ -10,14 +15,17 @@ title: "About Us"
     <title>About Us</title>
 </head>
 <body>
-    <header>
-        <h1>About Our Garden Website</h1>
-    </header>
-    <main>
-        <p>Here is a little about us the creators of the website.</p>
-    </main>
-    <footer>
-        <p>&copy; 2025 Garden Website</p>
-    </footer>
+
+    <!-- Page Buttons -->
+	<nav class="nav">
+		<ul class="nav-list">
+			<li><button class="btn"><a href="/" class="nav-link">Home</a></button></li>
+			<li><button class="btn"><a href="/about" class="nav-link">Weather</a></button></li>
+		</ul>
+	</nav>
+    <!-- City -->
+	<City />
+	<!-- Weather -->
+	<Weather />
 </body>
 </html>

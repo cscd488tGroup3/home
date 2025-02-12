@@ -1,0 +1,43 @@
+.nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.nav-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+}
+.btn {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+.nav-link {
+    text-decoration: none;
+    color: inherit;
+    padding: 10px 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.nav-link:hover {
+    background-color: #f0f0f0;
+}
+.city-input {
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: 2px solid rgb(77, 77, 77);
+    border-radius: 10px;
+}
+
+.city-input::placeholder {
+    color: rgb(77, 77, 77);
+}
+
+.city-input:focus {
+    border-color: rgb(145, 145, 145);
+    outline: none;
+}
