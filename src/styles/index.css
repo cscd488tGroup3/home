@@ -2,3 +2,7 @@ div {
     margin-top: 20px;
     text-align: center;
 }
+#city {
+    border: 2px solid black;
+    padding: 5px;
+}
