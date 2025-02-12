@@ -1,7 +1,10 @@
 ---
-const title = "About Us";
 import "../styles/global.css";
 import "../styles/about.css";
+
+
+import City from "../components/CityInput.astro";
+import Weather from "../components/Weather.astro";
 ---
 
 <!DOCTYPE html>
@@ -20,14 +23,9 @@ import "../styles/about.css";
 			<li><button class="btn"><a href="/about" class="nav-link">Weather</a></button></li>
 		</ul>
 	</nav>
-    <header>
-        <h1>About Our Garden Website</h1>
-    </header>
-    <main>
-        <p>Here is a little about us the creators of the website.</p>
-    </main>
-    <footer>
-        <p>&copy; 2025 Garden Website</p>
-    </footer>
+    <!-- City -->
+	<City />
+	<!-- Weather -->
+	<Weather />
 </body>
 </html>
