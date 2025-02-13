@@ -8,11 +8,11 @@
   </section>
   
   <script>
-    const searchButton = document.getElementById('search-button');
-    const cityInput = document.getElementById('city-input');
+    const searchButton = document.getElementById('search-button') as HTMLButtonElement;
+    const cityInput = document.getElementById('city-input') as HTMLInputElement;
   
-    searchButton.addEventListener('click', () => {
-      const cityName = cityInput.value;
+    searchButton?.addEventListener('click', () => {
+      const cityName = cityInput?.value;
       if (cityName) {
         // Dispatch a custom event with the city name
         const event = new CustomEvent('citySearch', { detail: { cityName } });
