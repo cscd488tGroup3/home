@@ -3,9 +3,10 @@
 
 <!-- Weather Display -->
 <section class="backdrop-blur-md bg-white/50">
-  <h1>City: <span class="city">City</span></h1>
-  <h2>State: <span class="state">State</span></h2>
-  <h3>Temp: <span class="temp">Temp</span>°F</h3>
+  <h1>Temp: <span class="temp">Temp</span>°F</h1>
+  <h2>City: <span class="city">City</span></h2>
+  <h3>State: <span class="state">State</span></h3>
+  <h4>Country: <span class="country">Country</span></h4>
   <!-- <img class="icon" src="" alt="Weather Icon" /> -->
 </section>
 
@@ -19,6 +20,7 @@
   const nameOfCity = document.querySelector('.city') as HTMLElement | null;
   const stateOfCity = document.querySelector('.state') as HTMLElement | null;
   const tempOfCity = document.querySelector('.temp') as HTMLElement | null;
+  const countryOfCity = document.querySelector('.country') as HTMLElement | null;
   // const weatherIcon = document.querySelector('.icon');
 
   // Function to fetch weather data
@@ -27,7 +29,8 @@
     const data = await response.json();
     if (data.cod === 200) {
       if (nameOfCity) nameOfCity.textContent = data.name;
-      if (stateOfCity) stateOfCity.textContent = data.sys.country;
+      if (tempOfCity) tempOfCity.textContent = data.main.temp;
+      if (countryOfCity) countryOfCity.textContent = data.sys.country;
       if (tempOfCity) tempOfCity.textContent = data.main.temp;
       // weatherIcon.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
     } else {
