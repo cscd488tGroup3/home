@@ -1,5 +1,22 @@
 ---
 ---
 
-<input type="text" id="cityNameInput" name="cityName" placeholder="Enter city name" autocomplete="off" class="city-input backdrop-blur-md bg-white/50 p-4 rounded-lg shadow-md" />
-
+<!-- City Input Form -->
+<section>
+    <input type="text" id="city-input" placeholder="Enter city name" />
+    <button id="search-button">Search</button>
+  </section>
+  
+  <script>
+    const searchButton = document.getElementById('search-button') as HTMLButtonElement;
+    const cityInput = document.getElementById('city-input') as HTMLInputElement;
+  
+    searchButton?.addEventListener('click', () => {
+      const cityName = cityInput?.value;
+      if (cityName) {
+        // Dispatch a custom event with the city name
+        const event = new CustomEvent('citySearch', { detail: { cityName } });
+        window.dispatchEvent(event);
+      }
+    });
+  </script>
