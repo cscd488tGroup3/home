@@ -1,6 +1,6 @@
 ---
-const API_KEY = import.meta.env.API_KEY;
-console.log('API_KEY:', API_KEY); // Add this line for debugging
+const apiKey = import.meta.env.API_KEY;
+console.log('APIKEY:', apiKey); // Add this line for debugging
 ---
 
 <!-- Weather Display -->
@@ -14,9 +14,8 @@ console.log('API_KEY:', API_KEY); // Add this line for debugging
 </section>
 
 <script>
-  // API key
-  const APIKEY = API_KEY; // Replace with your API key
-  console.log('APIKEY:', APIKEY); // Add this line for debugging
+  const apiKey = import.meta.env.API_KEY;
+  console.log('APIKEY:', apiKey); // Add this line for debugging
   // Units for Fahrenheit
   let units = 'imperial';
 
@@ -31,7 +30,7 @@ console.log('API_KEY:', API_KEY); // Add this line for debugging
 
   // Function to fetch weather data
   async function fetchWeather(cityName: string) {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&appid=${APIKEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&appid=${apiKey}`);
     const data = await response.json();
     if (data.cod === 200) {
       if (nameOfCity) nameOfCity.textContent = data.name;
