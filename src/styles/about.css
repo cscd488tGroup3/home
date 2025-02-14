@@ -1,3 +1,21 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
 .nav {
     display: flex;
     justify-content: center;
@@ -32,11 +50,9 @@
     border: 2px solid rgb(77, 77, 77);
     border-radius: 10px;
 }
-
 .city-input::placeholder {
     color: rgb(77, 77, 77);
 }
-
 .city-input:focus {
     border-color: rgb(145, 145, 145);
     outline: none;
