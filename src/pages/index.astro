@@ -1,20 +1,15 @@
 ---
 import "../styles/global.css";
 import "../styles/index.css";
+const pageTitle = "Home Page";
 
 // Components
 import Date from '../components/Date.astro';
 import Time from '../components/Time.astro';
+import Layout from '../layouts/Layout.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Gardenize</title>
-</head>
-<body>
+<Layout>
 	<!-- Page Buttons -->
 	<nav class="nav">
 		<ul class="nav-list">
@@ -26,7 +21,4 @@ import Time from '../components/Time.astro';
 	<Date />
 	<!-- Time -->
 	<Time />
-
-	
-</body>
-</html>
+</Layout>
