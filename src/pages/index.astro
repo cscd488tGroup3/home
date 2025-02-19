@@ -5,6 +5,8 @@ import "../styles/index.css";
 // Components
 import Date from '../components/Date.astro';
 import Time from '../components/Time.astro';
+import Weather from "../components/Weather.astro";
+import City from "../components/CityInput.astro";
 ---
 
 <!DOCTYPE html>
@@ -12,21 +14,26 @@ import Time from '../components/Time.astro';
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Gardenize</title>
+	<title>BloomBuddy</title>
 </head>
 <body>
 	<!-- Page Buttons -->
 	<nav class="nav">
 		<ul class="nav-list">
 			<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
-			<li><button class="btn no-outline"><a href="/about" class="nav-link">Weather</a></button></li>
+			<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
 		</ul>
 	</nav>
 	<!-- Date -->
 	<Date />
 	<!-- Time -->
 	<Time />
-
+	<div style="margin-top: 30px; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+		<!-- City -->
+		<City />
+		<!-- Weather -->
+		<Weather />
+	</div>
 	
 </body>
 </html>
