@@ -1,24 +1,9 @@
 ---
-title: "Create Account"
-import "../styles/createAccount.css";
+Astro.props.pageTitle = "Create Account";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account</title>
-</head>
-<body>
-    <!-- Page Buttons -->
-	<nav class="nav">
-		<ul class="nav-list">
-			<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
-			<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
-		</ul>
-	</nav>
+<Layout>
     <h1>Create Account</h1>
     <!-- Add your content here -->
-</body>
-</html>
+</Layout>

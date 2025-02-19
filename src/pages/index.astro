@@ -1,7 +1,5 @@
 ---
-import "../styles/global.css";
-import "../styles/index.css";
-const pageTitle = "Home Page";
+Astro.props.pageTitle = "Home Page";
 
 // Components
 import Date from '../components/Date.astro';
@@ -12,15 +10,12 @@ import City from "../components/CityInput.astro";
 ---
 
 <Layout>
-	<!-- Page Buttons -->
-	<nav class="nav">
-		<ul class="nav-list">
-			<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
-			<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
-		</ul>
-	</nav>
 	<!-- Date -->
 	<Date />
 	<!-- Time -->
 	<Time />
+	<!-- City -->
+	<City />
+	<!-- Weather -->
+	<Weather />
 </Layout>

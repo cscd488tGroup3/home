@@ -1,5 +1,6 @@
 ---
 const { pageTitle } = Astro.props;
+import "../styles/global.css";
 ---
 <!doctype html>
 <html lang="en">
@@ -12,11 +13,39 @@ const { pageTitle } = Astro.props;
 	</head>
 	<body>
 		<header>
+			<!-- needs to overwrite global.css for now
+			 		may fix in the future -->
+			<div style="display: flex;
+						justify-content: center;
+						align-items: center;
+						gap: 0.625em;
+						margin: 0;
+						padding: 0;">
+				<img src="/bloom_buddy1.png" 
+				     alt="logo"
+					 style="width: 3em;
+							height: auto;
+							margin: 0;
+							padding: 0;" />
+				<h1 class="logo">Bloom Buddy</h1>
+			</div>
 
+			<!-- the right side of the header contains the navbar -->
+			<nav class="nav">
+				<ul class="nav-list">
+					<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
+					<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
+					<li><button class="btn no-outline"><a href="/login" class="nav-link">Login</a></button></li>
+					<li><button class="btn no-outline"><a href="/createAccount" class="nav-link">Create Account</a></button></li>
+				</ul>
+			</nav>
 		</header>
-		<slot />
+
+		<slot /> <!-- This is where the page content will be injected -->
+		
+		<!-- footer -->
 		<footer>
-			<p class="copyright">© 2025 Bloom Buddy</p>
+			<p class="copyright">© 2025 Bloom Buddy. All rights reserved.</p>
 		</footer>
 	</body>
 </html>
