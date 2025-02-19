@@ -1,0 +1,31 @@
+---
+title: "Login Page"
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <!-- Page Buttons -->
+	<nav class="nav">
+		<ul class="nav-list">
+			<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
+			<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
+		</ul>
+	</nav>
+    <h1>Login</h1>
+    <form action="/login" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
