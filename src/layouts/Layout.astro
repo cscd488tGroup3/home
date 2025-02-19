@@ -13,13 +13,30 @@ import "../styles/global.css";
 	</head>
 	<body>
 		<header>
+			<div style="display: flex;
+						justify-content: center;
+						align-items: center;
+						gap: 0.625em;
+						margin: 0;
+						padding: 0;">
+				<img src="/bloom_buddy1.png" alt="logo">
+				<h1 class="logo">Bloom Buddy</h1>
+			</div>
 
+			<nav class="nav">
+				<ul class="nav-list">
+					<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
+					<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
+					<li><button class="btn no-outline"><a href="/login" class="nav-link">Login</a></button></li>
+					<li><button class="btn no-outline"><a href="/createAccount" class="nav-link">Create Account</a></button></li>
+				</ul>
+			</nav>
 		</header>
 
 		<slot />
 		
 		<footer>
-			<p class="copyright">© 2025 Bloom Buddy</p>
+			<p class="copyright">© 2025 Bloom Buddy. All rights reserved.</p>
 		</footer>
 	</body>
 </html>
