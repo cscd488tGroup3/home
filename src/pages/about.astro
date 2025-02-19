@@ -1,24 +1,22 @@
 ---
 import "../styles/global.css";
 import "../styles/about.css";
-
+import Layout from "../layouts/Layout.astro";
 ---
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
-</head>
-<body>
-    <!-- Page Buttons -->
+  
+<Layout>
+	<!-- Page Buttons -->
 	<nav class="nav">
 		<ul class="nav-list">
 			<li><button class="btn"><a href="/" class="nav-link">Home</a></button></li>
 			<li><button class="btn"><a href="/about" class="nav-link">About</a></button></li>
 		</ul>
 	</nav>
-	<p>&copy; BloomBuddy 2025. All rights reserved.</p>
-</body>
-</html>
+	<!-- style="margin-top: 30px; display: flex; justify-content: center; align-items: center; flex-direction: column;" -->
+	<div>
+		<!-- City -->
+		<City />
+		<!-- Weather -->
+		<Weather />
+	</div>
+</Layout>

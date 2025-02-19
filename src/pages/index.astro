@@ -1,22 +1,17 @@
 ---
 import "../styles/global.css";
 import "../styles/index.css";
+const pageTitle = "Home Page";
 
 // Components
 import Date from '../components/Date.astro';
 import Time from '../components/Time.astro';
+import Layout from '../layouts/Layout.astro';
 import Weather from "../components/Weather.astro";
 import City from "../components/CityInput.astro";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>BloomBuddy</title>
-</head>
-<body>
+<Layout>
 	<!-- Page Buttons -->
 	<nav class="nav">
 		<ul class="nav-list">
@@ -28,18 +23,4 @@ import City from "../components/CityInput.astro";
 	<Date />
 	<!-- Time -->
 	<Time />
-	<div style="margin-top: 30px; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-		<!-- City -->
-		<City />
-		<!-- Weather -->
-		<Weather />
-	</div>
-	<nav class="auth-nav">
-		<ul class="auth-list">
-			<li><button class="btn no-outline"><a href="/createAccount" class="auth-link">Create Account</a></button></li>
-			<li><button class="btn no-outline"><a href="/login" class="auth-link">Login</a></button></li>
-		</ul>
-	</nav>
-	<p>&copy; BloomBuddy 2025. All rights reserved.</p>
-</body>
-</html>
+</Layout>

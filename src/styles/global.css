@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+html {
+    background-color: rgb(189, 215, 206);
+}
+
+header {
+    background-color: #088908;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+footer {
+    background-color: #014829;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+footer .copyright {
+    color: #ffffff;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
