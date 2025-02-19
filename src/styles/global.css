@@ -8,7 +8,8 @@ header {
     display: flex;
     justify-content: space-between;
     background-color: #088908;
-    padding: 0.35em;
+    padding: 0;
+    margin-bottom: 0.5em;
     text-align: center;
     color: #cbecca;
     font-size: 1.25em;
@@ -182,3 +183,8 @@ body {
     flex-grow: 1;
 }
 
+img .logo {
+    width: 100%;
+    max-width: 12.5em;
+    margin-top: 1.25em;
+}
