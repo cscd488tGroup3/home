@@ -38,3 +38,6 @@ Date, Time{
 .nav-link:hover {
     background-color: #f0f0f0;
 }
+p{
+    text-align: center;
+}

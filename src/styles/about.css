@@ -43,17 +43,7 @@ body {
 .nav-link:hover {
     background-color: #f0f0f0;
 }
-.city-input {
-    padding: 10px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    border: 2px solid rgb(77, 77, 77);
-    border-radius: 10px;
+p{
+    text-align: center;
 }
-.city-input::placeholder {
-    color: rgb(77, 77, 77);
-}
-.city-input:focus {
-    border-color: rgb(145, 145, 145);
-    outline: none;
-}
+
