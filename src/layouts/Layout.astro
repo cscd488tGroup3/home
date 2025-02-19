@@ -13,16 +13,24 @@ import "../styles/global.css";
 	</head>
 	<body>
 		<header>
+			<!-- needs to overwrite global.css for now
+			 		may fix in the future -->
 			<div style="display: flex;
 						justify-content: center;
 						align-items: center;
 						gap: 0.625em;
 						margin: 0;
 						padding: 0;">
-				<img src="/bloom_buddy1.png" alt="logo">
+				<img src="/bloom_buddy1.png" 
+				     alt="logo"
+					 style="width: 3em;
+							height: auto;
+							margin: 0;
+							padding: 0;" />
 				<h1 class="logo">Bloom Buddy</h1>
 			</div>
 
+			<!-- the right side of the header contains the navbar -->
 			<nav class="nav">
 				<ul class="nav-list">
 					<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
@@ -33,8 +41,9 @@ import "../styles/global.css";
 			</nav>
 		</header>
 
-		<slot />
+		<slot /> <!-- This is where the page content will be injected -->
 		
+		<!-- footer -->
 		<footer>
 			<p class="copyright">© 2025 Bloom Buddy. All rights reserved.</p>
 		</footer>
