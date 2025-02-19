@@ -1,7 +1,5 @@
 ---
-import "../styles/global.css";
-import "../styles/index.css";
-const pageTitle = "Home Page";
+Astro.props.pageTitle = "Home Page";
 
 // Components
 import Date from '../components/Date.astro';
@@ -23,4 +21,8 @@ import City from "../components/CityInput.astro";
 	<Date />
 	<!-- Time -->
 	<Time />
+	<!-- City -->
+	<City />
+	<!-- Weather -->
+	<Weather />
 </Layout>

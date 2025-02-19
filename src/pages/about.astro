@@ -1,6 +1,5 @@
 ---
-import "../styles/global.css";
-import "../styles/about.css";
+Astro.props.pageTitle = "About";
 import Layout from "../layouts/Layout.astro";
 ---
   
@@ -12,11 +11,6 @@ import Layout from "../layouts/Layout.astro";
 			<li><button class="btn"><a href="/about" class="nav-link">About</a></button></li>
 		</ul>
 	</nav>
-	<!-- style="margin-top: 30px; display: flex; justify-content: center; align-items: center; flex-direction: column;" -->
-	<div>
-		<!-- City -->
-		<City />
-		<!-- Weather -->
-		<Weather />
-	</div>
+
+	<h1>About the Developers</h1>
 </Layout>
