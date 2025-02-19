@@ -1,5 +1,6 @@
 ---
 const { pageTitle } = Astro.props;
+import "../styles/global.css";
 ---
 <!doctype html>
 <html lang="en">
@@ -14,7 +15,9 @@ const { pageTitle } = Astro.props;
 		<header>
 
 		</header>
+
 		<slot />
+		
 		<footer>
 			<p class="copyright">© 2025 Bloom Buddy</p>
 		</footer>
