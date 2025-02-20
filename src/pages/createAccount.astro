@@ -1,9 +1,29 @@
 ---
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
 ---
 
 <Layout>
     <h1>Create Account</h1>
     <!-- Add your content here -->
+    <form action="/login" method="post">
+        <br>
+        <label for="firstname">First Name:</label>
+        <input type="text" id="firstname" name="firstname" required>
+        <label for="lastname">Last Name:</label>
+        <input type="text" id="lastname" name="lastname" required>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="dob">Date of Birth:</label>
+        <input type="text" id="dob" name="dob" required pattern="\d{4}-\d{2}-\d{2}">
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required>
+        <label for="confirmpassword">Confirm Password:</label>
+        <input type="text" id="confirmpassword" name="confirmpassword" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
 </Layout>
