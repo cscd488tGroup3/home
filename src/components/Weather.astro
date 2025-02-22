@@ -7,7 +7,7 @@ const apiKey = import.meta.env.API_KEY;
 <section class="backdrop-blur-md bg-white/50">
   <h1>Temp: <span class="temp">Temp</span>°<span class="unit">F</span></h1>
   <h2>City: <span class="city">City</span></h2>
-  <h3>State: <span class="state">State</span></h3>
+  <!-- <h3>State: <span class="state">State</span></h3> -->
   <h4>Country: <span class="country">Country</span></h4>
   <!-- <img class="icon" src="" alt="Weather Icon" /> -->
   <button id="toggleUnit">Switch to Celsius</button>
@@ -32,6 +32,7 @@ const apiKey = import.meta.env.API_KEY;
   async function fetchWeather(cityName: string) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&appid=${apiKey}`);
     const data = await response.json();
+    console.log(data); // looks like the data object does not contain a state
     if (data.cod === 200) {
       if (nameOfCity) nameOfCity.textContent = data.name;
       if (tempOfCity) tempOfCity.textContent = data.main.temp;
