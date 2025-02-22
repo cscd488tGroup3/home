@@ -1,6 +1,8 @@
 export default {
     async fetch(request, env) {
         const url = new URL(request.url);
+        const params = new URLSearchParams(url.search);
+        console.log(params);
 
         // Handle your API routes
         if (url.pathname === "/api/info") {
