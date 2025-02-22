@@ -1,0 +1,33 @@
+---
+Astro.props.pageTitle = "Account Info";
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+
+let user = null;
+let error = null;
+
+try {
+    const res = await fetch('/api/user?uid=1');
+    if (res.ok) {
+        user = await res.json();
+    } else {
+        error = await res.json();
+    }
+} catch (err) {
+    error = { message: "Failed to fetch user data" };
+}
+---
+
+<Layout>
+    <h1>Account Info</h1>
+    {user ? (
+        <div>
+            <p><strong>Name:</strong> {user[0]?.fname} {user[0]?.lname}</p>
+            <p><strong>Email:</strong> {user[0]?.email}</p>
+            <p><strong>Date of Birth:</strong> {user[0]?.dob}</p>
+            <p><strong>Date of Joining:</strong> {user[0]?.doj}</p>
+        </div>
+    ) : (
+        <p>{error?.message || "User not found"}</p>
+    )}
+</Layout>
