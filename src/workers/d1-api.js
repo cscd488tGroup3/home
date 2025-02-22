@@ -2,6 +2,12 @@ export default {
     async fetch(request, env) {
         const url = new URL(request.url);
         const params = new URLSearchParams(url.search);
+        const apiKey = request.headers.get("Authorization");
+
+        // Check for API key
+        if (apiKey !== env.USR_DB_API_KEY) {
+            return new Response("Unauthorized", { status: 401 });
+        }
         console.log(params);
 
         // Handle your API routes
