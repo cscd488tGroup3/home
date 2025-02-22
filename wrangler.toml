@@ -1,0 +1,7 @@
+name = "astro-d1-integration"
+compatibility_date = "2024-02-21" # Use the latest date
+
+[[d1_databases]]
+binding = "DB"
+database_name = "user-info"
+database_id = "dd840014-ec92-44d3-b6d3-de33a241b265"
