@@ -6,4 +6,4 @@ main = "src/workers/d1-api.js"  # Specify the entry point
 [[d1_databases]]
 binding = "DB"
 database_name = "user-info"
-database_id = "dd840014-ec92-44d3-b6d3-de33a241b265"  
+database_id = "dd840014-ec92-44d3-b6d3-de33a241b265"
