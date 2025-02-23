@@ -2,30 +2,60 @@
 // It's a Cloudflare Worker that uses Durable Objects
 
 // get the user data from the database
-export async function getUserByUid(uid, env) {
-    try {
-        const { results } = await env.DB.prepare("SELECT * FROM admin WHERE uid = ?")
-            .bind(uid)
-            .all();
-        return results;
-    } catch (error) {
-        console.error("Database query error:", error);
-        throw new Error("Failed to fetch user data");
-    }
-}
+import { getUserByUid } from './d1-func.js';
+import { getInfoByUid } from './d1-func.js';
 
-// get the info data from the database
-export async function getInfoByUid(uid, env) {
-    try {
-        const { results } = await env.DB.prepare("SELECT * FROM info WHERE uid = ?")
-            .bind(uid)
-            .all();
-        return results;
-    } catch (error) {
-        console.error("Database query error:", error);
-        throw new Error("Failed to fetch user data");
-    }
-}
+export default {
+    async fetch(request, env) {
+        const url = new URL(request.url);
+
+        if (url.pathname === "/api/admin") {
+            const uid = url.searchParams.get("uid");
+            if (!uid) {
+                return new Response(JSON.stringify({ error: "UID is required" }), { status: 400 });
+            }
+
+            try {
+                const user = await getUserByUid(uid, env);
+
+                if (user.length === 0) {
+                    return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+                }
+
+                return new Response(JSON.stringify(user), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                });
+            } catch (err) {
+                return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+            }
+        }
+
+        if (url.pathname === "/api/info") {
+            const uid = url.searchParams.get("uid");
+            if (!uid) {
+                return new Response(JSON.stringify({ error: "UID is required" }), { status: 400 });
+            }
+
+            try {
+                const user = await getInfoByUid(uid, env);
+
+                if (user.length === 0) {
+                    return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+                }
+
+                return new Response(JSON.stringify(user), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                });
+            } catch (err) {
+                return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+            }
+        }
+
+        return new Response("Not found", { status: 404 });
+    },
+};
 
 // export default {
 //     async fetch(request, env) {

@@ -1,4 +1,5 @@
-import { getUserByUid } from "../../server/d1-api.js";
+import { getUserByUid } from "../../workers/d1-func.js";
+import { getInfoByUid } from "../../workers/d1-func.js";
 
 export async function GET({ request, locals }) {
     const url = new URL(request.url);
@@ -10,16 +11,28 @@ export async function GET({ request, locals }) {
 
     try {
         const env = locals.runtime.env;
-        const user = await getUserByUid(uid, env);
-
-        if (user.length === 0) {
-            return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+        
+        if (type === "user") {
+            const user = await getUserByUid(uid, env);
+            if (user.length === 0) {
+                return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+            }
+            return new Response(JSON.stringify(user), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+            });
+        } else if (type === "info") {
+            const info = await getInfoByUid(uid, env);
+            if (info.length === 0) {
+                return new Response(JSON.stringify({ error: "Info not found" }), { status: 404 });
+            }
+            return new Response(JSON.stringify(info), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+            });
+        } else {
+            return new Response(JSON.stringify({ error: "Invalid type parameter" }), { status: 400 });
         }
-
-        return new Response(JSON.stringify(user), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-        });
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
