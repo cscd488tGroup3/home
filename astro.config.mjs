@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 import dotenv from 'dotenv';
-import cloudflare from '@astrojs/cloudflare';
+import netlify from '@astrojs/netlify/functions';
 
 dotenv.config();
 
@@ -11,6 +11,6 @@ export default defineConfig({
     },
   },
   output: 'server',
-  adapter: cloudflare()
+  adapter: netlify()
   // your existing configuration
 });
