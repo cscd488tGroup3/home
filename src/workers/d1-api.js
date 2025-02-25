@@ -8,6 +8,13 @@ import { getInfoByUid } from './d1-func.js';
 export default {
     async fetch(request, env) {
         const url = new URL(request.url);
+        
+        //Check for API key
+        const auth = url.searchParams.get("auth");
+        if (!auth || auth !== env.USR_DB) {
+            return new Response("Unauthorized", { status: 401 });
+        }
+        //console.log(params);
 
         if (url.pathname === "/api/admin") {
             const uid = url.searchParams.get("uid");

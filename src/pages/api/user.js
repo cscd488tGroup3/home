@@ -4,6 +4,11 @@ import { getInfoByUid } from "../../workers/d1-func.js";
 export async function GET({ request, locals }) {
     const url = new URL(request.url);
     const uid = url.searchParams.get("uid");
+    const auth = url.searchParams.get("auth");
+
+    if (!auth || auth !== locals.USR_DB) {
+        return new Response("Unauthorized", { status: 401 });
+    }
 
     if (!uid) {
         return new Response(JSON.stringify({ error: "UID is required" }), { status: 400 });
