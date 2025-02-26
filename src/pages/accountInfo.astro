@@ -2,7 +2,7 @@
 Astro.props.pageTitle = "Account Info";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import { GET } from "./api/user.js";
+import { readUserInfoRequest } from "./api/user.js";
 
 let user = null;
 let error = null;
@@ -15,7 +15,11 @@ let locals = {
 }; // Define locals
 
 try {
-    const res = await GET({ request: 'https://astro-d1-integration.ecrawford4.workers.dev/api/user?uid=1', locals });
+    const res = await readUserInfoRequest({
+        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/user',
+        uid: 1,
+        auth: locals.runtime.env.DB
+    });
     if (res.ok) {
         user = await res.json();
     } else {
