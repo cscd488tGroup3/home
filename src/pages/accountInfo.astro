@@ -16,7 +16,7 @@ let locals = {
 
 try {
     const res = await readUserInfoRequest({
-        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/user',
+        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
         uid: 1,
         auth: locals.runtime.env.DB
     });
