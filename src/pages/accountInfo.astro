@@ -20,12 +20,16 @@ try {
         uid: 1,
         auth: locals.runtime.env.DB
     });
-    if (res.ok) {
+    if (res.status === 200) {
+        //console.log('ok');
         user = await res.json();
-    } else {
-        error = await res.json();
+    } else { 
+        // if res is already json format (this might cause unexpected behavior if the response is not 200 and the response is already other json)
+        error = res;
     }
-} catch (err) {
+} catch (err) { 
+    // if the status is not 200
+    //console.log('error');
     error = { message: "Failed to fetch user data" };
 }
 ---
