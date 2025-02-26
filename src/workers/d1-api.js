@@ -11,6 +11,7 @@ export default {
         
         //Check for API key
         const auth = url.searchParams.get("auth");
+
         if (!auth || auth !== env.USR_DB) {
             return new Response("Unauthorized", { status: 401 });
         }
