@@ -29,3 +29,6 @@ randomhashes
 
 # wrangler env variables
 .dev.vars
+
+# wrangler config secrets
+wrangler.toml
