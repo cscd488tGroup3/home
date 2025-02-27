@@ -17,7 +17,7 @@ let locals = {
 try {
     const res = await readUserInfoRequest({
         worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
-        uid: 1,
+        uid: 'jsmith',
         auth: locals.runtime.env.DB
     });
     if (res.status === 200) {
@@ -38,10 +38,11 @@ try {
     <h1>Account Info</h1>
     {user ? (
         <div>
-            <p><strong>Name:</strong> {user[0]?.fname} {user[0]?.lname}</p>
-            <p><strong>Email:</strong> {user[0]?.email}</p>
-            <p><strong>Date of Birth:</strong> {user[0]?.dob}</p>
-            <p><strong>Date of Joining:</strong> {user[0]?.doj}</p>
+        <p><strong>Username:</strong>{user[0]?.uid}</p>
+            <p><strong>Name:</strong>{user[0]?.fname} {user[0]?.lname}</p>
+            <p><strong>Email:</strong>{user[0]?.email}</p>
+            <p><strong>Date of Birth:</strong>{user[0]?.dob}</p>
+            <p><strong>Date of Joining:</strong>{user[0]?.doj}</p>
         </div>
     ) : (
         <p>{error?.message || "User not found"}</p>

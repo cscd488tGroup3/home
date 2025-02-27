@@ -26,3 +26,9 @@ pnpm-debug.log*
 #
 randomhashes
 .database/
+
+# wrangler env variables
+.dev.vars
+
+# wrangler config secrets
+wrangler.toml
