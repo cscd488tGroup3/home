@@ -16,9 +16,18 @@ export async function getInfoByUid(uid, env) {
     }
 }
 
-export async function getPassword(uid, env) {
+export async function getPasswordByUid(uid, env) {
     try {
         const { results } = await env.DB.prepare("SELECT hashpass FROM admin WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+export async function getPasswordByEmail(email, env) {
+    try {
+        const { results } = await env.DB.prepare("SELECT hashpass FROM admin WHERE email = ?").bind(email).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
