@@ -38,13 +38,13 @@ try {
     <h1>Account Info</h1>
     {user ? (
         <div>
-        <p><strong>Username:</strong>{user[0]?.uid}</p>
-            <p><strong>Name:</strong>{user[0]?.fname} {user[0]?.lname}</p>
-            <p><strong>Email:</strong>{user[0]?.email}</p>
-            <p><strong>Date of Birth:</strong>{user[0]?.dob}</p>
-            <p><strong>Date of Joining:</strong>{user[0]?.doj}</p>
+        <p><strong>Username:</strong> {user[0]?.uid}</p>
+            <p><strong>Name:</strong> {user[0]?.fname} {user[0]?.lname}</p>
+            <p><strong>Email:</strong> {user[0]?.email}</p>
+            <p><strong>Date of Birth:</strong> {user[0]?.dob}</p>
+            <p><strong>Date of Joining:</strong> {user[0]?.doj}</p>
         </div>
     ) : (
-        <p>{error?.message || "User not found"}</p>
+        <p>{error instanceof Response ? "Failed to fetch user data" : error?.message || "User not found"}</p>
     )}
 </Layout>
