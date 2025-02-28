@@ -23,8 +23,10 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-#
+# hidden hashes
 randomhashes
+
+# local database
 .database/
 
 # wrangler env variables
