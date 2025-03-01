@@ -97,6 +97,10 @@ let locals = {
         console.error("Account creation failed:", error);
         alert("Failed to create account. Please try again.");
       }
+
+      // Open response in a new tab
+      const newTab = window.open();
+      newTab.document.body.innerText = JSON.stringify(response, null, 2);
     });
   </script>
 </Layout>
