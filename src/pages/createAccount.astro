@@ -13,7 +13,7 @@ import "../styles/global.css";
 
 <Layout>
   <h1>Create Account</h1>
-  <form id="createAccountForm">
+  <form id="createAccountForm" action="#">
     <br />
     <label for="firstname">First Name:</label>
     <input type="text" id="firstname" name="firstname" required />
@@ -58,7 +58,7 @@ import "../styles/global.css";
   </script>
 
   <script type="module">
-    import { createNewUserAccount } from "./api/user.js";
+    import { createNewUserAccount } from "/api/user.js";
     document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
