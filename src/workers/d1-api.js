@@ -4,6 +4,10 @@
 // get the user data from the database
 import { getUserByUid } from './d1-func.js';
 import { getInfoByUid } from './d1-func.js';
+import { getPasswordByUid } from './d1-func.js';
+import { getPasswordByEmail } from './d1-func.js';
+import { writeNewUser } from './d1-func.js';
+import { writeNewPassword } from './d1-func.js';
 
 export default {
     async fetch(request, env) {
