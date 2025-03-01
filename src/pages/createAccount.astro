@@ -44,49 +44,5 @@ import "../styles/global.css";
     <button type="submit">Submit</button>
   </form>
 
-  <script type="module">
-    import { createNewUserAccount } from "/api/user.js";
-    document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmpassword").value;
-
-      if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
-
-      // Hash the password
-      const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(password));
-      const hashHex = Array.from(new Uint8Array(hash))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-
-      // Gather form data
-      const formData = new FormData(e.target);
-      const userData = {
-        adminWorker: "/api/write/admin", 
-        userWorker: "/api/write/info",
-        fname: formData.get("firstname"),
-        lname: formData.get("lastname"),
-        email: formData.get("email"),
-        uid: formData.get("username"),
-        dob: formData.get("dob"),
-        doj: new Date().toISOString().split("T")[0],
-        hashpass: hashHex
-      };
-
-      try {
-        const response = await createNewUserAccount(userData);
-        alert("Account created successfully!");
-        // Open response in a new tab
-        const newTab = window.open();
-        newTab.document.body.innerText = JSON.stringify(response, null, 2);
-      } catch (error) {
-        console.error("Account creation failed:", error);
-        alert("Failed to create account. Please try again.");
-      }
-    });
-  </script>
+  <script type="module" src="/js/createAccount.js" defer></script>
 </Layout>
