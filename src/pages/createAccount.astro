@@ -2,18 +2,11 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-
-// // Pass environment variables to the client
-// global.Window.dbConfig = {
-//     DB: import.meta.env.USR_DB,
-//     DBW: import.meta.env.USR_DB_W,
-//     DBWA: import.meta.env.USR_DB_W_ADMIN,
-// };
 ---
 
 <Layout>
   <h1>Create Account</h1>
-  <form id="createAccountForm">
+  <form id="createAccountForm" action="#">
     <br />
     <label for="firstname">First Name:</label>
     <input type="text" id="firstname" name="firstname" required />
@@ -51,12 +44,6 @@ import "../styles/global.css";
     <button type="submit">Submit</button>
   </form>
 
-  <!-- Pass config to the frontend -->
-  <script>
-    // Declare dbConfig on the window object
-    window.dbConfig = JSON.parse('{{ JSON.stringify(dbConfig) }}');
-  </script>
-
   <script type="module">
     import { createNewUserAccount } from "/api/user.js";
     document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
@@ -87,10 +74,7 @@ import "../styles/global.css";
         uid: formData.get("username"),
         dob: formData.get("dob"),
         doj: new Date().toISOString().split("T")[0],
-        hashpass: hashHex,
-        auth: global.Window.dbConfig.DB,
-        wauth: global.Window.dbConfig.DBW,
-        aauth: global.Window.dbConfig.DBWA
+        hashpass: hashHex
       };
 
       try {
