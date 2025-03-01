@@ -36,7 +36,7 @@ export async function getPasswordByEmail(email, env) {
 
 export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO info (uid, email, fname, lname, dob, doj) VALUES (?, '?', '?', '?', '?', '?');").bind(uid, email, fname, lname, dob, doj).all();
+        const {results} = await env.DB.prepare("INSERT INTO info (uid, email, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?, ?);").bind(uid, email, fname, lname, dob, doj).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -45,7 +45,7 @@ export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
 
 export async function writeNewPassword(uid, hashpass, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO admin (uid, email, hashpass) VALUES (?, '?', '?');").bind(uid, email, hashpass).all();
+        const {results} = await env.DB.prepare("INSERT INTO admin (uid, email, hashpass) VALUES (?, ?, ?);").bind(uid, email, hashpass).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
