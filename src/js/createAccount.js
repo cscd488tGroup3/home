@@ -19,6 +19,8 @@ document.getElementById("createAccountForm").addEventListener("submit", async (e
 
     const formData = new FormData(e.target);
     const userData = {
+        adminWorker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/write/admin',
+        userWorker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/write/info',
         fname: formData.get("firstname"),
         lname: formData.get("lastname"),
         email: formData.get("email"),
