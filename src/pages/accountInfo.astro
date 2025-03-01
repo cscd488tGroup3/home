@@ -9,7 +9,7 @@ let error = null;
 let locals = {
     runtime: {
         env: {
-            DB: import.meta.env.USR_DB
+            USR_DB: import.meta.env.USR_DB
         }
     }
 }; // Define locals
@@ -18,7 +18,7 @@ try {
     const res = await readUserInfoRequest({
         worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
         uid: 'jsmith',
-        auth: locals.runtime.env.DB
+        auth: locals.runtime.env.USR_DB
     });
     if (res.status === 200) {
         //console.log('ok');

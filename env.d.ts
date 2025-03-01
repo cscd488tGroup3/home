@@ -12,9 +12,9 @@ interface ImportMeta {
 }
 
 interface DBConfig {
-  DB: string;
-  DBW: string;
-  DBWA: string;
+  USR_DB: string;
+  USR_DB_W: string;
+  USR_DB_W_ADMIN: string;
 }
 
 declare global {
