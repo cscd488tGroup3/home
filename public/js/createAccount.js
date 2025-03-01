@@ -1,4 +1,4 @@
-import { createNewUserAccount } from "../../src/pages/api/user.js";
+import { createNewUserAccount } from "./user.js";
 
 document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
     e.preventDefault();
