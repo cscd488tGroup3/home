@@ -5,8 +5,8 @@ import "../styles/global.css";
 let locals = {
     runtime: {
         env: {
-            DB: import.meta.env.USR_DB
-            DBW: import.meta.env.USR_DB_W
+            DB: import.meta.env.USR_DB,
+            DBW: import.meta.env.USR_DB_W,
             DBWA: import.meta.env.USR_DB_W_ADMIN
         }
     }
@@ -76,6 +76,8 @@ let locals = {
       // Gather form data
       const formData = new FormData(e.target);
       const userData = {
+        adminWorker: "/api/write/admin", 
+        userWorker: "/api/write/info",
         fname: formData.get("firstname"),
         lname: formData.get("lastname"),
         email: formData.get("email"),
