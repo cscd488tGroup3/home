@@ -2,29 +2,101 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import Password from "../components/password.astro";
+let locals = {
+    runtime: {
+        env: {
+            DB: import.meta.env.USR_DB,
+            DBW: import.meta.env.USR_DB_W,
+            DBWA: import.meta.env.USR_DB_W_ADMIN
+        }
+    }
+}; // Define locals
 ---
 
 <Layout>
-    <h1>Create Account</h1>
-    <!-- Add your content here -->
-    <form action="/login" method="post">
-        <br>
-        <label for="firstname">First Name:</label>
-        <input type="text" id="firstname" name="firstname" required>
-        <label for="lastname">Last Name:</label>
-        <input type="text" id="lastname" name="lastname" required>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required pattern="\d{4}-\d{2}-\d{2}">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required pattern="(?=.*[A-Z]).{8,}">
-        <label for="confirmpassword">Confirm Password:</label>
-        <input type="password" id="confirmpassword" name="confirmpassword" required pattern="(?=.*[A-Z]).{8,}">
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+  <h1>Create Account</h1>
+  <form id="createAccountForm">
+    <br />
+    <label for="firstname">First Name:</label>
+    <input type="text" id="firstname" name="firstname" required />
+    <label for="lastname">Last Name:</label>
+    <input type="text" id="lastname" name="lastname" required />
+    <label for="email">Email:</label>
+    <input
+      type="text"
+      id="email"
+      name="email"
+      required
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    />
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required />
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required />
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      required
+      pattern="(?=.*[A-Z]).{8,}"
+    />
+    <label for="confirmpassword">Confirm Password:</label>
+    <input
+      type="password"
+      id="confirmpassword"
+      name="confirmpassword"
+      required
+      pattern="(?=.*[A-Z]).{8,}"
+    />
+    <br />
+    <button type="submit">Submit</button>
+  </form>
+
+  <script type="module">
+    import { createNewUserAccount } from "./api/user.js";
+
+    document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmpassword").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      // Hash the password
+      const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(password));
+      const hashHex = Array.from(new Uint8Array(hash))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+
+      // Gather form data
+      const formData = new FormData(e.target);
+      const userData = {
+        adminWorker: "/api/write/admin", 
+        userWorker: "/api/write/info",
+        fname: formData.get("firstname"),
+        lname: formData.get("lastname"),
+        email: formData.get("email"),
+        uid: formData.get("username"),
+        dob: formData.get("dob"),
+        doj: new Date().toISOString().split("T")[0],
+        hashpass: hashHex,
+        auth: locals.runtime.env.DB,
+        wauth: locals.runtime.env.DBW,
+        aauth: locals.runtime.env.DBWA
+      };
+
+      try {
+        const response = await createNewUserAccount(userData);
+        alert("Account created successfully!");
+      } catch (error) {
+        console.error("Account creation failed:", error);
+        alert("Failed to create account. Please try again.");
+      }
+    });
+  </script>
 </Layout>
