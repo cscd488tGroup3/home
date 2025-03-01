@@ -54,7 +54,7 @@ let locals = {
   </form>
 
   <script type="module">
-    import { createNewUserAccount } from "../js/account.js";
+    import { createNewUserAccount } from "./api/user.js";
 
     document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
       e.preventDefault();
