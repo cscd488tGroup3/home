@@ -2,15 +2,13 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-let locals = {
-    runtime: {
-        env: {
-            DB: import.meta.env.USR_DB,
-            DBW: import.meta.env.USR_DB_W,
-            DBWA: import.meta.env.USR_DB_W_ADMIN
-        }
-    }
-}; // Define locals
+
+// // Pass environment variables to the client
+// const dbConfig = {
+//     DB: import.meta.env.USR_DB,
+//     DBW: import.meta.env.USR_DB_W,
+//     DBWA: import.meta.env.USR_DB_W_ADMIN,
+// };
 ---
 
 <Layout>
@@ -53,9 +51,14 @@ let locals = {
     <button type="submit">Submit</button>
   </form>
 
+  <!-- Pass config to the frontend -->
+  <!-- <script>
+    // Declare dbConfig on the window object
+    window.dbConfig = JSON.parse({{ JSON.stringify(dbConfig) }});
+  </script> -->
+
   <script type="module">
     import { createNewUserAccount } from "./api/user.js";
-
     document.getElementById("createAccountForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -85,9 +88,9 @@ let locals = {
         dob: formData.get("dob"),
         doj: new Date().toISOString().split("T")[0],
         hashpass: hashHex,
-        auth: locals.runtime.env.DB,
-        wauth: locals.runtime.env.DBW,
-        aauth: locals.runtime.env.DBWA
+        auth: import.meta.env.DB,
+        wauth: import.meta.env.DBW,
+        aauth: import.meta.env.DBWA
       };
 
       try {
@@ -100,8 +103,6 @@ let locals = {
         console.error("Account creation failed:", error);
         alert("Failed to create account. Please try again.");
       }
-
-      
     });
   </script>
 </Layout>
