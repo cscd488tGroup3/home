@@ -14,7 +14,11 @@ export async function readUserInfoRequest({worker, uid, auth }) {
     }
 }
 
-export async function createNewUserAccount({ adminWorker, userWorker, uid, email, fname, lname, dob, doj, hashpass, auth, wauth, aauth }) {
+export async function createNewUserAccount({ adminWorker, userWorker, uid, email, fname, lname, dob, doj, hashpass}) {
+    const auth = import.meta.env.USR_DB;
+    const wauth = import.meta.env.USR_DB_W;
+    const aauth = import.meta.env.USR_DB_W_AUTH;
+
     const aurl = new URL(adminWorker);
     aurl.searchParams.append('uid', uid);
     aurl.searchParams.append('email', email);
