@@ -1,7 +1,4 @@
-// This is your D1-powered API worker
-// It's a Cloudflare Worker that uses Durable Objects
-
-// get the user data from the database
+// D1-powered Cloudflare API worker
 import { getUserByUid } from './d1-func.js';
 import { getInfoByUid } from './d1-func.js';
 import { getPasswordByUid } from './d1-func.js';
@@ -13,11 +10,12 @@ export default {
     async fetch(request, env) {
         const url = new URL(request.url);
         
-        //Check for API key
+        // passed in keys
         const auth = url.searchParams.get("auth");
         const wauth = url.searchParams.get("wauth");
         const aauth = url.searchParams.get("aauth");
 
+        // check for the read key
         if (!auth || auth !== env.USR_DB) {
             return new Response("Unauthorized", { status: 401 });
         }

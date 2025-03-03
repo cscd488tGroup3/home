@@ -2,7 +2,11 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-// import "../js/createAccount.js";
+window.dbConfig = {
+      USR_DB: import.meta.env.USR_DB,
+      USR_DB_W: import.meta.env.USR_DB_W,
+      USR_DB_W_ADMIN: import.meta.env.USR_DB_W_ADMIN
+    };
 ---
 
 <Layout>
@@ -45,5 +49,15 @@ import "../styles/global.css";
     <button type="submit">Submit</button>
   </form>
 
-  <script type="module" src="../js/createAccount.js" is:inline></script>
+  // load the environment variables for createAccount.js to use
+  <!-- <script>
+    window.dbConfig = {
+      USR_DB: import.meta.env.USR_DB,
+      USR_DB_W: import.meta.env.USR_DB_W,
+      USR_DB_W_ADMIN: import.meta.env.USR_DB_W_ADMIN
+    };
+  </script>   -->
+
+  // call createAccount.js
+  <script type="module" src="/js/createAccount.js" is:inline></script>
 </Layout>

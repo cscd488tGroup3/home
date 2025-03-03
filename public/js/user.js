@@ -15,10 +15,6 @@ export async function readUserInfoRequest({worker, uid, auth }) {
 }
 
 export async function createNewUserAccount({ adminWorker, userWorker, uid, email, fname, lname, dob, doj, hashpass, auth, wauth, aauth }) {
-    // const auth = import.meta.env.USR_DB;
-    // const wauth = import.meta.env.USR_DB_W;
-    // const aauth = import.meta.env.USR_DB_W_AUTH;
-
     const aurl = new URL(adminWorker);
     aurl.searchParams.append('uid', uid);
     aurl.searchParams.append('email', email);
@@ -26,6 +22,10 @@ export async function createNewUserAccount({ adminWorker, userWorker, uid, email
     aurl.searchParams.append('auth', auth);
     aurl.searchParams.append('wauth', wauth);
     aurl.searchParams.append('aauth', aauth);
+
+    // // debug lines
+    // console.log(aurl.href);
+    // console.log(aurl);
 
     const uurl = new URL(userWorker);
     uurl.searchParams.append('uid', uid);
@@ -36,6 +36,10 @@ export async function createNewUserAccount({ adminWorker, userWorker, uid, email
     uurl.searchParams.append('doj', doj);
     uurl.searchParams.append('auth', auth);
     uurl.searchParams.append('wauth', wauth);
+
+    // // debug lines
+    // console.log(uurl.href);
+    // console.log(uurl);
 
     const [aresponse, uresponse] = await Promise.all([fetch(aurl.href), fetch(uurl.href)]);
 
