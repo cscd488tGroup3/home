@@ -108,9 +108,9 @@ export default {
         }
 
         // check for the write key
-        if (!wauth || wauth !== env.USR_DB_W) {
-            return new Response("Unauthorized", { status: 401 });
-        }
+        // if (!wauth || wauth !== env.USR_DB_W) {
+        //     return new Response("Unauthorized", { status: 401 });
+        // }
         
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
