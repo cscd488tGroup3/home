@@ -2,21 +2,11 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-let locals = {
-  runtime: {
-    env: {
-      USR_DB: import.meta.env.USR_DB,
-      USR_DB_W: import.meta.env.USR_DB_W,
-      USR_DB_W_ADMIN: import.meta.env.USR_DB_W_ADMIN
-    }
-  }
-}; 
-const { USR_DB, USR_DB_W, USR_DB_W_ADMIN } = Astro.locals.runtime.env;
-window.dbConfig = { 
-      USR_DB: `${USR_DB}`,
-      USR_DB_W: `${USR_DB_W}`,
-      USR_DB_W_ADMIN: `${USR_DB_W_ADMIN}`
-    };
+const dbConfig = {
+  USR_DB: import.meta.env.USR_DB,
+  USR_DB_W: import.meta.env.USR_DB_W,
+  USR_DB_W_ADMIN: import.meta.env.USR_DB_W_ADMIN,
+};
 ---
 
 <Layout>
@@ -59,22 +49,14 @@ window.dbConfig = {
     <button type="submit">Submit</button>
   </form>
 
-  // load the environment variables for createAccount.js to use
-  <!-- <script>
+  <!-- // load the environment variables for createAccount.js to use -->
+  <script type="module">
     window.dbConfig = {
-      USR_DB: import.meta.env.USR_DB,
-      USR_DB_W: import.meta.env.USR_DB_W,
-      USR_DB_W_ADMIN: import.meta.env.USR_DB_W_ADMIN
+      USR_DB: `${dbConfig.USR_DB}`,
+      USR_DB_W: `${dbConfig.USR_DB_W}`,
+      USR_DB_W_ADMIN: `${dbConfig.USR_DB_W_ADMIN}`,
     };
-  </script>   -->
-<!-- 
-  <script>
-    window.dbConfig = { 
-      USR_DB: `${USR_DB}`,
-      USR_DB_W: `${USR_DB_W}`,  
-      USR_DB_W_ADMIN: `${USR_DB_W_ADMIN}`
-    };
-  </script> -->
+  </script>
 
   // call createAccount.js
   <script type="module" src="/js/createAccount.js" is:inline></script>
