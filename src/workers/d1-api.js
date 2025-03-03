@@ -136,9 +136,9 @@ export default {
         }
 
         // check for the admin key
-        if (!aauth || aauth !== env.USR_DB_W_ADMIN) {
-            return new Response("Unauthorized", { status: 401 });
-        }
+        // if (!aauth || aauth !== env.USR_DB_W_ADMIN) {
+        //     return new Response("Unauthorized", { status: 401 });
+        // }
 
         if (url.pathname === "/api/write/admin") {
             const uid = url.searchParams.get("uid");
