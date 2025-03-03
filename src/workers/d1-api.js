@@ -108,9 +108,9 @@ export default {
         }
 
         // check for the write key
-        // if (!wauth || wauth !== env.USR_DB_W) {
-        //     return new Response("Unauthorized", { status: 401 });
-        // }
+        if (!wauth || wauth !== env.USR_DB_W) {
+            return new Response("Unauthorized", { status: 401 });
+        }
         
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
@@ -124,7 +124,7 @@ export default {
             }
 
             try {
-                const response = writeNewUser(uid, email, fname, lname, dob, doj, env);
+                const response = await writeNewUser(uid, email, fname, lname, dob, doj, env);
                 return new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -136,9 +136,9 @@ export default {
         }
 
         // check for the admin key
-        // if (!aauth || aauth !== env.USR_DB_W_ADMIN) {
-        //     return new Response("Unauthorized", { status: 401 });
-        // }
+        if (!aauth || aauth !== env.USR_DB_W_ADMIN) {
+            return new Response("Unauthorized", { status: 401 });
+        }
 
         if (url.pathname === "/api/write/admin") {
             const uid = url.searchParams.get("uid");
@@ -149,7 +149,7 @@ export default {
             }
 
             try {
-                const response = writeNewPassword(uid, email, hashpass, env);
+                const response = await writeNewPassword(uid, email, hashpass, env);
                 return new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -162,54 +162,3 @@ export default {
         return new Response("Not found", { status: 404 });
     },
 };
-
-// export default {
-//     async fetch(request, env) {
-//         const url = new URL(request.url);
-//         const params = new URLSearchParams(url.search);
-//         const apiKey = request.headers.get("Authorization");
-
-//         // Check for API key
-//         if (apiKey !== env.USR_DB_API_KEY) {
-//             return new Response("Unauthorized", { status: 401 });
-//         }
-//         console.log(params);
-
-//         // Handle your API routes
-//         if (url.pathname === "/api/info" && params.has("uid")) {
-//             const uid = params.get("uid");
-//             const { results } = await env.DB.prepare("SELECT * FROM info WHERE uid = ?")
-//                 .bind(uid)
-//                 .all();
-            
-//             return new Response(JSON.stringify(results), {
-//                 headers: { "Content-Type": "application/json" },
-//             });
-//         }
-
-//         if (url.pathname === "/api/admin" && params.has("uid")) {
-//             const uid = params.get("uid");
-//             const { results } = await env.DB.prepare("SELECT * FROM admin WHERE uid = ?")
-//                 .bind(uid)
-//                 .all();
-            
-//             return new Response(JSON.stringify(results), {
-//                 headers: { "Content-Type": "application/json" },
-//             });
-//         }
-//         // Handle the root path
-//         if (url.pathname === "/") {
-//             return new Response("Welcome to your D1-powered API!", {
-//                 headers: { "Content-Type": "text/plain" },
-//             });
-//         }
-
-//         // Handle favicon requests
-//         if (url.pathname === "/favicon.ico") {
-//             return new Response(null, { status: 204 }); // No content
-//         }
-
-//         // Fallback for unknown routes
-//         return new Response("Not found", { status: 404 });
-//     },
-// };
