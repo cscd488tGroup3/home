@@ -2,6 +2,11 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
+window.dbConfig = {
+      USR_DB: import.meta.env.USR_DB,
+      USR_DB_W: import.meta.env.USR_DB_W,
+      USR_DB_W_ADMIN: import.meta.env.USR_DB_W_ADMIN
+    };
 ---
 
 <Layout>
