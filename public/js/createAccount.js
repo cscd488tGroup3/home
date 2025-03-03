@@ -28,9 +28,9 @@ document.getElementById("createAccountForm").addEventListener("submit", async (e
         dob: formData.get("dob"),
         doj: new Date().toISOString().split("T")[0],
         hashpass: hashHex,
-        auth: global.Window.DBConfig.USR_DB, // script crashes here; fix how environment variables are passed
-        wauth: global.Window.DBConfig.USR_DB_W,
-        aauth: global.Window.DBConfig.USR_DB_W_AUTH
+        auth: window.dbConfig.USR_DB, // test refactor how env is passed
+        wauth: window.dbConfig.USR_DB_W,
+        aauth: window.dbConfig.USR_DB_W_AUTH
     };
 
     try {
