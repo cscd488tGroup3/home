@@ -2,7 +2,7 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import "../js/createAccount.js";
+// import "../js/createAccount.js";
 ---
 
 <Layout>
@@ -45,5 +45,5 @@ import "../js/createAccount.js";
     <button type="submit">Submit</button>
   </form>
 
-  <script type="module" src="../js/createAccount.js"></script>
+  <script type="module" src="../js/createAccount.js" is:inline></script>
 </Layout>

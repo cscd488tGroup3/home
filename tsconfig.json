@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["astro/client"]
   },
-  "include": ["src", "env.d.ts"],
+  "include": ["src", "env.d.ts", "public/js"],
   "exclude": ["dist"]
 }
