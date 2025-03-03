@@ -1,19 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import dotenv from 'dotenv';
 import cloudflare from '@astrojs/cloudflare';
 import { defineConfig } from 'astro/config';
