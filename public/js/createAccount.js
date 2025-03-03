@@ -28,9 +28,9 @@ document.getElementById("createAccountForm").addEventListener("submit", async (e
         dob: formData.get("dob"),
         doj: new Date().toISOString().split("T")[0],
         hashpass: hashHex,
-        auth: import.meta.env.USR_DB,
-        wauth: import.meta.env.USR_DB_W,
-        aauth: import.meta.env.USR_DB_W_AUTH
+        auth: global.Window.DBConfig.USR_DB,
+        wauth: global.Window.DBConfig.USR_DB_W,
+        aauth: global.Window.DBConfig.USR_DB_W_AUTH
     };
 
     try {
