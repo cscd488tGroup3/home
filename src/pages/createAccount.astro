@@ -77,17 +77,19 @@ import "../styles/global.css";
       delete data.password;
       delete data.confirmpassword;
 
-      console.log(data);
+      //console.log(data);
 
       // Send data to the Astro API route
-      const response = await fetch("/api/createAccount", {
+      const response = await fetch("/.netlify/functions/createAccount", {
+      // USE THIS LINE FOR LOCAL TESTING
+      // const response = await fetch("/api/createAccount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const result = await response.json();
-      console.log(result);
+      //console.log(result);
 
       if (response.ok) {
         alert("Account created successfully!");
