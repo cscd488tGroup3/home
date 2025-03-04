@@ -1,11 +1,12 @@
 exports.handler = async (event,context) => {
+    // headers
     const headers = {
         "Access-Control-Allow-Origin": "https://astro-d1-integration.ecrawford4.workers.dev", // Or specify your frontend URL
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
     
-    
+    // handle prefilght request
     if (event.httpMethod === "OPTIONS") {
         return {
             statusCode: 204,
