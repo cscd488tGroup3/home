@@ -43,7 +43,9 @@ export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
     }
 }
 
-export async function writeNewPassword(uid, hashpass, env) {
+export async function writeNewPassword(uid, email, hashpass, env) {
+    // if (!env.DB) throw new Error("Database not initialized");
+
     try {
         const {results} = await env.DB.prepare("INSERT INTO admin (uid, email, hashpass) VALUES (?, ?, ?);").bind(uid, email, hashpass).run();
         return results;
