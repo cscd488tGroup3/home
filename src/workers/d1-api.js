@@ -8,7 +8,7 @@ import { writeNewPassword } from './d1-func.js';
 
 function addCorsHeaders(response) {
     const headers = new Headers(response.headers);
-    headers.set("Access-Control-Allow-Origin", "*"); // Or your specific frontend URL
+    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); // Or your specific frontend URL
     headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     return new Response(response.body, { ...response, headers });
@@ -23,7 +23,7 @@ export default {
             return new Response(null, {
                 status: 204,
                 headers: {
-                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Origin": "https://peppy-nougat-0120f1.netlify.app/",
                     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
                     "Access-Control-Allow-Headers": "Content-Type, Authorization",
                     "Access-Control-Max-Age": "86400", // Cache preflight for 24 hours
