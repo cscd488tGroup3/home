@@ -6,7 +6,7 @@ export async function POST({ request }) {
     const USR_DB_W = import.meta.env.USR_DB_W;
     const USR_DB_W_ADMIN = import.meta.env.USR_DB_W_ADMIN;
 
-    console.log(USR_DB, USR_DB_W, USR_DB_W_ADMIN);
+    // console.log(USR_DB, USR_DB_W, USR_DB_W_ADMIN);
 
     try {
         // Prepare data for account info
@@ -19,7 +19,7 @@ export async function POST({ request }) {
             doj: new Date().toISOString().split('T')[0], // Set date of joining
         };
 
-        console.log(accountInfo);
+        // console.log(accountInfo);
 
         // Send account info to worker
         const infoResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/info?uid=${accountInfo.uid}&email=${accountInfo.email}&fname=${accountInfo.fname}&lname=${accountInfo.lname}&dob=${accountInfo.dob}&doj=${accountInfo.doj}&auth=${USR_DB}&wauth=${USR_DB_W}`);
@@ -35,9 +35,9 @@ export async function POST({ request }) {
             hashpass: body.hashpass,
         };
 
-        console.log(passData);
+        // console.log(passData);
 
-        console.log(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/admin?uid=${passData.uid}&email=${passData.email}&hashpass=${passData.hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
+        // console.log(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/admin?uid=${passData.uid}&email=${passData.email}&hashpass=${passData.hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
 
         // Send password data to worker
         const passResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/admin?uid=${passData.uid}&email=${passData.email}&hashpass=${passData.hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
