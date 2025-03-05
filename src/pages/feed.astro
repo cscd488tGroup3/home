@@ -6,7 +6,9 @@ import Layout from "../layouts/Layout.astro"
 <Layout>
     <!-- Page Button -->
      <h1>Post Feed</h1>
-    <form>
+    <form>    
+        <label for="images">Upload Images:</label>
+        <input type="file" id="images" name="images" accept="image/*" multiple required>
         
         <button type="submit">Create Post</button>
     </form>
