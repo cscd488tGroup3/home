@@ -9,6 +9,8 @@ import Layout from "../layouts/Layout.astro"
     <form>    
         <label for="images">Upload Images:</label>
         <input type="file" id="images" name="images" accept="image/*" multiple required>
+        <label for="caption">Caption:</label>
+        <input type="text" id="caption" name="caption" required>
         
         <button type="submit">Create Post</button>
     </form>
