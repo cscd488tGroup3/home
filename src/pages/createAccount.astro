@@ -2,29 +2,107 @@
 Astro.props.pageTitle = "Create Account";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import Password from "../components/password.astro";
 ---
 
 <Layout>
-    <h1>Create Account</h1>
-    <!-- Add your content here -->
-    <form action="/login" method="post">
-        <br>
-        <label for="firstname">First Name:</label>
-        <input type="text" id="firstname" name="firstname" required>
-        <label for="lastname">Last Name:</label>
-        <input type="text" id="lastname" name="lastname" required>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required pattern="\d{4}-\d{2}-\d{2}">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required pattern="(?=.*[A-Z]).{8,}">
-        <label for="confirmpassword">Confirm Password:</label>
-        <input type="password" id="confirmpassword" name="confirmpassword" required pattern="(?=.*[A-Z]).{8,}">
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+  <h1>Create Account</h1>
+  <form id="createAccountForm" action="#">
+    <br />
+    <label for="firstname">First Name:</label>
+    <input type="text" id="fname" name="fname" required />
+    <label for="lastname">Last Name:</label>
+    <input type="text" id="lname" name="lname" required />
+    <label for="email">Email:</label>
+    <input
+      type="text"
+      id="email"
+      name="email"
+      required
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    />
+    <label for="uid">Username:</label>
+    <input type="text" id="uid" name="uid" required />
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required />
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      required
+      pattern="(?=.*[A-Z]).{8,}"
+    />
+    <label for="confirmpassword">Confirm Password:</label>
+    <input
+      type="password"
+      id="confirmpassword"
+      name="confirmpassword"
+      required
+      pattern="(?=.*[A-Z]).{8,}"
+    />
+    <br />
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    async function hashPassword(password: FormDataEntryValue | undefined) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password as string);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    async function handleSubmit(event: {
+      preventDefault: () => void;
+      target: any;
+    }) {
+      event.preventDefault();
+
+      const form = event.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Check if passwords match
+      if (data.password !== data.confirmpassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Hash the password
+      data.hashpass = await hashPassword(data.password);
+
+      // Remove raw password fields
+      delete data.password;
+      delete data.confirmpassword;
+
+      //console.log(data);
+
+      // Send data to the Astro API route
+      const response = await fetch("https://peppy-nougat-0120f1.netlify.app/.netlify/functions/createAccount", {
+      // USE THIS LINE FOR LOCAL TESTING
+      // const response = await fetch("/api/createAccount", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      //console.log(result);
+
+      if (response.ok) {
+        alert("Account created successfully!");
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    }
+
+    const form = document.getElementById("createAccountForm");
+    if (form) {
+      form.addEventListener("submit", handleSubmit);
+    } else {
+      console.error("Form not found");
+    }
+  </script>
 </Layout>

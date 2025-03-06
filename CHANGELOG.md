@@ -8,16 +8,20 @@ for a more detailed view of our progress, see our commit history.
 
 ### sprint 4
 
-
-
 ### sprint 3
+
+> prototyping database api configuration
+> added login
+> added create account
+
+### sprint 2
 
 > added date component
 > added time component
 > added weather component
 > added compontents to homepage
 
-### sprint 2
+### sprint 1
 
 > added astro
 > added tailwind

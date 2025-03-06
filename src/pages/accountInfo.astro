@@ -1,0 +1,50 @@
+---
+Astro.props.pageTitle = "Account Info";
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+import { readUserInfoRequest } from "../../public/js/user.js";
+
+let user = null;
+let error = null;
+let locals = {
+    runtime: {
+        env: {
+            USR_DB: import.meta.env.USR_DB
+        }
+    }
+}; // Define locals
+
+try {
+    const res = await readUserInfoRequest({
+        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
+        uid: 'jsmith',
+        auth: locals.runtime.env.USR_DB
+    });
+    if (res.status === 200) {
+        //console.log('ok');
+        user = await res.json();
+    } else { 
+        // if res is already json format (this might cause unexpected behavior if the response is not 200 and the response is already other json)
+        error = res;
+    }
+} catch (err) { 
+    // if the status is not 200
+    //console.log('error');
+    error = { message: "Failed to fetch user data" };
+}
+---
+
+<Layout>
+    <h1>Account Info</h1>
+    {user ? (
+        <div>
+        <p><strong>Username:</strong> {user[0]?.uid}</p>
+            <p><strong>Name:</strong> {user[0]?.fname} {user[0]?.lname}</p>
+            <p><strong>Email:</strong> {user[0]?.email}</p>
+            <p><strong>Date of Birth:</strong> {user[0]?.dob}</p>
+            <p><strong>Date of Joining:</strong> {user[0]?.doj}</p>
+        </div>
+    ) : (
+        <p>{error instanceof Response ? "Failed to fetch user data" : error?.message || "User not found"}</p>
+    )}
+</Layout>
