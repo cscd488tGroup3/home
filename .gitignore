@@ -34,3 +34,6 @@ randomhashes
 
 # wrangler config secrets
 wrangler.toml
+
+# netlify build environment
+.netlify/
