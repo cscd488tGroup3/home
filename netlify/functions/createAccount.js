@@ -12,7 +12,7 @@ exports.handler = async (event,context) => {
     const headers = {
         "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://peppy-nougat-0120f1.netlify.app", // Default to the first allowed origin
         "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type"
     };
     
     // handle prefilght request
