@@ -1,7 +1,14 @@
 exports.handler = async (event,context) => {
     // headers
+    const allowedOrigins = [
+        "https://astro-d1-integration.ecrawford4.workers.dev",
+        "https://localhost:4321", // For local development
+        "https://peppy-nougat-0120f1.netlify.app" // For Netlify deployment
+    ];
+
+    const origin = event.headers.origin;
     const headers = {
-        "Access-Control-Allow-Origin": "https://astro-d1-integration.ecrawford4.workers.dev", // Or specify your frontend URL
+        "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://astro-d1-integration.ecrawford4.workers.dev", // Default to the first allowed origin
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
