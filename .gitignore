@@ -37,3 +37,6 @@ wrangler.toml
 
 # netlify build environment
 .netlify/
+
+# local workspace settings
+home.code-workspace
