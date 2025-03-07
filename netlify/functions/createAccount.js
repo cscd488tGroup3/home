@@ -3,7 +3,7 @@ exports.handler = async (event,context) => {
     // headers
     const allowedOrigins = [
         "https://astro-d1-integration.ecrawford4.workers.dev",
-        "http://localhost:4321", // For local development
+        //"http://localhost:4321", // For local development
         "https://*--peppy-nougat-0120f1.netlify.app" // For Netlify deployment
     ];
 
