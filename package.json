@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "lint": "eslint . --ext .js,.ts,.astro",
+    "lint": "eslint . --ext .js,.ts,.astro --ignore-pattern '.wrangler'",
     "test": "vitest",
     "dev": "astro dev",
     "build": "astro build",

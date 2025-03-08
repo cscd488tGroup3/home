@@ -4,11 +4,11 @@ module.exports = [
   // js.configs.recommended,
   ...eslintPluginAstro.configs['flat/recommended'], // In CommonJS, the `flat/` prefix is required.
   {
+    ignores : ['.*', '.wrangler/'],
     rules: {
       // override/add rules settings here, such as:
       // "astro/no-set-html-directive": "error"
-    },
-    ignores : ['.*']
+    }
   }
 ];
 
