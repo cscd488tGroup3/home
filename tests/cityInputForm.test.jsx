@@ -1,53 +1,26 @@
-import { render, fireEvent, screen } from '@testing-library/react';
-import React from 'react'; 
-import { describe, it, expect, vi } from 'vitest';
-import CityInput from '../src/components/CityInput.astro'; // Adjust the import path as needed
+import { render } from '@astro/test-utils';
+import CityInput from '../src/components/CityInput.astro';
 
 describe('City Input Form', () => {
-  it('dispatches citySearch event with the correct city name when search button is clicked', async () => {
-    // Create a mock function to listen to the custom event
-    const mockCitySearchHandler = vi.fn();
-    window.addEventListener('citySearch', mockCitySearchHandler);
+  it('dispatches citySearch event with the correct city name when search button is clicked', () => {
+    const { getByPlaceholderText, getByText } = render(<CityInput />);
+    const input = getByPlaceholderText('Enter city name');
+    const button = getByText('Search');
 
-    // Render the CityInputForm component (Astro component as HTML)
-    render(<CityInput />);
+    input.value = 'London';
+    button.click();
 
-    // Get input field and button elements
-    const cityInput = screen.getByPlaceholderText('Enter city name');
-    const searchButton = screen.getByText('Search');
-
-    // Simulate typing a city name in the input field
-    await fireEvent.update(cityInput, 'New York');
-
-    // Simulate clicking the search button
-    await fireEvent.click(searchButton);
-
-    // Check if the custom event is fired with the correct city name
-    expect(mockCitySearchHandler).toHaveBeenCalledWith(
-      expect.objectContaining({
-        detail: {
-          cityName: 'New York'
-        }
-      })
-    );
+    expect(someEventHandler).toHaveBeenCalledWith('London');
   });
 
-  it('does not dispatch event if input is empty', async () => {
-    // Create a mock function to listen to the custom event
-    const mockCitySearchHandler = vi.fn();
-    window.addEventListener('citySearch', mockCitySearchHandler);
+  it('does not dispatch event if input is empty', () => {
+    const { getByPlaceholderText, getByText } = render(<CityInput />);
+    const input = getByPlaceholderText('Enter city name');
+    const button = getByText('Search');
 
-    // Render the CityInputForm component (Astro component as HTML)
-    render(<CityInput />);
+    input.value = '';
+    button.click();
 
-    // Get input field and button elements
-    const cityInput = screen.getByPlaceholderText('Enter city name');
-    const searchButton = screen.getByText('Search');
-
-    // Simulate leaving the input empty and clicking the search button
-    await fireEvent.click(searchButton);
-
-    // Check that the event handler was not called since the input is empty
-    expect(mockCitySearchHandler).not.toHaveBeenCalled();
+    expect(someEventHandler).not.toHaveBeenCalled();
   });
 });
