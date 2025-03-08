@@ -1,14 +1,20 @@
 const eslintPluginAstro = require('eslint-plugin-astro');
+const js = require('@eslint/js');
+const typescriptParser = require('@typescript-eslint/parser');
+
 module.exports = [
-  // add more generic rule sets here, such as:
+  // Add more generic rule sets here, such as:
   // js.configs.recommended,
   ...eslintPluginAstro.configs['flat/recommended'], // In CommonJS, the `flat/` prefix is required.
+  
   {
-    ignores : ['.*', '.wrangler/'],
+    files: ['**/*.ts', '**/*.d.ts'], // TypeScript files
+    languageOptions: {
+      parser: typescriptParser, // Use TypeScript parser here
+    },
     rules: {
-      // override/add rules settings here, such as:
-      // "astro/no-set-html-directive": "error"
-    }
+      // Add TypeScript-specific rules here
+    },
+    ignores: ['.*', '.wrangler/'], // Ignore hidden files and .wrangler directory
   }
 ];
-
