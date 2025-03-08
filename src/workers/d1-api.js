@@ -1,10 +1,6 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid } from './d1-func.js';
-import { getInfoByUid } from './d1-func.js';
-import { getPasswordByUid } from './d1-func.js';
-import { getPasswordByEmail } from './d1-func.js';
-import { writeNewUser } from './d1-func.js';
-import { writeNewPassword } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword } from './d1-func.js';
+
 
 function addCorsHeaders(response) {
     const headers = new Headers(response.headers);
