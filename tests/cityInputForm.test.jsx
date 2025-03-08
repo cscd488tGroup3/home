@@ -1,6 +1,6 @@
 import { render, fireEvent, screen } from '@testing-library/react';
 import { expect, vi } from 'vitest';
-import CityInputForm from '../src/components/CityInputForm.astro'; // Adjust the import path as needed
+import CityInput from '../src/components/CityInput.astro'; // Adjust the import path as needed
 
 describe('City Input Form', () => {
   it('dispatches citySearch event with the correct city name when search button is clicked', async () => {
@@ -9,7 +9,7 @@ describe('City Input Form', () => {
     window.addEventListener('citySearch', mockCitySearchHandler);
 
     // Render the CityInputForm component (Astro component as HTML)
-    render(<CityInputForm />);
+    render(<CityInput />);
 
     // Get input field and button elements
     const cityInput = screen.getByPlaceholderText('Enter city name');
@@ -37,7 +37,7 @@ describe('City Input Form', () => {
     window.addEventListener('citySearch', mockCitySearchHandler);
 
     // Render the CityInputForm component (Astro component as HTML)
-    render(<CityInputForm />);
+    render(<CityInput />);
 
     // Get input field and button elements
     const cityInput = screen.getByPlaceholderText('Enter city name');
