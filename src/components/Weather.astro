@@ -1,65 +1,60 @@
 ---
-
 ---
 
 <!-- Weather Display -->
 <section class="backdrop-blur-md bg-white/50">
   <h1>Temp: <span class="temp">Temp</span>°<span class="unit">F</span></h1>
   <h2>City: <span class="city">City</span></h2>
-  <!-- <h3>State: <span class="state">State</span></h3> -->
   <h4>Country: <span class="country">Country</span></h4>
-  <!-- <img class="icon" src="" alt="Weather Icon" /> -->
   <button id="toggleUnit">Toggle Celsius/Fahrenheit</button>
 </section>
 
 <script>
   const weatherApiKey = import.meta.env.API_KEY;
-  //console.log('APIKEY:', apiKey); // Add this line for debugging
-  // Units for Fahrenheit
-  let units = 'F';
+  // Start with Fahrenheit
+  let units = 'imperial'; // Use 'imperial' for Fahrenheit, 'metric' for Celsius
 
   // DOM elements
   const nameOfCity = document.querySelector('.city') as HTMLElement | null;
-  const stateOfCity = document.querySelector('.state') as HTMLElement | null;
   const tempOfCity = document.querySelector('.temp') as HTMLElement | null;
   const countryOfCity = document.querySelector('.country') as HTMLElement | null;
   const unitOfTemp = document.querySelector('.unit') as HTMLElement | null;
   const toggleUnitButton = document.getElementById('toggleUnit') as HTMLButtonElement | null;
-  // const weatherIcon = document.querySelector('.icon');
 
   // Function to fetch weather data
   async function fetchWeather(cityName: string) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&appid=${weatherApiKey}`);
     const data = await response.json();
-    console.log(data); // looks like the data object does not contain a state
+    
     if (data.cod === 200) {
-      if (nameOfCity) nameOfCity.textContent = data.name;
-      if (tempOfCity) tempOfCity.textContent = data.main.temp;
-      if (countryOfCity) countryOfCity.textContent = data.sys.country;
-      if (unitOfTemp) unitOfTemp.textContent = units === 'F' ? 'F' : 'C';
-      // weatherIcon.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+      updateWeatherDisplay(data);
     } else {
       alert('City not found');
     }
   }
 
-  // Listen for the custom event
+  // Update the weather display with the fetched data
+  function updateWeatherDisplay(data: any) {
+    if (nameOfCity) nameOfCity.textContent = data.name;
+    if (tempOfCity) tempOfCity.textContent = data.main.temp.toFixed(1); // Round the temperature
+    if (countryOfCity) countryOfCity.textContent = data.sys.country;
+    if (unitOfTemp) unitOfTemp.textContent = units === 'imperial' ? 'F' : 'C'; // Update the unit display
+  }
+
+  // Listen for the custom event to trigger a weather fetch
   window.addEventListener('citySearch', (event) => {
     const cityName = (event as CustomEvent).detail.cityName;
     fetchWeather(cityName);
   });
 
-  // Toggle unit and fetch weather data again
+  // Toggle the unit (Fahrenheit/Celsius)
   if (toggleUnitButton) {
     toggleUnitButton.addEventListener('click', () => {
-      units = units === 'F' ? 'C' : 'F';
-      if (toggleUnitButton) {
-        toggleUnitButton.textContent = units === 'F' ? 'Celsius' : 'Fahrenheit';
-      }
+      // Toggle between Fahrenheit (imperial) and Celsius (metric)
+      units = units === 'imperial' ? 'metric' : 'imperial';
+      toggleUnitButton.textContent = units === 'imperial' ? 'Celsius' : 'Fahrenheit'; // Update the button text
       const cityName = nameOfCity?.textContent;
-      if (cityName) {
-        fetchWeather(cityName);
-      }
+      if (cityName) fetchWeather(cityName);
     });
   }
 </script>

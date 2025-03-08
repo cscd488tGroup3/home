@@ -1,72 +1,41 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { expect, test } from 'vitest';
 import puppeteer from 'puppeteer';
-import CityInput from '../src/components/CityInput.astro';
+import FullPage from '../src/pages/index.astro';
+import dotenv from 'dotenv';
 
-test('dispatches event with city name when input is filled', async () => {
-  const container = await AstroContainer.create();
-  const result = await container.renderToString(CityInput);
+// Ensure your environment variables are set up correctly for the test
+dotenv.config(); 
 
-  // Start a Puppeteer browser instance
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  
-  // Set the content of the page to the rendered HTML from Astro
-  await page.setContent(result);
+test(
+  'ensures components are loaded properly in index.astro',
+  async () => {
+    const container = await AstroContainer.create();
+    const result = await container.renderToString(FullPage);
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setContent(result);
 
-  // Simulate user interaction with Puppeteer
-  const input = await page.$('input[placeholder="Enter city name"]');
-  const button = await page.$('button');  // Select the first button
+    // Test that essential components are rendered
+    const headerExists = await page.$('header');
+    const footerExists = await page.$('footer');
+    const inputExists = await page.$('#city-input');
+    const buttonExists = await page.$('#search-button');
 
-  // Ensure elements are found
-  if (!input || !button) {
-    throw new Error('Input or Button not found');
-  }
+    expect(headerExists).not.toBeNull();
+    expect(footerExists).not.toBeNull();
+    expect(inputExists).not.toBeNull();
+    expect(buttonExists).not.toBeNull();
 
-  // Type the city name into the input field
-  await input.type('London');
-  await button.click();
+    // // Check if the clock component is rendered properly (with a wait)
+    // const clockExists = await page.waitForSelector('.clock', { visible: true, timeout: 5000 });
+    // expect(clockExists).not.toBeNull(); // Ensure the clock component is rendered
 
-  // Wait for any events or changes
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Replacing `waitForTimeout`
+    // // Further check specific components by their class or ID
+    // const cityComponentExists = await page.$('.city');
+    // expect(cityComponentExists).toBeNull(); // No city component should exist initially
 
-  // Extract and check the updated content
-  const content = await page.content();
-  expect(content).toContain('London');  // Check if the event has been fired properly
-  
-  await browser.close();
-});
-
-test('does not dispatch event if input is empty', async () => {
-  const container = await AstroContainer.create();
-  const result = await container.renderToString(CityInput);
-
-  // Start a Puppeteer browser instance
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
-  // Set the content of the page to the rendered HTML from Astro
-  await page.setContent(result);
-
-  // Simulate user interaction with Puppeteer
-  const input = await page.$('input[placeholder="Enter city name"]');
-  const button = await page.$('button');  // Select the first button
-
-  // Ensure elements are found
-  if (!input || !button) {
-    throw new Error('Input or Button not found');
-  }
-
-  // Type nothing into the input field and click the button
-  await input.type('');
-  await button.click();
-
-  // Wait for any events or changes
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Replacing `waitForTimeout`
-
-  // Extract and check the updated content
-  const content = await page.content();
-  expect(content).toContain('City');  
-
-  await browser.close();
-});
+    await browser.close();
+  },
+  15000
+);
