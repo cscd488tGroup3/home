@@ -15,6 +15,6 @@ module.exports = [
     rules: {
       // Add TypeScript-specific rules here
     },
-    ignores: ['.*', '.wrangler/', 'tests/'], // Ignore hidden files and .wrangler directory
+    ignores: ['.*', '.wrangler/', '*.test.js'], // Ignore hidden files and .wrangler directory
   }
 ];
