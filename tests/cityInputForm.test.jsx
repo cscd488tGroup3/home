@@ -16,14 +16,19 @@ test('dispatches event with city name when input is filled', async () => {
 
   // Simulate user interaction with Puppeteer
   const input = await page.$('input[placeholder="Enter city name"]');
-  const button = await page.$('button:contains("Search")');
+  const button = await page.$('button');  // Select the first button
+
+  // Ensure elements are found
+  if (!input || !button) {
+    throw new Error('Input or Button not found');
+  }
 
   // Type the city name into the input field
   await input.type('London');
   await button.click();
 
-  // Optionally, you can wait for the event or check for changes
-  await page.waitForTimeout(1000); // Adjust timing as needed for event handling
+  // Wait for any events or changes
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Replacing `waitForTimeout`
 
   // Extract and check the updated content
   const content = await page.content();
@@ -45,18 +50,23 @@ test('does not dispatch event if input is empty', async () => {
 
   // Simulate user interaction with Puppeteer
   const input = await page.$('input[placeholder="Enter city name"]');
-  const button = await page.$('button:contains("Search")');
+  const button = await page.$('button');  // Select the first button
+
+  // Ensure elements are found
+  if (!input || !button) {
+    throw new Error('Input or Button not found');
+  }
 
   // Type nothing into the input field and click the button
   await input.type('');
   await button.click();
 
-  // Optionally, you can wait for the event or check for changes
-  await page.waitForTimeout(1000); // Adjust timing as needed for event handling
+  // Wait for any events or changes
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Replacing `waitForTimeout`
 
   // Extract and check the updated content
   const content = await page.content();
-  expect(content).toContain('City');  // Example text or event result for empty input
+  expect(content).toContain('City');  
 
   await browser.close();
 });
