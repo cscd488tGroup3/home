@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { expect, test } from 'vitest';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import CityInput from '../src/components/CityInput.astro';
 
 test('dispatches event with city name when input is filled', async () => {
