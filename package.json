@@ -3,6 +3,8 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "lint": "eslint . --ext .js,.ts,.astro",
+    "test": "vitest",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
@@ -19,6 +21,10 @@
   },
   "devDependencies": {
     "daisyui": "^4.12.23",
+    "eslint": "^9.22.0",
+    "eslint-plugin-astro": "^1.3.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "vitest": "^3.0.8",
     "wrangler": "^3.109.2"
   }
 }
