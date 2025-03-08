@@ -20,6 +20,8 @@
     "typescript": "^5.8.2"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@typescript-eslint/parser": "^8.26.0",
     "daisyui": "^4.12.23",
     "eslint": "^9.22.0",

@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/astro';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { expect, vi } from 'vitest';
 import CityInputForm from '../src/components/CityInputForm.astro'; // Adjust the import path as needed
 
@@ -8,12 +8,12 @@ describe('City Input Form', () => {
     const mockCitySearchHandler = vi.fn();
     window.addEventListener('citySearch', mockCitySearchHandler);
 
-    // Render the CityInputForm component
-    const { getByPlaceholderText, getByText } = await render(CityInputForm);
+    // Render the CityInputForm component (Astro component as HTML)
+    render(<CityInputForm />);
 
     // Get input field and button elements
-    const cityInput = getByPlaceholderText('Enter city name');
-    const searchButton = getByText('Search');
+    const cityInput = screen.getByPlaceholderText('Enter city name');
+    const searchButton = screen.getByText('Search');
 
     // Simulate typing a city name in the input field
     await fireEvent.update(cityInput, 'New York');
@@ -36,12 +36,12 @@ describe('City Input Form', () => {
     const mockCitySearchHandler = vi.fn();
     window.addEventListener('citySearch', mockCitySearchHandler);
 
-    // Render the CityInputForm component
-    const { getByPlaceholderText, getByText } = await render(CityInputForm);
+    // Render the CityInputForm component (Astro component as HTML)
+    render(<CityInputForm />);
 
     // Get input field and button elements
-    const cityInput = getByPlaceholderText('Enter city name');
-    const searchButton = getByText('Search');
+    const cityInput = screen.getByPlaceholderText('Enter city name');
+    const searchButton = screen.getByText('Search');
 
     // Simulate leaving the input empty and clicking the search button
     await fireEvent.click(searchButton);
