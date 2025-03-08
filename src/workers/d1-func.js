@@ -1,3 +1,7 @@
+/* 
+    This file contains the functions that interact with the database.
+    The functions are used in the worker (./d1-api.js) to perform database operations.
+*/
 export async function getUserByUid(uid, env) {
     try {
         const { results } = await env.DB.prepare("SELECT * FROM admin WHERE uid = ?").bind(uid).all();
