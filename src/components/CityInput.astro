@@ -3,20 +3,20 @@
 
 <!-- City Input Form -->
 <section>
-    <input type="text" id="city-input" placeholder="Enter city name" />
-    <button id="search-button">Search</button>
-  </section>
-  
-  <script>
-    const searchButton = document.getElementById('search-button') as HTMLButtonElement;
-    const cityInput = document.getElementById('city-input') as HTMLInputElement;
-  
-    searchButton?.addEventListener('click', () => {
-      const cityName = cityInput?.value;
-      if (cityName) {
-        // Dispatch a custom event with the city name
-        const event = new CustomEvent('citySearch', { detail: { cityName } });
-        window.dispatchEvent(event);
-      }
-    });
-  </script>
+  <input type="text" id="city-input" placeholder="Enter city name" />
+  <button id="search-button">Search</button>
+</section>
+
+<script>
+  const searchButton = document.getElementById('search-button') as HTMLButtonElement;
+  const cityInput = document.getElementById('city-input') as HTMLInputElement;
+
+  searchButton?.addEventListener('click', () => {
+    const cityName = cityInput?.value.trim();
+    if (cityName) {
+      // Dispatch a custom event with the city name
+      const event = new CustomEvent('citySearch', { detail: { cityName } });
+      window.dispatchEvent(event);
+    }
+  });
+</script>
