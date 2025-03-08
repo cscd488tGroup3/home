@@ -13,7 +13,7 @@ test('dispatches event with city name when input is filled', async () => {
   const button = $('button:contains("Search")');
 
   input.val('London');
-  button.click();
+  button.trigger('click');
 
   expect(input.val()).toBe('London');
   expect(result).toContain('London');
@@ -29,7 +29,7 @@ test('does not dispatch event if input is empty', async () => {
   const button = $('button:contains("Search")');
 
   input.val('');
-  button.click();
+  button.trigger('click');
 
   expect(input.val()).toBe('');
   expect(result).toContain('City');
