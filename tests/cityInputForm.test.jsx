@@ -1,5 +1,5 @@
 import { render, fireEvent, screen } from '@testing-library/react';
-import { expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import CityInput from '../src/components/CityInput.astro'; // Adjust the import path as needed
 
 describe('City Input Form', () => {
