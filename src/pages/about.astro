@@ -5,4 +5,35 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout>
 	<h1>About the Developers</h1>
+	<div class="team-container">
+		<div class="team-member">
+			<img src="placeholder.jpg" alt="Developer 1">
+			<h2>Ethan Crawford</h2>
+			<p>Bio for developer member 1.</p>
+		</div>
+		<div class="team-member">
+			<img src="placeholder.jpg" alt="Developer 2">
+			<h2>Jared Diaz</h2>
+			<p>Bio for developer member 2.</p>
+		</div>
+		<div class="team-member">
+			<img src="placeholder.jpg" alt="Developer 3">
+			<h2>Daniel Montes</h2>
+			<p>Bio for developer member 3.</p>
+		</div>
+	</div>
+	<style>
+		.team-container {
+			display: flex;
+			justify-content: space-between;
+		}
+		.team-member {
+			text-align: center;
+			width: 30%;
+		}
+		.team-member img {
+			width: 100%;
+			height: auto;
+		}
+	</style>	
 </Layout>
