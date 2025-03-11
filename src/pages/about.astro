@@ -7,20 +7,20 @@ import Layout from "../layouts/Layout.astro";
 	<h1>About the Developers</h1>
 	<div class="team-container">
 		<div class="team-member">
-			<img src="placeholder.jpg" alt="Developer 1/3">
 			<h2>Ethan Crawford</h2>
+			<img src="placeholder.jpg">
 			<br />
 			<p>Bio goes here.</p>
 		</div>
 		<div class="team-member">
-			<img src="placeholder.jpg" alt="Developer 2/3">
 			<h2>Jared Diaz</h2>
+			<img src="placeholder.jpg">
 			<br />
 			<p>Bio goes here.</p>
 		</div>
 		<div class="team-member">
-			<img src="placeholder.jpg" alt="Developer 3/3">
 			<h2>Daniel Montes</h2>
+			<img src="placeholder.jpg">
 			<br />
 			<p>My name is Daniel and I am originally from Prosser, Washington. I’m currently a Senior at Eastern Washington University, working toward my Bachelor of Computer Science (BCS) with minors in Spanish, Communications, and Cybersecurity. After graduation, I plan to pursue a career in software or web development, as that’s where I feel most confident and passionate.</p>
 			<p>I’m a huge sports fan and love watching the Boston Celtics and San Francisco 49ers whenever their games are on. I also enjoy collecting sneakers, especially retro pairs of Jordans and Nikes, shoes have always been a passion of mine.</p>
@@ -28,6 +28,11 @@ import Layout from "../layouts/Layout.astro";
 		</div>
 	</div>
 	<style>
+		class{
+			.image-box
+			width: 100%;
+			height: auto;
+		}
 		.team-container {
 			display: flex;
 			justify-content: space-between;
