@@ -1,13 +1,24 @@
 ---
 ---
-
 <!-- Weather Display -->
 <section class="backdrop-blur-md bg-white/50">
   <h1>Temp: <span class="temp">Temp</span>°<span class="unit">F</span></h1>
   <h2>City: <span class="city">City</span></h2>
   <h4>Country: <span class="country">Country</span></h4>
-  <button id="toggleUnit">Toggle Celsius/Fahrenheit</button>
+  <button id="toggleUnit">Celsius/Fahrenheit</button>
 </section>
+
+<style>
+  section {
+    position: absolute;
+    right: 30%;
+    top: 45%;
+    transform: translate(50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+</style>
 
 <script>
   const weatherApiKey = import.meta.env.API_KEY;
