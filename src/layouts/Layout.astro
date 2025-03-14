@@ -1,6 +1,8 @@
 ---
 const { pageTitle } = Astro.props;
 import "../styles/global.css";
+import Date from "../components/Date.astro";
+import Time from "../components/Time.astro";
 ---
 <!doctype html>
 <html lang="en">
@@ -30,6 +32,21 @@ import "../styles/global.css";
 				<h1 class="logo">Bloom Buddy</h1>
 			</div>
 
+			<!-- Date and Time horizontally aligned and centered -->
+			<div style="display: flex; 
+						align-items: center; 
+						justify-content: center; 
+						gap: 0.625em;
+						margin: 0;
+						padding: 0;
+						font-size: .8em;
+    					font-weight: normal;">
+				<!-- Date -->
+				<Date/>
+				<!-- Time -->
+				<Time/>
+			</div>
+			
 			<!-- the right side of the header contains the navbar -->
 			<nav class="nav">
 				<ul class="nav-list">
