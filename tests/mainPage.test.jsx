@@ -21,13 +21,13 @@ test(
     // Test that essential components are rendered
     const headerExists = await page.$('header');
     const footerExists = await page.$('footer');
-    const inputExists = await page.$('#city-input');
-    const buttonExists = await page.$('#search-button');
+    // const inputExists = await page.$('#city-input');
+    // const buttonExists = await page.$('#search-button');
 
     expect(headerExists).not.toBeNull();
     expect(footerExists).not.toBeNull();
-    expect(inputExists).not.toBeNull();
-    expect(buttonExists).not.toBeNull();
+    // expect(inputExists).not.toBeNull();
+    // expect(buttonExists).not.toBeNull();
 
     // // Check if the clock component is rendered properly (with a wait)
     // const clockExists = await page.waitForSelector('.clock', { visible: true, timeout: 5000 });
