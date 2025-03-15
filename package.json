@@ -13,6 +13,8 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/netlify": "^6.2.2",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
     "@tailwindcss/vite": "^4.0.6",
     "astro": "^5.4.2",
     "cheerio": "^1.0.0",
