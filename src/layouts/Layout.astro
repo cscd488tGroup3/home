@@ -4,13 +4,15 @@ import "../styles/global.css";
 import Date from "../components/Date.astro";
 import Time from "../components/Time.astro";
 ---
+<!-- This file containes the base layout for pages on the Bloom Buddy website. It includes the header, footer, and a slot for page content. The header contains the logo, date, time, and a navigation bar. The footer contains copyright information. -->
 <!doctype html>
-<html lang="en">
+<html lang="en">	
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+		<!-- dynamically populated title -->
 		<title>{pageTitle}</title>
 	</head>
 	<body>
@@ -68,6 +70,7 @@ import Time from "../components/Time.astro";
 	</body>
 </html>
 
+<!-- overwrite style -->
 <style>
 	html,
 	body {
