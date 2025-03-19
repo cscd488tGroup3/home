@@ -8,18 +8,6 @@
   <button id="toggleUnit">Celsius/Fahrenheit</button>
 </section>
 
-<style>
-  section {
-    position: absolute;
-    right: 30%;
-    top: 45%;
-    transform: translate(50%, -50%);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-</style>
-
 <script>
   const weatherApiKey = import.meta.env.API_KEY;
   // Start with Fahrenheit
@@ -69,3 +57,17 @@
     });
   }
 </script>
+
+<!-- Styling -->
+<style>
+  section {
+    position: absolute;
+    right: 30%;
+    top: 45%;
+    transform: translate(50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
