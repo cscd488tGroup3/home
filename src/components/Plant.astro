@@ -7,7 +7,7 @@
 <style>
     section {
         position: absolute;
-        right: 30%;
+        left: 7%;
         top: 25%;
         transform: translate(50%, -50%);
         padding: 20px;
@@ -22,7 +22,7 @@
         const plantInput = document.getElementById('plant-input');
 
         const searchPlant = () => {
-            const plantName = plantInput?.value.trim();
+            const plantName = (plantInput as HTMLInputElement)?.value.trim();
             if (plantName) {
                 // Dispatch a custom event with the plant name
                 const event = new CustomEvent('plantSearch', { detail: { plantName } });
