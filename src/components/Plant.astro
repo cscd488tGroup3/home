@@ -1,0 +1,42 @@
+<!-- Plant Input Form -->
+<section>
+    <input type="text" id="plant-input" placeholder="Enter plant name" />
+    <button id="search-button" style="margin-top: 10px; border: 0.0625em solid black; border-radius: 0.3125em;">Search</button>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchButton = document.getElementById('search-button');
+        const plantInput = document.getElementById('plant-input');
+
+        const searchPlant = () => {
+            const plantName = (plantInput as HTMLInputElement)?.value.trim();
+            if (plantName) {
+                // Dispatch a custom event with the plant name
+                const event = new CustomEvent('plantSearch', { detail: { plantName } });
+                window.dispatchEvent(event);
+            }
+        };
+
+        searchButton?.addEventListener('click', searchPlant);
+
+        plantInput?.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                searchPlant();
+            }
+        });
+    });
+</script>
+
+<!-- Styling -->
+<style>
+    section {
+        position: absolute;
+        left: 7%;
+        top: 25%;
+        transform: translate(50%, -50%);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>

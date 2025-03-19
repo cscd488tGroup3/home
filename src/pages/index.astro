@@ -5,9 +5,15 @@ Astro.props.pageTitle = "Home Page";
 import Layout from '../layouts/Layout.astro';
 import Weather from "../components/Weather.astro";
 import City from "../components/CityInput.astro";
+import Plant from "../components/Plant.astro";
+import PlantInfo from "../components/plantInfo.astro";
 ---
 
 <Layout>
+	<!-- Plant -->
+	<Plant />
+	<!-- Plant Information -->
+	<PlantInfo />
 	<!-- City -->
 	<City />
 	<!-- Weather -->
