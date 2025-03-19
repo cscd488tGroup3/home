@@ -1,0 +1,66 @@
+---
+---
+
+<!-- Plant Display -->
+<section class="backdrop-blur-md bg-white/50">
+    <h1>Plant name: <span class="plant-name">Plant</span></h1>
+    <h2>Climate: <span class="plant-climate">Climate</span></h2>
+    <h4>Smell: <span class="plant-smell">Smell</span></h4>
+    <button id="fetchPlantInfo">Search Plant</button>
+</section>
+
+<script>
+    const plantApiKey = import.meta.env.PLANT_API_KEY;
+
+    // DOM elements
+    const plantNameElement = document.querySelector('.plant-name') as HTMLElement | null;
+    const plantClimateElement = document.querySelector('.plant-climate') as HTMLElement | null;
+    const plantSmellElement = document.querySelector('.plant-smell') as HTMLElement | null;
+    const fetchPlantInfoButton = document.getElementById('fetchPlantInfo') as HTMLButtonElement | null;
+
+    // Function to fetch plant data
+    async function fetchPlantInfo(plantName: string) {
+        const response = await fetch(`https://api.plantinfo.com/v1/plants?name=${plantName}&apikey=${plantApiKey}`);
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            updatePlantDisplay(data[0]);
+        } else {
+            alert('Plant not found');
+        }
+    }
+
+    // Update the plant display with the fetched data
+    function updatePlantDisplay(data: any) {
+        if (plantNameElement) plantNameElement.textContent = data.name;
+        if (plantClimateElement) plantClimateElement.textContent = data.climate || 'Unknown';
+        if (plantSmellElement) plantSmellElement.textContent = data.smell || 'Unknown';
+    }
+
+    // Listen for the custom event to trigger a plant fetch
+    window.addEventListener('plantSearch', (event) => {
+        const plantName = (event as CustomEvent).detail.plantName;
+        fetchPlantInfo(plantName);
+    });
+
+    // Fetch plant info when the button is clicked
+    if (fetchPlantInfoButton) {
+        fetchPlantInfoButton.addEventListener('click', () => {
+            const plantName = prompt('Enter the plant name:');
+            if (plantName) fetchPlantInfo(plantName);
+        });
+    }
+</script>
+
+<!-- Styling -->
+<style>
+    section {
+        position: absolute;
+        left: 30%;
+        top: 45%;
+        transform: translate(50%, -50%);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
