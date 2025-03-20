@@ -13,12 +13,32 @@ import Layout from "../layouts/Layout.astro";
 			<p>My name is Ethan, and I’m originally from Spokane, WA. I’m currently attending Eastern Washington University, where I’m working toward a Bachelor of Science in Computer Science with a minor in Music—a unique combination that reflects my love for both technology and the arts.</p>
 			<p>In my free time, I develop small applications and explore open-source repositories on GitHub to grow my skills and stay inspired. Music is also a big part of my life—I compose my own pieces and perform as a semi-professional oboist with groups like the Spokane Jazz Orchestra and ensembles at Eastern Washington University. Outside of work and music, I’m a proud husband and father, and my family is my top priority.</p>
 			<p>I’ve built up experience in web development and software development, with a particular interest in database systems and data science. Looking ahead, I’m aiming to focus on backend development, especially when it comes to managing and fine-tuning database systems. I’m really excited about the chance to keep growing in this field and to work on projects that push boundaries and make a difference.</p>
+			<br />
+			<h3><u>Connect with Ethan</u></h3>
+			<!--
+						<ul class="link-list">
+							<li><a href="" target="_blank" class="link">LinkedIn</a></li>
+							<li><a href="" target="_blank" class="link">GitHub</a></li>
+							<li><a href="" target="_blank" class="link">CodePen</a></li>
+						</ul>
+			-->
 		</div>
 		<div class="team-member">
 			<h2>Jared Diaz</h2>
 			<img src="placeholder.jpg">
 			<br />
-			<p>Bio goes here.</p>
+			<p>My name is Jared Alexis Diaz, and I am a computer science student studying at Eastern Washington University. My favorite pastime is gaming, and it's rare for a day to go by without me playing at least one video game. I consider myself to be very introverted, but I am more than happy to tackle a project with a team, whether in groups of two or more.</p>
+			<p>I have a wonderful girlfriend named Leslie, who is my biggest motivation for my studies. She is amazing at staying consistent with work and assignments. Without her, I don’t think I would have had the courage to stay in school, let alone pursue computer science!</p>
+			<p>If you haven’t visited my GitHub.io page, I have a cat named Morro that Leslie and I adopted. He's a bit of a mean little guy, but he warms up to you eventually—with enough treats. My biggest goal right now is to create a game studio with Leslie so that we can both produce video games that we hope will be fun and entertaining to most, if not all.</p>
+			<br />
+			<h3><u>Connect with Jared</u></h3>
+			<!--
+						<ul class="link-list">
+							<li><a href="" target="_blank" class="link">LinkedIn</a></li>
+							<li><a href="" target="_blank" class="link">GitHub</a></li>
+							<li><a href="" target="_blank" class="link">CodePen</a></li>
+						</ul>
+			-->
 		</div>
 		<div class="team-member">
 			<h2>Daniel Montes</h2>
@@ -27,20 +47,65 @@ import Layout from "../layouts/Layout.astro";
 			<p>My name is Daniel, and I am originally from Prosser, Washington. I’m currently a Senior at Eastern Washington University, working toward my Bachelor of Science in Computer Science with minors in Spanish, Communications, and Cybersecurity. After graduation, I plan to pursue a career in software development or web development, as that’s where I feel most confident and passionate.</p>
 			<p>I’m a huge sports fan and love watching the Boston Celtics and San Francisco 49ers whenever their games are on. I also enjoy collecting sneakers, especially retro pairs of Jordans and Nikes, shoes have always been a passion of mine.</p>
 			<p>When I’m not coding or working on projects, you’ll usually find me diving into my favorite hobbies, like playing video games, watching movies, or hanging out with friends. I’m always up for a good time, whether it’s on the court, in front of a screen, or just hanging with the people I care about.</p>
+			<br />
+			<h3><u>Connect with Daniel</u></h3>
+			<ul class="link-list">
+				<li><a href="mailto:daniel.montes23@hotmail.com" class="link">daniel.montes23@hotmail.com</a></li>
+				<li><a href="https://www.linkedin.com/in/daniel-montes-095602192/" target="_blank" class="link">LinkedIn</a></li>
+				<li><a href="https://github.com/danielmontes23" target="_blank" class="link">GitHub</a></li>
+				<li><a href="https://codepen.io/your-work" target="_blank" class="link">CodePen</a></li>
+			</ul>
 		</div>
 	</div>
 	<style>
 		.team-container {
-			display: flex;
-			justify-content: space-between;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 20px;
+			padding: 20px;
 		}
 		.team-member {
+			/* background: #f9f9f9; */
+			/* border: 1px solid #ddd; */
+			border-radius: 8px;
+			padding: 20px;
 			text-align: center;
-			width: 30%;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 		}
 		.team-member img {
 			width: 100%;
 			height: auto;
+			border-radius: 50%;
+			margin-bottom: 15px;
 		}
-	</style>	
+		.team-member h2 {
+			font-size: 1.5rem;
+			margin-bottom: 10px;
+		}
+		.team-member p {
+			font-size: 1rem;
+			line-height: 1.6;
+			margin-bottom: 15px;
+		}
+		.team-member h3 {
+			font-size: 1.2rem;
+			margin-bottom: 10px;
+			color: #0073e6;
+		}
+		.link-list {
+			list-style: none;
+			padding: 0;
+		}
+		.link-list li {
+			margin-bottom: 5px;
+		}
+		.link {
+			color: #0073e6;
+			text-decoration: none;
+			transition: color 0.3s;
+		}
+		.link:hover {
+			color: #005bb5;
+		}
+	</style>
 </Layout>
