@@ -1,7 +1,11 @@
 // D1-powered Cloudflare API worker
 import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword } from './d1-func.js';
 
-
+/**
+ * addCorsHeaders - add CORS headers to the response
+ * @param {response} response 
+ * @returns 
+ */
 function addCorsHeaders(response) {
     const headers = new Headers(response.headers);
     headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); // Or your specific frontend URL
@@ -10,6 +14,12 @@ function addCorsHeaders(response) {
     return new Response(response.body, { ...response, headers });
 }
 
+/**
+ * fetch - handle the incoming request
+ * @param {request} request
+ * @param {env} env
+ * @returns response
+ */
 export default {
     async fetch(request, env) {
         const url = new URL(request.url);
@@ -37,6 +47,7 @@ export default {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
 
+        // api/admin
         if (url.pathname === "/api/admin") {
             const uid = url.searchParams.get("uid");
             if (!uid) {
@@ -59,6 +70,7 @@ export default {
             }
         }
 
+        // api/info
         if (url.pathname === "/api/info") {
             const uid = url.searchParams.get("uid");
             if (!uid) {
@@ -81,6 +93,7 @@ export default {
             }
         }
 
+        // api/password
         if (url.pathname === "/api/password") {
             const uid = url.searchParams.get("uid");
             const email = url.searchParams.get("email");
@@ -126,7 +139,8 @@ export default {
         if (!wauth || wauth !== env.USR_DB_W) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
-        
+
+        // api/write/info
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
             const email = url.searchParams.get("email");
@@ -155,6 +169,7 @@ export default {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
 
+        // api/write/admin
         if (url.pathname === "/api/write/admin") {
             const uid = url.searchParams.get("uid");
             const email = url.searchParams.get("email");

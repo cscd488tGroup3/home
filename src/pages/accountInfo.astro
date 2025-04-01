@@ -3,6 +3,8 @@ Astro.props.pageTitle = "Account Info";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
 import { readUserInfoRequest } from "../../public/js/user.js";
+const query = Astro.url.searchParams;
+const n = query.get("n");
 
 let user = null;
 let error = null;
@@ -17,7 +19,7 @@ let locals = {
 try {
     const res = await readUserInfoRequest({
         worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
-        uid: 'jxav',
+        uid: n, // get uid from query string
         auth: locals.runtime.env.USR_DB
     });
     if (res.status === 200) {

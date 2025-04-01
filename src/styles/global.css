@@ -1,9 +1,16 @@
+/*
+This file contains our global styling. All styles derive from this main styling document
+*/
 @import "tailwindcss";
 
+/* 
+Set the global styles for all html elements
+*/
 html {
     background-color: rgb(189, 215, 206);
 }
 
+/* style the header */
 header {
     display: flex;
     justify-content: space-between;
@@ -27,7 +34,16 @@ header .nav {
     margin-bottom: auto
 }
 
+/* style the body */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
 
+/* style the footer */
 footer {
     background-color: #014829;
     padding: 0.625em;
@@ -45,6 +61,11 @@ footer .copyright {
     display: block;
 }
 
+/* set default paragraph styling */
+p {
+    text-align: center;
+}
+
 div {
     padding: 1em;
     border: #014829;
@@ -56,6 +77,12 @@ div {
 #city {
     border: 0.125em solid black;
     padding: 0.3125em;
+}
+
+#Date, #Time {
+    display: block;
+    text-align: center;
+    margin: 0.625em auto;
 }
 
 form {
@@ -95,12 +122,6 @@ button[type="submit"]:hover {
     background-color: #066606;
 }
 
-#Date, #Time {
-    display: block;
-    text-align: center;
-    margin: 0.625em auto;
-}
-
 .nav {
     justify-content: right;
     margin-top: 0em; /* Reduced margin */
@@ -132,9 +153,6 @@ button[type="submit"]:hover {
     background-color: #cbecca;
 }
 
-p {
-    text-align: center;
-}
 
 .auth-nav {
     position: absolute;
@@ -162,13 +180,6 @@ p {
     background-color: #f0f0f0;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
 
 .button-container {
     display: flex;
