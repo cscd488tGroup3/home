@@ -1,5 +1,5 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -47,6 +47,7 @@ export default {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
 
+        // create a new session
         if (url.pathname === "/sessions/new") {
             if (!sauth || sauth !== env.USR_DB_S) {
                 return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
@@ -62,7 +63,141 @@ export default {
             if (!id || !uid || !expires_at) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
+
+            try {
+                const response = await addSession(id, uid, expires_at, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
         }
+
+        // get session
+        if (url.pathname === "/sessions/get") {
+            if (!sauth || sauth !== env.USR_DB_S) {
+                return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+            }
+            // add a new session
+
+            // get the session params from the querystring
+            const id = url.searchParams.get("id");
+            const uid = url.searchParams.get("uid");
+
+            // check for the session params
+            if (!id && !uid) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            } else if (!id) {
+                // get all sessions
+                try {
+                    const response = await getAllSessions(uid, env);
+                    return addCorsHeaders(new Response(JSON.stringify(response), {
+                        status: 200,
+                        headers: { "Content-Type": "application/json" },
+                    }));
+                }
+                catch (err) {
+                    return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+                }
+            }
+            // get a single session
+            try {
+                const response = await getSession(id, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // delete session
+        if (url.pathname === "/sessions/delete") {
+            if (!sauth || sauth !== env.USR_DB_S) {
+                return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+            }
+            // add a new session
+
+            // get the session params from the querystring
+            const id = url.searchParams.get("id");
+            const uid = url.searchParams.get("uid");
+
+            // check for the session params
+            if (!id && !uid) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            } else if (!id) {
+                // delete all sessions
+                try {
+                    const response = await deleteAllSessions(uid, env);
+                    return addCorsHeaders(new Response(JSON.stringify(response), {
+                        status: 200,
+                        headers: { "Content-Type": "application/json" },
+                    }));
+                }
+                catch (err) {
+                    return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+                }
+            }
+            // delete a single session
+            try {
+                const response = await deleteSession(id, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // renew session
+        if (url.pathname === "/sessions/renew") {
+            if (!sauth || sauth !== env.USR_DB_S) {
+                return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+            }
+            // add a new session
+
+            // get the session params from the querystring
+            const id = url.searchParams.get("id");
+            const expires_at = url.searchParams.get("expires_at");
+
+            // check for the session params
+            if (!id || !expires_at) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            try {
+                const response = await renewSession(id, expires_at, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // delete expired sessions
+        if (url.pathname === "/sessions/stale") {
+            if (!sauth || sauth !== env.USR_DB_S) {
+                return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+            }
+            // add a new session
+
+            try {
+                const response = await deleteExpiredSessions(env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
 
         // check for the read key
         if (!auth || auth !== env.USR_DB) {
