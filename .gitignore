@@ -44,3 +44,6 @@ wrangler.toml
 
 # local workspace settings
 home.code-workspace
+
+# ignore deprecated files
+~*
