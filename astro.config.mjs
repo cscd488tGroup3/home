@@ -11,6 +11,9 @@ export default defineConfig({
     },
   },
   output: 'server',
+  security: {
+    checkOrigin: true
+  },
   adapter: netlify(),
   server: {
     host: true
