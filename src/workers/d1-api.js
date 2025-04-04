@@ -47,6 +47,12 @@ export default {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
 
+///////////////
+///////////////
+///////////////
+///////////////
+/////////////// untested implementation:
+
         // create a new session
         if (url.pathname === "/sessions/new") {
             if (!sauth || sauth !== env.USR_DB_S) {
@@ -197,6 +203,12 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
+
+///////////////
+///////////////
+///////////////
+///////////////
+///////////////
 
 
         // check for the read key
