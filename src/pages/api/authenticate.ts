@@ -2,6 +2,8 @@ import { Handler } from '@netlify/functions'
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
+const USR_SESSION = process.env.USR_SESSION;
+
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
 	crypto.getRandomValues(bytes);
@@ -16,12 +18,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await db.execute(
-		"INSERT INTO user_session (id, user_id, expires_at) VALUES (?, ?, ?)",
-		session.id,
-		session.userId,
-		session.expiresAt
-	);
+	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
 	return session;
 }
 
