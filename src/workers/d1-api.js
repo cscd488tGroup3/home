@@ -41,6 +41,28 @@ export default {
         const auth = url.searchParams.get("auth");
         const wauth = url.searchParams.get("wauth");
         const aauth = url.searchParams.get("aauth");
+        const sauth = url.searchParams.get("sauth");
+
+        if (!auth && !wauth && !aauth && !sauth) {
+            return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+        }
+
+        if (url.pathname === "/sessions/new") {
+            if (!sauth || sauth !== env.USR_DB_S) {
+                return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+            }
+            // add a new session
+
+            // get the session params from the querystring
+            const id = url.searchParams.get("id");
+            const uid = url.searchParams.get("uid");
+            const expires_at = url.searchParams.get("expires_at");
+
+            // check for the session params
+            if (!id || !uid || !expires_at) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+        }
 
         // check for the read key
         if (!auth || auth !== env.USR_DB) {

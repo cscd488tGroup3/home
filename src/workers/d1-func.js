@@ -99,3 +99,20 @@ export async function writeNewPassword(uid, email, hashpass, env) {
         throw new Error(`Database query failed: ${err.message}`);
     }
 }
+
+/**
+ * addSession - insert a new session into the user_session table
+ * @param {id} id the session id
+ * @param {uid} uid the user id
+ * @param {expires_at} expires_at the date and time of expiration in ISO format
+ * @param {env} env  
+ * @returns 
+ */
+export async function addSession(id, uid, expires_at, env) {
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO user_session (id, uid, expires_at) VALUES (?, ?, ?);").bind(id, uid, expires_at).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
