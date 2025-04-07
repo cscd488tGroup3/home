@@ -202,7 +202,8 @@ export async function renewSession(id, expires_at, env) {
  */
 export async function deleteExpiredSessions(env) {
     try {
-        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE expires_at < ?").bind(new Date(Date.now())).run();
+        const today = new Date().toISOString().slice(0, 10); // "2025-04-07"
+        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE expires_at < ?").bind(today).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
