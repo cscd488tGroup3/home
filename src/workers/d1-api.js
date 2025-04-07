@@ -55,7 +55,7 @@ export default {
 
         // create a new session
         if (url.pathname === "/sessions/new") {
-            if (!sauth || sauth !== env.USR_DB_S) {
+            if (!sauth || sauth !== env.USR_SESSION) {
                 return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
             }
             // add a new session
@@ -83,7 +83,7 @@ export default {
 
         // get session
         if (url.pathname === "/sessions/get") {
-            if (!sauth || sauth !== env.USR_DB_S) {
+            if (!sauth || sauth !== env.USR_SESSION) {
                 return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
             }
             // add a new session
@@ -122,7 +122,7 @@ export default {
 
         // delete session
         if (url.pathname === "/sessions/delete") {
-            if (!sauth || sauth !== env.USR_DB_S) {
+            if (!sauth || sauth !== env.USR_SESSION) {
                 return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
             }
             // add a new session
@@ -161,7 +161,7 @@ export default {
 
         // renew session
         if (url.pathname === "/sessions/renew") {
-            if (!sauth || sauth !== env.USR_DB_S) {
+            if (!sauth || sauth !== env.USR_SESSION) {
                 return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
             }
             // add a new session
@@ -188,7 +188,7 @@ export default {
 
         // delete expired sessions
         if (url.pathname === "/sessions/stale") {
-            if (!sauth || sauth !== env.USR_DB_S) {
+            if (!sauth || sauth !== env.USR_SESSION) {
                 return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
             }
             // add a new session
