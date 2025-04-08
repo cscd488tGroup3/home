@@ -63,12 +63,12 @@ export async function getPasswordByEmail(email, env) {
 
 /**
  * writeNewUser - insert a new user into the info table
- * @param {*} uid 
- * @param {*} email 
- * @param {*} fname 
- * @param {*} lname 
- * @param {*} dob 
- * @param {*} doj 
+ * @param {String} uid 
+ * @param {String} email 
+ * @param {String} fname 
+ * @param {String} lname 
+ * @param {Date} dob 
+ * @param {Date} doj 
  * @param {*} env 
  * @returns status message of the database
  */
@@ -83,8 +83,8 @@ export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
 
 /**
  * writeNewPassword - insert a new user into the admin table
- * @param {*} uid 
- * @param {*} email 
+ * @param {String} uid 
+ * @param {String} email 
  * @param {*} hashpass 
  * @param {*} env 
  * @returns status message of the database
@@ -94,6 +94,116 @@ export async function writeNewPassword(uid, email, hashpass, env) {
 
     try {
         const {results} = await env.DB.prepare("INSERT INTO admin (uid, email, hashpass) VALUES (?, ?, ?);").bind(uid, email, hashpass).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/// untested implementation ///
+
+/**
+ * addSession - insert a new session into the user_session table
+ * @param {*} id the session id
+ * @param {String} uid the user id
+ * @param {Date} expires_at the date and time of expiration in ISO format
+ * @param {*} env  
+ * @returns 
+ */
+export async function addSession(id, uid, expires_at, env) {
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO user_session (id, uid, expires_at) VALUES (?, ?, ?);").bind(id, uid, expires_at).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * getSession - query the user_session table for the session id and the expiration date
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getSession(id, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM user_session WHERE id = ?").bind(id).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * getAllSessions - query the user_session table for the session id and the expiration date
+ * @param {String} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllSessions(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM user_session WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * deleteSession - delete a session from the user_session table
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deleteSession(id, env) {
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE id = ?").bind(id).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * deleteAllSessions - delete all of a user's session from the user_session table
+ * @param {*} uid the user id
+ * @param {*} env  
+ * @returns 
+ */
+export async function deleteAllSessions(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE uid = ?").bind(uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * renewSession - update the expiration date of a session in the user_session table
+ * @param {*} id 
+ * @param {Date} expires_at 
+ * @param {*} env 
+ * @returns 
+ */
+export async function renewSession(id, expires_at, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE user_session SET expires_at = ? WHERE id = ?").bind(expires_at, id).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * deleteExpiredSessions - delete all expired sessions from the user_session table
+ * @param {*} env 
+ * @returns 
+ */
+export async function deleteExpiredSessions(env) {
+    try {
+        const today = new Date().toISOString().slice(0, 10); // "2025-04-07"
+        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE expires_at < ?").bind(today).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
