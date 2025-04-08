@@ -47,3 +47,7 @@ home.code-workspace
 
 # ignore deprecated files
 ~*
+
+# ignore bash and ps1 utility files
+*.sh
+*.ps1
