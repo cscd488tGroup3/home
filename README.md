@@ -1,6 +1,6 @@
 # home
 
-This repository contains the BloomBuddy home page. It is built in Astro with Tailwind and DaisyUI. 
+This repository contains the [BloomBuddy home page](https://peppy-nougat-0120f1.netlify.app/). It is built in Astro with Tailwind and DaisyUI. 
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/d49a17ad-e9c9-42f3-95eb-1ff54637e8b1/deploy-status)](https://app.netlify.com/sites/peppy-nougat-0120f1/deploys)
 
