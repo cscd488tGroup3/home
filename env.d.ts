@@ -25,4 +25,11 @@ declare global {
   }
 }
 
+declare namespace App {
+  interface Locals {
+    session: import("./pages/api/").Session | null;
+    user: import("./pages/api/").User | null;
+  }
+}
+
 export {};
