@@ -15,7 +15,10 @@ declare global {
 		}
 	}
 }
-
+/**
+ * onRequest is a middleware that runs on every request
+ * and checks if the user is authenticated by validating the session token
+ */
 export const onRequest = defineMiddleware(async (context, next) => {
 	const token = context.cookies.get("session")?.value ?? null;
 
