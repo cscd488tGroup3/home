@@ -27,8 +27,8 @@ declare global {
 
 declare namespace App {
   interface Locals {
-    session: import("./pages/api/").Session | null;
-    user: import("./pages/api/").User | null;
+    session: import("./pages/api/authenticate.ts").Session | null;
+    user: import("./pages/api/authenticate.ts").User | null;
   }
 }
 
