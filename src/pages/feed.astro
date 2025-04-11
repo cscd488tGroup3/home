@@ -4,13 +4,61 @@ import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout>
-    <!-- Page Button -->
-     <h1>Post Feed</h1>
-    <form>    
+    <h1>Post Feed</h1>
+    <form id="postForm">    
         <label for="images">Choose an image to post:</label>
-        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp, image/eps, image/tiff" multiple required>
+        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required>
         <label for="caption">Caption the Post:</label>
         <input type="text" id="caption" name="caption" required>
         <button type="submit">Create Post</button>
     </form>
+
+    <div id="postContainer">
+        <!-- Posts will appear here -->
+    </div>
+
+    <script>
+        const postForm = document.getElementById('postForm');
+        const postContainer = document.getElementById('postContainer');
+
+        postForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const imageInput = document.getElementById('images');
+            const captionInput = document.getElementById('caption');
+
+            if (imageInput.files.length === 0) {
+                alert('Please select an image to post.');
+                return;
+            }
+
+            const file = imageInput.files[0];
+            const caption = captionInput.value;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const post = document.createElement('div');
+                post.classList.add('post');
+
+                post.innerHTML = `
+                    <img src="${e.target.result}" alt="Post Image" class="post-image">
+                    <p class="post-caption">${caption}</p>
+                    <button class="delete-post">Delete</button>
+                `;
+
+                post.querySelector('.delete-post').addEventListener('click', () => {
+                    post.remove();
+                });
+
+                postContainer.appendChild(post);
+            };
+
+            reader.readAsDataURL(file);
+
+            // Reset the form
+            postForm.reset();
+        });
+    </script>
+
+    
 </Layout>
