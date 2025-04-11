@@ -43,14 +43,14 @@ import Layout from "../layouts/Layout.astro"
                 post.innerHTML = `
                     <div class="image-container">
                         <img src="${e.target.result}" alt="Post Image" class="post-image">
-                    </div>
-                    <p class="post-caption">${caption}</p>
-                    <div class="menu-container">
-                        <button class="menu-button">⋮</button>
-                        <div class="menu-options hidden">
-                            <button class="confirm-delete">Delete</button>
+                        <div class="menu-container">
+                            <button class="menu-button">⋮</button>
+                            <div class="menu-options hidden">
+                                <button class="confirm-delete">Delete</button>
+                            </div>
                         </div>
                     </div>
+                    <p class="post-caption">${caption}</p>
                 `;
 
                 const menuButton = post.querySelector('.menu-button');
@@ -84,56 +84,60 @@ import Layout from "../layouts/Layout.astro"
         #postContainer {
             margin-top: 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); /* Adjusted for larger posts */
+            gap: 20px; /* Increased gap for better spacing */
         }
         .post {
             border: 1px solid #ccc;
-            padding: 10px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             background-color: #f9f9f9;
             border-radius: 8px;
             position: relative;
+            overflow: hidden;
         }
         .image-container {
-            width: 150px;
-            height: 150px;
+            width: 720px; /* Doubled the size */
+            height: 720px; /* Doubled the size */
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 8px;
             background-color: #ddd;
-            border: 2px solid #333;
+            border: 3px solid black; /* Black border around the image */
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
         }
         .post-image {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Ensures the image scales properly without distortion */
         }
         .post-caption {
-            margin: 10px 0;
+            margin: 15px 0;
             text-align: center;
-            font-size: 12px;
+            font-size: 16px; /* Increased font size for better readability */
             color: #666;
             font-style: italic;
         }
         .menu-container {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 10px; /* Adjusted for larger image */
+            right: 10px; /* Adjusted for larger image */
+            z-index: 10;
         }
         .menu-button {
             background: none;
             border: none;
-            font-size: 18px;
+            font-size: 20px; /* Slightly larger menu button */
             cursor: pointer;
         }
         .menu-options {
             position: absolute;
-            top: 30px;
+            top: 40px; /* Adjusted for larger menu button */
             right: 0;
             background: white;
             border: 1px solid #ccc;
@@ -149,7 +153,7 @@ import Layout from "../layouts/Layout.astro"
             background-color: red;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 10px 15px; /* Increased padding for larger button */
             cursor: pointer;
             border-radius: 4px;
         }
