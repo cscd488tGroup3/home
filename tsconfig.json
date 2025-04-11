@@ -4,6 +4,6 @@
     "jsx": "react-jsx",
     "types": ["astro/client","node", "react", "react-dom"]
   },
-  "include": ["src", "env.d.ts", "public/js", "netlify/functions/authenticate.ts"],
+  "include": ["src", "env.d.ts", "public/js"],
   "exclude": ["dist"]
 }
