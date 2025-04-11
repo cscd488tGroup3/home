@@ -60,5 +60,34 @@ import Layout from "../layouts/Layout.astro"
         });
     </script>
 
-    
+<style>
+    #postContainer {
+        margin-top: 20px;
+    }
+    .post {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .post-image {
+        max-width: 100%;
+        height: auto;
+    }
+    .post-caption {
+        margin: 10px 0;
+    }
+    .delete-post {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    .delete-post:hover {
+        background-color: darkred;
+    }
+</style>
 </Layout>
