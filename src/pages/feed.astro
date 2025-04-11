@@ -30,7 +30,7 @@ import Layout from "../layouts/Layout.astro"
             const captionInput = document.getElementById('caption');
 
             // Validate that an image is selected
-            if (imageInput.files.length === 0) {
+            if (!imageInput || imageInput.files.length === 0) {
                 alert('Please select an image to post.');
                 return;
             }
@@ -91,10 +91,12 @@ import Layout from "../layouts/Layout.astro"
     <style>
         /* Container for all posts */
         #postContainer {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); /* Responsive grid layout */
-            gap: 20px; /* Spacing between posts */
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            flex-direction: column; /* Stack posts vertically */
+            min-height: 100vh; /* Ensure the container takes up the full viewport height */
+            margin: 0; /* Remove any default margin */
         }
 
         /* Individual post styling */
@@ -105,14 +107,16 @@ import Layout from "../layouts/Layout.astro"
             align-items: center;
             background-color: #f9f9f9;
             border-radius: 8px;
-            position: relative;
             overflow: hidden;
+            width: 360px; /* Reduced width for smaller posts */
+            max-width: 90%; /* Ensure responsiveness on smaller screens */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
         }
 
         /* Image container with a black border */
         .image-container {
-            width: 720px; /* Image width */
-            height: 720px; /* Image height */
+            width: 100%; /* Make the image container take the full width of the post */
+            height: 360px; /* Reduced height for smaller posts */
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -120,8 +124,6 @@ import Layout from "../layouts/Layout.astro"
             border-radius: 8px;
             background-color: #ddd;
             border: 3px solid black; /* Black border around the image */
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
         }
 
         /* Image styling */
@@ -133,9 +135,9 @@ import Layout from "../layouts/Layout.astro"
 
         /* Caption styling */
         .post-caption {
-            margin: 15px 0;
+            margin: 10px 0;
             text-align: center;
-            font-size: 16px; /* Increased font size for better readability */
+            font-size: 14px; /* Slightly smaller font size */
             color: #666;
             font-style: italic;
         }
@@ -143,7 +145,7 @@ import Layout from "../layouts/Layout.astro"
         /* Menu container for the three-dot menu */
         .menu-container {
             position: absolute;
-            top: 10px; /* Position at the top-right of the image */
+            top: 10px; /* Position at the top-right of the post */
             right: 10px;
             z-index: 10;
         }
