@@ -31,10 +31,10 @@ import Layout from "../layouts/Layout.astro"
             if (postForm.style.display === 'none') {
             postForm.style.display = 'block';
             toggleFormButton.textContent = 'Hide Form';
-            postForm.style.border = '1px solid #ccc'; // Add a border to the form
+            postForm.style.border = '1px solid #000'; // Add a black border to the form
             postForm.style.borderRadius = '8px'; // Add rounded corners
             postForm.style.padding = '10px'; // Add padding inside the form
-            postForm.style.backgroundColor = '#f9f9f9'; // Match the background color of the posts
+            postForm.style.backgroundColor = 'transparent'; // Transparent background
             postForm.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)'; // Add a shadow for aesthetics
             } else {
             postForm.style.display = 'none';
