@@ -4,13 +4,196 @@ import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout>
-    <!-- Page Button -->
-     <h1>Post Feed</h1>
-    <form>    
+    <h1>Post Feed</h1>
+    <!-- Form for creating a new post -->
+    <form id="postForm">    
         <label for="images">Choose an image to post:</label>
-        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp, image/eps, image/tiff" multiple required>
+        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required>
         <label for="caption">Caption the Post:</label>
         <input type="text" id="caption" name="caption" required>
         <button type="submit">Create Post</button>
     </form>
+
+    <!-- Container where posts will be dynamically added -->
+    <div id="postContainer"></div>
+
+    <script>
+        // Get references to the form and post container
+        const postForm = document.getElementById('postForm');
+        const postContainer = document.getElementById('postContainer');
+
+        // Event listener for form submission
+        postForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission behavior
+
+            const imageInput = document.getElementById('images');
+            const captionInput = document.getElementById('caption');
+
+            // Validate that an image is selected
+            if (!imageInput || imageInput.files.length === 0) {
+                alert('Please select an image to post.');
+                return;
+            }
+
+            // Validate that a caption is provided
+            if (!captionInput || captionInput.value.trim() === '') {
+                alert('Please enter a caption for the post.');
+                return;
+            }
+
+            const file = imageInput.files[0];
+            const caption = captionInput.value.trim();
+
+            // Read the selected image file
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                // Create a new post element
+                const post = document.createElement('div');
+                post.classList.add('post');
+
+                // Add the image, caption, and menu to the post
+                post.innerHTML = `
+                    <div class="image-container">
+                        <img src="${event.target.result}" alt="Post Image" class="post-image">
+                        <div class="menu-container">
+                            <button class="menu-button">⋮</button>
+                            <div class="menu-options hidden">
+                                <button class="confirm-delete">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="post-caption">${caption}</p>
+                `;
+
+                // Add functionality to the menu button
+                const menuButton = post.querySelector('.menu-button');
+                const menuOptions = post.querySelector('.menu-options');
+                const confirmDelete = post.querySelector('.confirm-delete');
+
+                // Toggle visibility of the menu options
+                menuButton.addEventListener('click', () => {
+                    menuOptions.classList.toggle('hidden');
+                });
+
+                // Confirm and delete the post
+                confirmDelete.addEventListener('click', () => {
+                    const confirm = window.confirm('Are you sure you want to delete this post?');
+                    if (confirm) {
+                        post.remove();
+                    }
+                });
+
+                // Add the post to the container
+                postContainer.appendChild(post);
+            };
+
+            reader.readAsDataURL(file); // Convert the image file to a data URL
+
+            // Reset the form fields
+            postForm.reset();
+        });
+    </script>
+
+    <style>
+        /* Container for all posts */
+        #postContainer {
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            flex-direction: column; /* Stack posts vertically */
+            min-height: 100vh; /* Ensure the container takes up the full viewport height */
+            margin: 0; /* Remove any default margin */
+        }
+
+        /* Individual post styling */
+        .post {
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 70px; /* Reduced width to half */
+            max-width: 90%; /* Ensure responsiveness on smaller screens */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
+        }
+
+        /* Image container */
+        .image-container {
+            width: 100%; /* Make the image container take the full width of the post */
+            height: 90px; /* Reduced height to half */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            background-color: #ddd;
+        }
+
+        /* Image styling */
+        .post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image scales properly without distortion */
+        }
+
+        /* Caption styling */
+        .post-caption {
+            margin: 10px 0;
+            text-align: center;
+            font-size: 10px; /* Slightly smaller font size */
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Menu container for the three-dot menu */
+        .menu-container {
+            position: absolute;
+            top: 10px; /* Position at the top-right of the post */
+            right: 10px;
+            z-index: 10;
+        }
+
+        /* Three-dot menu button */
+        .menu-button {
+            background: none;
+            border: none;
+            font-size: 20px; /* Slightly larger menu button */
+            cursor: pointer;
+        }
+
+        /* Dropdown menu options */
+        .menu-options {
+            position: absolute;
+            top: 40px; /* Position below the menu button */
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hide menu options by default */
+        .menu-options.hidden {
+            display: none;
+        }
+
+        /* Delete button styling */
+        .confirm-delete {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px; /* Increased padding for larger button */
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Hover effect for delete button */
+        .confirm-delete:hover {
+            background-color: darkred;
+        }
+    </style>
 </Layout>
