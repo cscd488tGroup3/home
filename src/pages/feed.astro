@@ -35,12 +35,18 @@ import Layout from "../layouts/Layout.astro"
                 return;
             }
 
+            // Validate that a caption is provided
+            if (!captionInput || captionInput.value.trim() === '') {
+                alert('Please enter a caption for the post.');
+                return;
+            }
+
             const file = imageInput.files[0];
-            const caption = captionInput.value;
+            const caption = captionInput.value.trim();
 
             // Read the selected image file
             const reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = function (event) {
                 // Create a new post element
                 const post = document.createElement('div');
                 post.classList.add('post');
@@ -48,7 +54,7 @@ import Layout from "../layouts/Layout.astro"
                 // Add the image, caption, and menu to the post
                 post.innerHTML = `
                     <div class="image-container">
-                        <img src="${e.target.result}" alt="Post Image" class="post-image">
+                        <img src="${event.target.result}" alt="Post Image" class="post-image">
                         <div class="menu-container">
                             <button class="menu-button">⋮</button>
                             <div class="menu-options hidden">
@@ -108,7 +114,7 @@ import Layout from "../layouts/Layout.astro"
             background-color: #f9f9f9;
             border-radius: 8px;
             overflow: hidden;
-            width: 360px; /* Reduced width for smaller posts */
+            width: 280px; /* Reduced width for smaller posts */
             max-width: 90%; /* Ensure responsiveness on smaller screens */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
         }
