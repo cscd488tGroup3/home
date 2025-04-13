@@ -1,0 +1,12 @@
+---
+Astro.props.pageTitle = "Dashboard";
+import Layout from "../layouts/Layout.astro";
+
+// Extract the username from the query string
+const url = new URL(Astro.request.url);
+const username = url.searchParams.get('username') || 'Guest';
+---
+<Layout>
+    <h1>Welcome, {username}!</h1>
+    <p>This is the dashboard page where users can view their account details or other personalized content.</p>
+</Layout>
