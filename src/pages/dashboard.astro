@@ -1,0 +1,35 @@
+---
+Astro.props.pageTitle = "Dashboard";
+import Layout from "../layouts/Layout.astro";
+import { posts } from "../pages/feed.astro"; // Import posts from feed.astro
+
+// Extract the username from the query string
+const url = new URL(Astro.request.url);
+const username = url.searchParams.get('username') || 'Guest';
+
+// Filter posts to show only those belonging to the logged-in user
+const userPosts = posts.filter(post => post.username === username);
+---
+<Layout>
+    <!-- Display username under the logo -->
+    <div style="text-align: right; margin-top: 10px;">
+        <p>Welcome, <strong>{username}</strong></p>
+    </div>
+
+    <!-- Display user posts -->
+    <section>
+        <h2>Your Posts</h2>
+        {userPosts.length > 0 ? (
+            <ul>
+                {userPosts.map(post => (
+                    <li key={post.id}>
+                        <h3>{post.title}</h3>
+                        <p>{post.content}</p>
+                    </li>
+                ))}
+            </ul>
+        ) : (
+            <p>You have no posts yet.</p>
+        )}
+    </section>
+</Layout>

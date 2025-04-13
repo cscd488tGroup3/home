@@ -40,8 +40,11 @@ import "../styles/global.css";
 
                 // Handle the server's response
                 if (response.ok) {
-                    // Redirect to the dashboard or another page on successful login
-                    window.location.href = '/dashboard';
+                    // Parse the server's response
+                    const data = await response.json();
+
+                    // Redirect to the dashboard with the username in the query string
+                    window.location.href = `/dashboard?username=${encodeURIComponent(data.username)}`;
                 } else {
                     // Display an error message if login fails
                     const errorData = await response.json();
