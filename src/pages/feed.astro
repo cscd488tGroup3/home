@@ -10,8 +10,8 @@ import Layout from "../layouts/Layout.astro"
 
     <!-- Form for creating a new post (hidden by default) -->
     <form id="postForm" style="display: none;">    
-        <label for="images">Choose an image to post:</label>
-        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required>
+        <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label>
+        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required style="display: none;">
         <label for="caption">Caption the Post:</label>
         <input type="text" id="caption" name="caption" required>
         <button type="submit">Create Post</button>
@@ -21,10 +21,21 @@ import Layout from "../layouts/Layout.astro"
     <div id="postContainer"></div>
 
     <script>
-        // Get references to the form, toggle button, and post container
+        // Get references to the form, toggle button, post container, and file input
         const postForm = document.getElementById('postForm');
         const toggleFormButton = document.getElementById('toggleFormButton');
         const postContainer = document.getElementById('postContainer');
+        const imageInput = document.getElementById('images');
+        const fileLabel = document.getElementById('fileLabel');
+
+        // Change "Choose File" to the selected file name when a file is chosen
+        imageInput.addEventListener('change', () => {
+            if (imageInput.files.length > 0) {
+                fileLabel.textContent = `Chosen File: ${imageInput.files[0].name}`; // Display the file name
+            } else {
+                fileLabel.textContent = "Choose File"; // Revert to default if no file is selected
+            }
+        });
 
         // Toggle the visibility of the form when the button is clicked
         toggleFormButton.addEventListener('click', () => {
@@ -43,6 +54,7 @@ import Layout from "../layouts/Layout.astro"
 
             const imageInput = document.getElementById('images');
             const captionInput = document.getElementById('caption');
+            const fileLabel = document.getElementById('fileLabel');
 
             // Validate that an image is selected
             if (!imageInput || imageInput.files.length === 0) {
@@ -66,21 +78,23 @@ import Layout from "../layouts/Layout.astro"
                 const post = document.createElement('div');
                 post.classList.add('post');
 
-                // Add the image, caption, and menu to the post
+                // Add the image, file name, and caption to the post
                 post.innerHTML = `
-                    <div class="image-container">
-                        <img src="${event.target.result}" alt="Post Image" class="post-image">
-                        <div class="menu-container">
-                            <button class="menu-button">⋮</button>
-                            <div class="menu-options hidden">
-                                <button class="confirm-delete">Delete</button>
-                            </div>
+                    <div class="menu-container">
+                        <button class="menu-button">⋮</button>
+                        <div class="menu-options hidden">
+                            <button class="confirm-delete">Delete</button>
                         </div>
                     </div>
-                    <p class="post-caption">${caption}</p>
+                    <div class="image-container">
+                        <img src="${event.target.result}" alt="Post Image" class="post-image">
+                    </div>
+                    <p class="post-file-name">Choose File: ${file.name}; Caption: ${caption}</p>
                 `;
 
-                // Add functionality to the menu button
+                // Add the post to the container
+                postContainer.appendChild(post);
+
                 const menuButton = post.querySelector('.menu-button');
                 const menuOptions = post.querySelector('.menu-options');
                 const confirmDelete = post.querySelector('.confirm-delete');
@@ -97,15 +111,14 @@ import Layout from "../layouts/Layout.astro"
                         post.remove();
                     }
                 });
-
-                // Add the post to the container
-                postContainer.appendChild(post);
             };
 
             reader.readAsDataURL(file); // Convert the image file to a data URL
 
             // Reset the form fields
             postForm.reset();
+            imageInput.value = ""; // Clear the file input
+            fileLabel.textContent = "Choose File"; // Reset the label text
             postForm.style.display = 'none'; // Hide the form after submission
             toggleFormButton.textContent = 'Create Post'; // Reset the button text
         });
@@ -140,7 +153,8 @@ import Layout from "../layouts/Layout.astro"
         /* Image container */
         .image-container {
             width: 100%; /* Full width of the post */
-            height: 150px; /* Fixed height for the image container */
+            height: auto; /* Allow the height to adjust dynamically */
+            max-height: 300px; /* Limit the maximum height for readability */
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -150,19 +164,27 @@ import Layout from "../layouts/Layout.astro"
 
         /* Image styling */
         .post-image {
-            width: 100%; /* Ensure the image fills the container width */
-            height: 100%; /* Ensure the image fills the container height */
-            object-fit: cover; /* Ensures the image scales properly without distortion */
+            width: auto; /* Maintain the aspect ratio */
+            height: 100%; /* Scale the image to fit the container height */
+            max-width: 100%; /* Prevent the image from overflowing horizontally */
+            object-fit: contain; /* Ensure the entire image is visible without cropping */
+        }
+
+        /* File name styling */
+        .post-file-name {
+            margin: 5px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
         }
 
         /* Caption styling */
         .post-caption {
-            margin: 10px 0;
+            margin: 5px 0;
             text-align: center;
-            font-size: 14px; /* Slightly larger font size */
-            color: #333; /* Darker color for better visibility */
-            font-style: normal; /* Normal font style */
-            flex-shrink: 0; /* Prevent the caption from shrinking */
+            font-size: 14px;
+            color: #333;
         }
 
         /* Menu container for the three-dot menu */
