@@ -1,4 +1,4 @@
-import { queryTrefle, queryPlantAPI2, queryPlantAPI3 } from './queryAPIs';
+import { queryTrefle, queryPerenual, queryRapid } from './queryAPIs';
 
 export async function POST({ request }) {
     const body = await request.json();
@@ -13,10 +13,10 @@ export async function POST({ request }) {
                 plantInfo = await queryTrefle(query);
                 break;
             case 'api2':
-                plantInfo = await queryPlantAPI2(query);
+                plantInfo = await queryPerenual(query);
                 break;
             case 'api3':
-                plantInfo = await queryPlantAPI3(query);
+                plantInfo = await queryRapid(query);
                 break;
             default:
                 throw new Error('Invalid API specified');

@@ -1,5 +1,14 @@
+import { getCorsHeaders, handleOptionsRequest } from './corsPolicy.js';
+
 // For Trefle API
-export async function queryTrefle(plantQuery) {
+export async function queryTrefle(plantQuery, event) {
+    const origin = event.headers.origin;
+    const headers = getCorsHeaders(origin);
+
+    if (event.httpMethod === "OPTIONS") {
+        return handleOptionsRequest(headers);
+    }
+
     const TREFLE_API_KEY = import.meta.env.TREFLE_API_KEY;
 
     try {
@@ -16,11 +25,11 @@ export async function queryTrefle(plantQuery) {
 }
 
 // Placeholder for Plant API 2
-export async function queryPlantAPI2(plantQuery) {
-    const API2_KEY = import.meta.env.API2_KEY;
+export async function queryPerenual(plantQuery) {
+    const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
 
     try {
-        const api2Response = await fetch(`https://api2.example.com/plants?q=${plantQuery}&key=${API2_KEY}`);
+        const api2Response = await fetch(`https://api2.example.com/plants?q=${plantQuery}&key=${PERENUAL_KEY}`);
 
         if (!api2Response.ok) {
             throw new Error('Failed to fetch plant information from Plant API 2');
@@ -33,11 +42,11 @@ export async function queryPlantAPI2(plantQuery) {
 }
 
 // Placeholder for Plant API 3
-export async function queryPlantAPI3(plantQuery) {
-    const API3_KEY = import.meta.env.API3_KEY;
+export async function queryRapid(plantQuery) {
+    const X_RAPIDAPI_KEY = import.meta.env.X_RAPIDAPI_KEY;
 
     try {
-        const api3Response = await fetch(`https://api3.example.com/search?query=${plantQuery}&apiKey=${API3_KEY}`);
+        const api3Response = await fetch(`https://api3.example.com/search?query=${plantQuery}&apiKey=${X_RAPIDAPI_KEY}`);
 
         if (!api3Response.ok) {
             throw new Error('Failed to fetch plant information from Plant API 3');
