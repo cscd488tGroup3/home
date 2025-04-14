@@ -4,13 +4,236 @@ import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout>
-    <!-- Page Button -->
-     <h1>Post Feed</h1>
-    <form>    
-        <label for="images">Choose an image to post:</label>
-        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp, image/eps, image/tiff" multiple required>
+    <h1 style="text-decoration: underline; font-size: 36px;">Post Feed</h1>
+    <!-- Button to toggle the form -->
+    <button id="toggleFormButton" style="border: 1px solid black; border-radius: 8px; padding: 10px; background-color: transparent; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); cursor: pointer;">Create Post</button>
+
+    <!-- Form for creating a new post (hidden by default) -->
+    <form id="postForm" style="display: none;">    
+        <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label>
+        <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required style="display: none;">
         <label for="caption">Caption the Post:</label>
         <input type="text" id="caption" name="caption" required>
         <button type="submit">Create Post</button>
     </form>
+
+    <!-- Container where posts will be dynamically added -->
+    <div id="postContainer"></div>
+
+    <script>
+        // Get references to the form, toggle button, post container, and file input
+        const postForm = document.getElementById('postForm');
+        const toggleFormButton = document.getElementById('toggleFormButton');
+        const postContainer = document.getElementById('postContainer');
+        const imageInput = document.getElementById('images');
+        const fileLabel = document.getElementById('fileLabel');
+
+        // Change "Choose File" to the selected file name when a file is chosen
+        imageInput.addEventListener('change', () => {
+            if (imageInput.files.length > 0) {
+                fileLabel.textContent = `Chosen File: ${imageInput.files[0].name}`; // Display the file name
+            } else {
+                fileLabel.textContent = "Choose File"; // Revert to default if no file is selected
+            }
+        });
+
+        // Toggle the visibility of the form when the button is clicked
+        toggleFormButton.addEventListener('click', () => {
+            if (postForm.style.display === 'none') {
+                postForm.style.display = 'block';
+                toggleFormButton.textContent = 'Hide Form';
+            } else {
+                postForm.style.display = 'none';
+                toggleFormButton.textContent = 'Create Post';
+            }
+        });
+
+        // Event listener for form submission
+        postForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission behavior
+
+            const imageInput = document.getElementById('images');
+            const captionInput = document.getElementById('caption');
+            const fileLabel = document.getElementById('fileLabel');
+
+            // Validate that an image is selected
+            if (!imageInput || imageInput.files.length === 0) {
+                alert('Please select an image to post.');
+                return;
+            }
+
+            // Validate that a caption is provided
+            if (!captionInput || captionInput.value.trim() === '') {
+                alert('Please enter a caption for the post.');
+                return;
+            }
+
+            const file = imageInput.files[0];
+            const caption = captionInput.value.trim();
+
+            // Read the selected image file
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                // Create a new post element
+                const post = document.createElement('div');
+                post.classList.add('post');
+
+                // Add the image, file name, and caption to the post
+                post.innerHTML = `
+                    <div class="menu-container">
+                        <button class="menu-button">⋮</button>
+                        <div class="menu-options hidden">
+                            <button class="confirm-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="image-container">
+                        <img src="${event.target.result}" alt="Post Image" class="post-image">
+                    </div>
+                    <p class="post-file-name">Choose File: ${file.name}; Caption: ${caption}</p>
+                `;
+
+                // Add the post to the container
+                postContainer.appendChild(post);
+
+                const menuButton = post.querySelector('.menu-button');
+                const menuOptions = post.querySelector('.menu-options');
+                const confirmDelete = post.querySelector('.confirm-delete');
+
+                // Toggle visibility of the menu options
+                menuButton.addEventListener('click', () => {
+                    menuOptions.classList.toggle('hidden');
+                });
+
+                // Confirm and delete the post
+                confirmDelete.addEventListener('click', () => {
+                    const confirm = window.confirm('Are you sure you want to delete this post?');
+                    if (confirm) {
+                        post.remove();
+                    }
+                });
+            };
+
+            reader.readAsDataURL(file); // Convert the image file to a data URL
+
+            // Reset the form fields
+            postForm.reset();
+            imageInput.value = ""; // Clear the file input
+            fileLabel.textContent = "Choose File"; // Reset the label text
+            postForm.style.display = 'none'; // Hide the form after submission
+            toggleFormButton.textContent = 'Create Post'; // Reset the button text
+        });
+    </script>
+
+    <style>
+        /* Container for all posts */
+        #postContainer {
+            display: flex;
+            flex-direction: column; /* Stack posts vertically */
+            gap: 20px; /* Add spacing between posts */
+            padding: 20px; /* Add padding around the container */
+            max-width: 600px; /* Limit the width of the feed */
+            margin: 0 auto; /* Center the feed on the page */
+        }
+
+        /* Individual post styling */
+        .post {
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 200px; /* Fixed width for all posts */
+            height: 300px; /* Fixed height for all posts */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
+            position: relative; /* For positioning the menu button */
+        }
+
+        /* Image container */
+        .image-container {
+            width: 100%; /* Full width of the post */
+            height: auto; /* Allow the height to adjust dynamically */
+            max-height: 300px; /* Limit the maximum height for readability */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ddd;
+        }
+
+        /* Image styling */
+        .post-image {
+            width: auto; /* Maintain the aspect ratio */
+            height: 100%; /* Scale the image to fit the container height */
+            max-width: 100%; /* Prevent the image from overflowing horizontally */
+            object-fit: contain; /* Ensure the entire image is visible without cropping */
+        }
+
+        /* File name styling */
+        .post-file-name {
+            margin: 5px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* Caption styling */
+        .post-caption {
+            margin: 5px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Menu container for the three-dot menu */
+        .menu-container {
+            position: absolute;
+            top: 10px; /* Position at the top-right of the post */
+            right: 10px;
+            z-index: 10;
+        }
+
+        /* Three-dot menu button */
+        .menu-button {
+            background: none;
+            border: none;
+            font-size: 20px; /* Slightly larger menu button */
+            cursor: pointer;
+        }
+
+        /* Dropdown menu options */
+        .menu-options {
+            position: absolute;
+            top: 40px; /* Position below the menu button */
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hide menu options by default */
+        .menu-options.hidden {
+            display: none;
+        }
+
+        /* Delete button styling */
+        .confirm-delete {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px; /* Increased padding for larger button */
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Hover effect for delete button */
+        .confirm-delete:hover {
+            background-color: darkred;
+        }
+    </style>
 </Layout>

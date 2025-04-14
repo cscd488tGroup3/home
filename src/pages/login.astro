@@ -6,7 +6,7 @@ import "../styles/global.css";
 <Layout>
     <!-- Page Buttons -->
     <h1>Account Login:</h1>
-    <form action="/login" method="post">
+    <form id="loginForm">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <br>
@@ -15,4 +15,45 @@ import "../styles/global.css";
         <br>
         <button type="submit">Login</button>
     </form>
+
+    <script>
+        // Get references to the form and input fields
+        const loginForm = document.getElementById('loginForm');
+
+        // Add an event listener for form submission
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the username and password values
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Send a POST request to the server with the login data
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                // Handle the server's response
+                if (response.ok) {
+                    // Parse the server's response
+                    const data = await response.json();
+
+                    // Redirect to the dashboard with the username in the query string
+                    window.location.href = `/dashboard?username=${encodeURIComponent(data.username)}`;
+                } else {
+                    // Display an error message if login fails
+                    const errorData = await response.json();
+                    alert(errorData.message || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    </script>
 </Layout>
