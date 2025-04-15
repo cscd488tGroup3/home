@@ -3,13 +3,13 @@ const { pageTitle } = Astro.props;
 import "../styles/global.css";
 import Date from "../components/Date.astro";
 import Time from "../components/Time.astro";
-import { validateSessionToken, invalitadeStaleSessions } from "../lib/authenticate.ts"
+import { validateSessionToken, invalidateStaleSessions } from "../lib/authenticate.ts"
 
 // Extract the username from the query string
 const url = new URL(Astro.request.url);
 const sessionID = url.searchParams.get('i') || 'Guest';
 
-await invalitadeStaleSessions();// try to invalidate stale sessions every time a new page is loaded
+await invalidateStaleSessions();// try to invalidate stale sessions every time a new page is loaded
 
 if (sessionID !== 'Guest') {
 	const sessionValidation = await validateSessionToken (sessionID);

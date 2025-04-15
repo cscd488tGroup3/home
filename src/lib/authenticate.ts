@@ -49,7 +49,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const session: Session = {
 		id: row[0],
 		userId: row[1],
-		expiresAt: row[2]
+		expiresAt: new Date(row[2])
 	};
 	const user: User = {
 		id: row[3]
@@ -103,7 +103,7 @@ export async function invalidateAllSessions(userId: number): Promise<void> {
  * @returns void
  * @throws Error if the request fails
  */
-export async function invalitadeStaleSessions(): Promise<void> {
+export async function invalidateStaleSessions(): Promise<void> {
 	const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/stale?sauth=${USR_SESSION}`);
 
 	if (!res.ok) {
