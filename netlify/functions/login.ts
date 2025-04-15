@@ -37,11 +37,12 @@ exports.handler = async (event,context) => {
     }
 
     const body = JSON.parse(event.body);
+    const uid = body.uid;
+    const hashpass = body.hashpass;
 
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
-    const uid = body.uid;
-    const password = body.password;
+    
 
     // Query the database for the user
     const userCredentials = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/password?uid=${uid}&auth=${USR_DB}`);
@@ -55,7 +56,7 @@ exports.handler = async (event,context) => {
     }
 
     const user = await userCredentials.json();
-    if (user.hashpass !== password) {
+    if (user.hashpass !== hashpass) {
         return {
             statusCode: 401,
             headers,

@@ -46,7 +46,10 @@ import "../styles/global.css";
             const data = Object.fromEntries(formData.entries());
 
             // Hash the password
-            data.password = await hashPassword(data.password);
+            data.hashpass = await hashPassword(data.password);
+
+            // Remove the password from the data object
+            delete data.password;
 
             //console.log(data);
 
