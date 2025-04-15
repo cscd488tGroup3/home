@@ -1,21 +1,28 @@
 import { queryTrefle, queryPerenual, queryRapid } from './queryAPIs';
+import { getCorsHeaders, handleOptionsRequest } from './corsPolicy';
 
-export async function POST({ request }) {
-    const body = await request.json();
-    const { query, api } = body; // Expecting `api` to specify which API to query
+export async function POST(event) {
+    const origin = event.headers.origin;
+    const headers = getCorsHeaders(origin);
+
+    if (event.httpMethod === "OPTIONS") {
+        return handleOptionsRequest(headers);
+    }
+
+    const body = await event.request.json();
+    const { query, api } = body;
 
     try {
         let plantInfo;
 
-        // Determine which API to query based on the `api` parameter
-        switch (api) {
+        switch (api.toLowerCase()) {
             case 'trefle':
                 plantInfo = await queryTrefle(query);
                 break;
-            case 'api2':
+            case 'perenual':
                 plantInfo = await queryPerenual(query);
                 break;
-            case 'api3':
+            case 'rapid':
                 plantInfo = await queryRapid(query);
                 break;
             default:
@@ -24,13 +31,12 @@ export async function POST({ request }) {
 
         return new Response(JSON.stringify(plantInfo), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' },
+            headers,
         });
-
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' },
+            headers,
         });
     }
 }
