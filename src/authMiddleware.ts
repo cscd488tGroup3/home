@@ -1,9 +1,9 @@
-import { validateSessionToken } from "./pages/api/authenticate";
-import type { Session, User } from "./pages/api/authenticate";
+import { validateSessionToken } from "./pages/api/authenticate.ts";
+import type { Session, User } from "./pages/api/authenticate.ts";
 import {
 	setSessionTokenCookie,
 	deleteSessionTokenCookie
-} from "./pages/api/cookies";
+} from "./pages/api/authenticate.ts";
 import { defineMiddleware } from "astro:middleware";
 
 // fix module augmentation error
@@ -15,6 +15,7 @@ declare global {
 		}
 	}
 }
+
 /**
  * onRequest is a middleware that runs on every request
  * and checks if the user is authenticated by validating the session token
