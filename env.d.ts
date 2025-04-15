@@ -23,6 +23,13 @@ declare global {
   interface Window {
     dbConfig: DBConfig;
   }
+
+  namespace App {
+    interface Locals {
+      session: import("./pages/api/authenticate").Session | null;
+      user: import("./pages/api/authenticate").User | null;
+    }
+  }
 }
 
 export {};

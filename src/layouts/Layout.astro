@@ -3,7 +3,25 @@ const { pageTitle } = Astro.props;
 import "../styles/global.css";
 import Date from "../components/Date.astro";
 import Time from "../components/Time.astro";
+import { validateSessionToken, invalidateStaleSessions } from "../lib/authenticate";
+
+await invalidateStaleSessions();
+
+// const sessionToken = Astro.cookies.get("session")?.value ?? null;
+// let username = "Guest";
+
+const user = Astro.locals.user;
+const session = Astro.locals.session;
+const username = user ? `User ${user.id}` : "Guest";
+
+if (session) {
+  const { session, user } = await validateSessionToken(session);
+  if (session && user) {
+    username = `User ${user.id}`;
+  }
+}
 ---
+
 <!-- This file containes the base layout for pages on the Bloom Buddy website. It includes the header, footer, and a slot for page content. The header contains the logo, date, time, and a navigation bar. The footer contains copyright information. -->
 <!doctype html>
 <html lang="en">	
@@ -55,10 +73,20 @@ import Time from "../components/Time.astro";
 					<li><button class="btn no-outline"><a href="/" class="nav-link">Home</a></button></li>
 					<li><button class="btn no-outline"><a href="/feed" class="nav-link">Feed</a></button></li>
 					<li><button class="btn no-outline"><a href="/about" class="nav-link">About</a></button></li>
-					<li><button class="btn no-outline"><a href="/login" class="nav-link">Login</a></button></li>
-					<li><button class="btn no-outline"><a href="/createAccount" class="nav-link">Create Account</a></button></li>
+					{user ? (
+						<>
+							<li><button class="btn no-outline"><a href="/accountInfo" class="nav-link">Profile</a></button></li>
+							<li><button class="btn no-outline"><a href="/logout" class="nav-link">Logout</a></button></li>
+						</>
+					) : (
+						<>
+							<li><button class="btn no-outline"><a href="/login" class="nav-link">Login</a></button></li>
+							<li><button class="btn no-outline"><a href="/createAccount" class="nav-link">Create Account</a></button></li>
+						</>
+					)}
 				</ul>
 			</nav>
+			
 		</header>
 
 		<slot /> <!-- This is where the page content will be injected -->
