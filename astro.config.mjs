@@ -26,6 +26,7 @@ export default defineConfig({
         USR_DB: process.env.USR_DB,
         USR_DB_W: process.env.USR_DB_W,
         USR_DB_W_ADMIN: process.env.USR_DB_W_ADMIN,
+        USR_SESSION: process.env.USR_SESSION,
       });
     }
   }
