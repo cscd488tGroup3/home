@@ -136,7 +136,8 @@ export function deleteSessionTokenCookie(context: APIContext): void {
 	context.cookies.set("session", "", {
 		httpOnly: true,
 		sameSite: "lax",
-		secure: import.meta.env.PROD,
+		// secure: import.meta.env.PROD,
+		secure: true,
 		maxAge: 0,
 		path: "/"
 	});

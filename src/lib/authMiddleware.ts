@@ -1,9 +1,9 @@
-import { validateSessionToken } from "./pages/api/authenticate.ts";
-import type { Session, User } from "./pages/api/authenticate.ts";
+import { validateSessionToken } from "./authenticate.ts";
+import type { Session, User } from "./authenticate.ts";
 import {
 	setSessionTokenCookie,
 	deleteSessionTokenCookie
-} from "./pages/api/authenticate.ts";
+} from "./authenticate.ts";
 import { defineMiddleware } from "astro:middleware";
 
 // fix module augmentation error

@@ -7,10 +7,6 @@ import Weather from "../components/Weather.astro";
 import City from "../components/CityInput.astro";
 import Plant from "../components/Plant.astro";
 import PlantInfo from "../components/plantInfo.astro";
-
-// Extract the username from the query string
-const url = new URL(Astro.request.url);
-const sessionID = url.searchParams.get('i') || 'Guest';
 ---
 
 <Layout>
