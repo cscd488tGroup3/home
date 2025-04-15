@@ -1,7 +1,7 @@
 ---
 Astro.props.pageTitle = "Dashboard";
 import Layout from "../layouts/Layout.astro";
-import { posts } from "../pages/feed.astro"; // Import posts from feed.astro
+import posts from "../pages/feed.astro"; // Import posts from feed.astro
 
 // Extract the username from the query string
 const url = new URL(Astro.request.url);
