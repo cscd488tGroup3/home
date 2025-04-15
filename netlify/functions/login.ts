@@ -7,7 +7,7 @@ export async function handler(event,context) {
     const allowedOrigins = [
         "https://astro-d1-integration.ecrawford4.workers.dev",
         //"http://localhost:4321", // For local development
-        "https://*--peppy-nougat-0120f1.netlify.app" // For Netlify deployment
+        "https://*--cscd488group3-bloombuddy.netlify.app" // For Netlify deployment
     ];
 
     const origin = event.headers.origin;
