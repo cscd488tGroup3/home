@@ -10,7 +10,7 @@ exports.handler = async (event,context) => {
     const origin = event.headers.origin;
 
     const headers = {
-        "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://peppy-nougat-0120f1.netlify.app", // Default to the first allowed origin
+        "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://cscd488group3-BloomBuddy.netlify.app", // Default to the first allowed origin
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type"
     };
