@@ -1,6 +1,5 @@
-import exp from "constants";
-import generateSessionToken from "./authenticate.ts";
-import createSession from "./authenticate.ts";
+import { generateSessionToken } from "./authenticate";
+import { createSession } from "./authenticate";
 
 exports.handler = async (event,context) => {
     console.log("Incoming request origin:", event.headers.origin);
