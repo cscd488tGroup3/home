@@ -1,8 +1,6 @@
 # Home
 
-This repository contains the [BloomBuddy home page](https://peppy-nougat-0120f1.netlify.app/).
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d49a17ad-e9c9-42f3-95eb-1ff54637e8b1/deploy-status)](https://app.netlify.com/sites/peppy-nougat-0120f1/deploys)
+This repository contains the [BloomBuddy home page](https://cscd488group3-BloomBuddy.netlify.app/).
 
 ## Gardening Website
 
