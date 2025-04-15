@@ -1,6 +1,7 @@
 // import { Handler } from '@netlify/functions'
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
+import type { APIContext } from "astro";
 
 const USR_SESSION = process.env.USR_SESSION;
 
@@ -108,6 +109,36 @@ export async function invalitadeStaleSessions(): Promise<void> {
 	if (!res.ok) {
 		throw new Error("Failed to invalidate stale sessions");
 	}
+}
+
+/**
+ * setSessionTokenCookie sets the session token cookie
+ * @param context 
+ * @param token 
+ * @param expyiresAt 
+ */
+export function setSessionTokenCookie(context: APIContext, token: string, expyiresAt: Date): void {
+	context.cookies.set("session", token, {
+		httpOnly: true,
+		secure: import.meta.env.PROD,
+		sameSite: "lax",
+		expires: expyiresAt,
+		path: "/"
+	});
+}
+
+/**
+ * deleteSessionTokenCookie deletes the session token cookie
+ * @param context 
+ */
+export function deleteSessionTokenCookie(context: APIContext): void {
+	context.cookies.set("session", "", {
+		httpOnly: true,
+		sameSite: "lax",
+		secure: import.meta.env.PROD,
+		maxAge: 0,
+		path: "/"
+	});
 }
 
 /**
