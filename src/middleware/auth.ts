@@ -1,9 +1,9 @@
-import { validateSessionToken } from "./authenticate.ts";
-import type { Session, User } from "./authenticate.ts";
+import { validateSessionToken } from "../lib/authenticate.ts";
+import type { Session, User } from "../lib/authenticate.ts";
 import {
 	setSessionTokenCookie,
 	deleteSessionTokenCookie
-} from "./authenticate.ts";
+} from "../lib/authenticate.ts";
 import { defineMiddleware } from "astro:middleware";
 
 // fix module augmentation error
@@ -21,6 +21,7 @@ declare global {
  * and checks if the user is authenticated by validating the session token
  */
 export const onRequest = defineMiddleware(async (context, next) => {
+	console.log("Running auth middleware...");
 	const token = context.cookies.get("session")?.value ?? null;
 
 	if (!token) {
