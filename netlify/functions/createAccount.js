@@ -1,4 +1,4 @@
-exports.handler = async (event,context) => {
+export async function handler(event,context) {
     console.log("Incoming request origin:", event.headers.origin);
     // headers
     const allowedOrigins = [

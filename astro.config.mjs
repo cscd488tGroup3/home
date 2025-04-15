@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 import dotenv from 'dotenv';
-import netlify from '@astrojs/netlify';
+import netlify from '@astrojs/netlify/functions';
 import tailwindcss from '@tailwindcss/vite';
 
 dotenv.config();
