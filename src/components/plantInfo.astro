@@ -1,4 +1,5 @@
 ---
+import { queryTrefle, queryPerenual, queryRapid } from '/workspaces/home/src/pages/api/queryAPIs.js'; // Ensure queryPerenual is exported and imported
 ---
 
 <!-- Plant Display -->
@@ -11,47 +12,64 @@
     <h6>Soil Type: <span class="plant-soil">Soil</span></h6>
 </section>
 
-<script>
-    const plantApiKey = import.meta.env.PLANT_API_KEY;
+<div>
+    <label for="apiSelect">Select API:</label>
+    <select id="apiSelect">
+        <option value="trefle">Trefle</option>
+        <option value="perenual">Perenual</option>
+        <option value="rapid">Rapid</option>
+    </select>
+</div>
 
+<script>
     // DOM elements
     const plantNameElement = document.querySelector('.plant-name') as HTMLElement | null;
     const plantClimateElement = document.querySelector('.plant-climate') as HTMLElement | null;
-    const plantSmellElement = document.querySelector('.plant-smell') as HTMLElement | null;
-    const fetchPlantInfoButton = document.getElementById('fetchPlantInfo') as HTMLButtonElement | null;
+    const apiSelect = document.getElementById('apiSelect') as HTMLSelectElement | null;
 
-    // Function to fetch plant data
-    async function fetchPlantInfo(plantName: string) {
-        const response = await fetch(`https://api.plantinfo.com/v1/plants?name=${plantName}&apikey=${plantApiKey}`);
-        const data = await response.json();
+    // Function to fetch plant data from the server-side API
+    async function fetchPlantInfo(plantName: string, api: string) {
+        try {
+            const response = await fetch('/api/handlePlantRequests', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: plantName, api }),
+            });
 
-        if (data && data.length > 0) {
-            updatePlantDisplay(data[0]);
-        } else {
-            alert('Plant not found');
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            if (data) {
+                updatePlantDisplay(data);
+            } else {
+                alert('Plant not found');
+            }
+        } catch (error) {
+            console.error('Error fetching plant info:', error);
+            alert('Failed to fetch plant information');
         }
     }
 
     // Update the plant display with the fetched data
     function updatePlantDisplay(data: any) {
-        if (plantNameElement) plantNameElement.textContent = data.name;
+        if (plantNameElement) plantNameElement.textContent = data.name || 'Unknown';
         if (plantClimateElement) plantClimateElement.textContent = data.climate || 'Unknown';
-        if (plantSmellElement) plantSmellElement.textContent = data.smell || 'Unknown';
     }
 
-    // Listen for the custom event to trigger a plant fetch
+    // Listen for the custom "plantSearch" event
     window.addEventListener('plantSearch', (event) => {
         const plantName = (event as CustomEvent).detail.plantName;
-        fetchPlantInfo(plantName);
+        const api = apiSelect?.value; // Get the selected API from the dropdown
+        if (plantName && api) {
+            fetchPlantInfo(plantName, api.toLowerCase());
+        } else {
+            alert('Please select an API.');
+        }
     });
-
-    // Fetch plant info when the button is clicked
-    if (fetchPlantInfoButton) {
-        fetchPlantInfoButton.addEventListener('click', () => {
-            const plantName = prompt('Enter the plant name:');
-            if (plantName) fetchPlantInfo(plantName);
-        });
-    }
 </script>
 
 <!-- Styling -->
@@ -64,5 +82,16 @@
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    div {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    select {
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
     }
 </style>
