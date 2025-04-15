@@ -3,7 +3,7 @@ import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/enco
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { APIContext } from "astro";
 
-const USR_SESSION = process.env.USR_SESSION;
+const USR_SESSION = import.meta.env.USR_SESSION;
 
 /**
  * generateSessionToken generates a random session token
