@@ -22,7 +22,7 @@ export function generateSessionToken(): string {
  * @param userId 
  * @returns session object representing the session
  */
-export async function createSession(token: string, userId: number): Promise<Session> {
+export async function createSession(token: string, userId: string): Promise<Session> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
@@ -90,7 +90,7 @@ export async function invalidateSession(sessionId: string): Promise<void> {
  * @returns void
  * @throws Error if the request fails
  */
-export async function invalidateAllSessions(userId: number): Promise<void> {
+export async function invalidateAllSessions(userId: string): Promise<void> {
 	const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/delete?uid=${userId}&sauth=${USR_SESSION}`);
 
 	if (!res.ok) {
@@ -156,7 +156,7 @@ export type SessionValidationResult =
  */
 export interface Session {
 	id: string;
-	userId: number;
+	userId: string;
 	expiresAt: Date;
 }
 
@@ -165,5 +165,5 @@ export interface Session {
  * @property id the user id
  */
 export interface User {
-	id: number;
+	id: string;
 }

@@ -1,3 +1,7 @@
+import exp from "constants";
+import generateSessionToken from "./authenticate.ts";
+import createSession from "./authenticate.ts";
+
 exports.handler = async (event,context) => {
     console.log("Incoming request origin:", event.headers.origin);
     // headers
@@ -37,8 +41,44 @@ exports.handler = async (event,context) => {
 
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
-    const USR_DB_W = process.env.USR_DB_W;
-    const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
-    const USR_SESSION = process.env.USR_SESSION;
+    const uid = body.uid;
+    const password = body.password;
 
+    // Query the database for the user
+    const userCredentials = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/password?uid=${uid}&auth=${USR_DB}`);
+
+    if (!userCredentials.ok) {
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: "Failed to fetch user credentials" }),
+        };
+    }
+
+    const user = await userCredentials.json();
+    if (user.hashpass !== password) {
+        return {
+            statusCode: 401,
+            headers,
+            body: JSON.stringify({ error: "Invalid credentials" }),
+        };
+    } else {
+        // create a new session for the user
+        const newToken = generateSessionToken();
+        const session = await createSession(newToken, uid);
+
+        if (!session) {
+            return {
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({ error: "Failed to create session" }),
+            };
+        } else {
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify(session),
+            };
+        }
+    }
 }

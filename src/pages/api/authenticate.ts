@@ -120,7 +120,8 @@ export async function invalitadeStaleSessions(): Promise<void> {
 export function setSessionTokenCookie(context: APIContext, token: string, expyiresAt: Date): void {
 	context.cookies.set("session", token, {
 		httpOnly: true,
-		secure: import.meta.env.PROD,
+		// secure: import.meta.env.PROD,
+		secure: true,
 		sameSite: "lax",
 		expires: expyiresAt,
 		path: "/"
