@@ -273,21 +273,21 @@ export default {
                 } catch (err) {
                     return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
                 }
-            }
+            } else {
+                try {
+                    const hashpass = await getPasswordByUid(uid, env);
 
-            try {
-                const hashpass = await getPasswordByUid(uid, env);
+                    if (hashpass.length === 0) {
+                        return addCorsHeaders(new Response(JSON.stringify({ error: "User not found" }), { status: 404 }));
+                    }
 
-                if (hashpass.length === 0) {
-                    return addCorsHeaders(new Response(JSON.stringify({ error: "User not found" }), { status: 404 }));
+                    return addCorsHeaders(new Response(JSON.stringify(hashpass), {
+                        status: 200,
+                        headers: { "Content-Type": "application/json" },
+                    }));
+                } catch (err) {
+                    return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
                 }
-
-                return addCorsHeaders(new Response(JSON.stringify(hashpass), {
-                    status: 200,
-                    headers: { "Content-Type": "application/json" },
-                }));
-            } catch (err) {
-                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
 
