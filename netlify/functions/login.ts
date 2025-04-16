@@ -55,12 +55,22 @@ export async function handler(event,context) {
         };
     }
 
-    const user = await userCredentials.json();
+    const responseData = await userCredentials.json();
+
+    if (!Array.isArray(responseData) || responseData.length === 0) {
+        return {
+            statusCode: 401,
+            headers,
+            body: JSON.stringify({ error: "User not found" }),
+        };
+    }
+
+    const user = responseData[0];
     
     // DEBUGGING
-    console.log("User credentials fetched:", user);
-    console.log("Provided hash:", hashpass);
-    console.log("Stored hash:", user.hashpass);
+    // console.log("User credentials fetched:", user);
+    // console.log("Provided hash:", hashpass);
+    // console.log("Stored hash:", user.hashpass);
 
     if (user.hashpass !== hashpass) {
         return {
