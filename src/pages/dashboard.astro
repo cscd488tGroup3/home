@@ -1,11 +1,11 @@
 ---
 Astro.props.pageTitle = "Dashboard";
 import Layout from "../layouts/Layout.astro";
-import { posts } from "../pages/feed.astro"; // Import posts from feed.astro
+import posts from "../pages/feed.astro"; // Import posts from feed.astro
 
 // Extract the username from the query string
 const url = new URL(Astro.request.url);
-const username = url.searchParams.get('username') || 'Guest';
+const sessionID = url.searchParams.get('i') || 'Guest';
 
 // Filter posts to show only those belonging to the logged-in user
 const userPosts = posts.filter(post => post.username === username);

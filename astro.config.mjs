@@ -1,16 +1,16 @@
 import { defineConfig } from 'astro/config';
 import dotenv from 'dotenv';
-import netlify from '@astrojs/netlify';
+import netlify from '@astrojs/netlify/functions';
 import tailwindcss from '@tailwindcss/vite';
 
 dotenv.config();
 
 export default defineConfig({
+  // middleware: [
+	// 	'./src/lib/authMiddleware.ts', // Adjust path as needed
+	// ],
   vite: {
     plugins: [tailwindcss()],
-    define: {
-      'import.meta.env.API_KEY': JSON.stringify(process.env.API_KEY),
-    },
   },
   output: 'server',
   security: {
@@ -26,6 +26,7 @@ export default defineConfig({
         USR_DB: process.env.USR_DB,
         USR_DB_W: process.env.USR_DB_W,
         USR_DB_W_ADMIN: process.env.USR_DB_W_ADMIN,
+        USR_SESSION: process.env.USR_SESSION,
       });
     }
   }
