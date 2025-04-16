@@ -68,9 +68,9 @@ export async function handler(event,context) {
     const user = responseData[0];
     
     // DEBUGGING
-    // console.log("User credentials fetched:", user);
-    // console.log("Provided hash:", hashpass);
-    // console.log("Stored hash:", user.hashpass);
+    console.log("User credentials fetched:", user);
+    console.log("Provided hash:", hashpass);
+    console.log("Stored hash:", user.hashpass);
 
     if (user.hashpass !== hashpass) {
         return {
