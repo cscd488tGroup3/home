@@ -145,11 +145,38 @@ import Layout from "../layouts/Layout.astro"
                     const username = "YourUsername"; // Replace with dynamic username if available
                     const commentText = commentInput.value.trim();
                     if (commentText) {
-                        const comment = document.createElement('p');
+                        const comment = document.createElement('div');
                         comment.classList.add('comment');
-                        comment.textContent = `${username}: ${commentText}`;
+
+                        // Create the comment text and action buttons
+                        comment.innerHTML = `
+                            <span class="comment-text">${username}: ${commentText}</span>
+                            <button class="edit-comment-button">Edit</button>
+                            <button class="delete-comment-button">Delete</button>
+                        `;
+
                         commentsList.appendChild(comment);
                         commentInput.value = ''; // Clear the input field
+
+                        // Handle editing the comment
+                        const editButton = comment.querySelector('.edit-comment-button');
+                        editButton.addEventListener('click', () => {
+                            const commentTextElement = comment.querySelector('.comment-text');
+                            const currentText = commentTextElement.textContent.replace(`${username}: `, '').trim();
+                            const newText = prompt('Edit your comment:', currentText);
+                            if (newText !== null && newText.trim() !== '') {
+                                commentTextElement.textContent = `${username}: ${newText.trim()}`;
+                            }
+                        });
+
+                        // Handle deleting the comment
+                        const deleteButton = comment.querySelector('.delete-comment-button');
+                        deleteButton.addEventListener('click', () => {
+                            const confirmDelete = window.confirm('Are you sure you want to delete this comment?');
+                            if (confirmDelete) {
+                                comment.remove();
+                            }
+                        });
                     } else {
                         alert('Please enter a comment.');
                     }
