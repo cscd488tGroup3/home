@@ -90,6 +90,15 @@ import Layout from "../layouts/Layout.astro"
                         <img src="${event.target.result}" alt="Post Image" class="post-image">
                     </div>
                     <p class="post-file-name">Choose File: ${file.name}; Caption: ${caption}</p>
+                    <div class="reaction-container">
+                        <button class="like-button">👍 Like</button>
+                        <span class="like-count">0</span>
+                    </div>
+                    <div class="comment-section">
+                        <input type="text" class="comment-input" placeholder="Add a comment..." />
+                        <button class="comment-button">Comment</button>
+                        <div class="comments-list"></div>
+                    </div>
                 `;
 
                 // Add the post to the container
@@ -98,6 +107,11 @@ import Layout from "../layouts/Layout.astro"
                 const menuButton = post.querySelector('.menu-button');
                 const menuOptions = post.querySelector('.menu-options');
                 const confirmDelete = post.querySelector('.confirm-delete');
+                const likeButton = post.querySelector('.like-button');
+                const likeCount = post.querySelector('.like-count');
+                const commentInput = post.querySelector('.comment-input');
+                const commentButton = post.querySelector('.comment-button');
+                const commentsList = post.querySelector('.comments-list');
 
                 // Toggle visibility of the menu options
                 menuButton.addEventListener('click', () => {
@@ -109,6 +123,27 @@ import Layout from "../layouts/Layout.astro"
                     const confirm = window.confirm('Are you sure you want to delete this post?');
                     if (confirm) {
                         post.remove();
+                    }
+                });
+
+                // Handle like button click
+                likeButton.addEventListener('click', () => {
+                    let count = parseInt(likeCount.textContent, 10);
+                    likeCount.textContent = count + 1;
+                });
+
+                // Handle adding comments
+                commentButton.addEventListener('click', () => {
+                    const username = "YourUsername"; // Replace with dynamic username if available
+                    const commentText = commentInput.value.trim();
+                    if (commentText) {
+                        const comment = document.createElement('p');
+                        comment.classList.add('comment');
+                        comment.textContent = `${username}: ${commentText}`;
+                        commentsList.appendChild(comment);
+                        commentInput.value = ''; // Clear the input field
+                    } else {
+                        alert('Please enter a comment.');
                     }
                 });
             };
@@ -234,6 +269,72 @@ import Layout from "../layouts/Layout.astro"
         /* Hover effect for delete button */
         .confirm-delete:hover {
             background-color: darkred;
+        }
+
+        /* Reaction container styling */
+        .reaction-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .like-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .like-button:hover {
+            background-color: #0056b3;
+        }
+
+        .like-count {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Comment section styling */
+        .comment-section {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .comment-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .comment-button:hover {
+            background-color: #218838;
+        }
+
+        .comments-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .comment {
+            font-size: 14px;
+            color: #555;
         }
     </style>
 </Layout>
