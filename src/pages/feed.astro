@@ -83,6 +83,7 @@ import Layout from "../layouts/Layout.astro"
                     <div class="menu-container">
                         <button class="menu-button">⋮</button>
                         <div class="menu-options hidden">
+                            <button class="edit-caption">Edit</button>
                             <button class="confirm-delete">Delete</button>
                         </div>
                     </div>
@@ -205,6 +206,25 @@ import Layout from "../layouts/Layout.astro"
             fileLabel.textContent = "Choose File"; // Reset the label text
             postForm.style.display = 'none'; // Hide the form after submission
             toggleFormButton.textContent = 'Create Post'; // Reset the button text
+        });
+    </script>
+
+    <script>
+        // filepath: /workspaces/home/src/pages/feed.astro
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add event listener for editing captions
+            document.addEventListener('click', (event) => {
+                if (event.target.classList.contains('edit-caption')) {
+                    const post = event.target.closest('.post');
+                    const captionElement = post.querySelector('.post-caption');
+                    const currentCaption = captionElement.textContent.trim();
+                    const newCaption = prompt('Edit your caption:', currentCaption);
+
+                    if (newCaption !== null && newCaption.trim() !== '') {
+                        captionElement.textContent = newCaption.trim();
+                    }
+                }
+            });
         });
     </script>
 
@@ -411,13 +431,8 @@ import Layout from "../layouts/Layout.astro"
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Stack options vertically */
             z-index: 10;
-        }
-
-        /* Hide menu options by default */
-        .comment-menu-options.hidden {
-            display: none;
         }
 
         /* Buttons inside the menu */
@@ -427,7 +442,7 @@ import Layout from "../layouts/Layout.astro"
             padding: 10px;
             text-align: left;
             cursor: pointer;
-            width: 100%;
+            width: 100%; /* Ensure buttons take full width of the menu */
         }
 
         /* Hover effect for menu buttons */
