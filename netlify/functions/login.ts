@@ -37,8 +37,11 @@ export async function handler(event,context) {
     }
 
     const body = JSON.parse(event.body);
+    console.log(body);
     const uid = body.uid;
+    console.log(uid);
     const hashpass = body.hashpass;
+    console.log(hashpass);
 
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
