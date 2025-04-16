@@ -126,10 +126,18 @@ import Layout from "../layouts/Layout.astro"
                     }
                 });
 
-                // Handle like button click
+                // Handle like button toggle
+                let liked = false; // Track like state for the current user
                 likeButton.addEventListener('click', () => {
                     let count = parseInt(likeCount.textContent, 10);
-                    likeCount.textContent = count + 1;
+                    if (liked) {
+                        likeCount.textContent = count - 1;
+                        likeButton.textContent = '👍 Like';
+                    } else {
+                        likeCount.textContent = count + 1;
+                        likeButton.textContent = '👎 Unlike';
+                    }
+                    liked = !liked; // Toggle the like state
                 });
 
                 // Handle adding comments
