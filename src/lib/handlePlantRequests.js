@@ -2,7 +2,7 @@ import { queryTrefle, queryPerenual, queryRapid } from './queryAPIs';
 import { getCorsHeaders, handleOptionsRequest } from './corsPolicy';
 
 export async function POST(event) {
-    const origin = event.headers.origin;
+    const origin = event.headers?.origin || '*'; // Fallback to '*' if origin is undefined
     const headers = getCorsHeaders(origin);
 
     if (event.httpMethod === "OPTIONS") {
