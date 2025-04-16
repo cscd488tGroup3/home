@@ -148,15 +148,28 @@ import Layout from "../layouts/Layout.astro"
                         const comment = document.createElement('div');
                         comment.classList.add('comment');
 
-                        // Create the comment text and action buttons
+                        // Create the comment text and action menu
                         comment.innerHTML = `
                             <span class="comment-text">${username}: ${commentText}</span>
-                            <button class="edit-comment-button">Edit</button>
-                            <button class="delete-comment-button">Delete</button>
+                            <div class="comment-menu-container">
+                                <button class="comment-menu-button">⋮</button>
+                                <div class="comment-menu-options hidden">
+                                    <button class="edit-comment-button">Edit</button>
+                                    <button class="delete-comment-button">Delete</button>
+                                </div>
+                            </div>
                         `;
 
                         commentsList.appendChild(comment);
                         commentInput.value = ''; // Clear the input field
+
+                        const menuButton = comment.querySelector('.comment-menu-button');
+                        const menuOptions = comment.querySelector('.comment-menu-options');
+
+                        // Toggle visibility of the comment menu options
+                        menuButton.addEventListener('click', () => {
+                            menuOptions.classList.toggle('hidden');
+                        });
 
                         // Handle editing the comment
                         const editButton = comment.querySelector('.edit-comment-button');
@@ -167,6 +180,7 @@ import Layout from "../layouts/Layout.astro"
                             if (newText !== null && newText.trim() !== '') {
                                 commentTextElement.textContent = `${username}: ${newText.trim()}`;
                             }
+                            menuOptions.classList.add('hidden'); // Hide the menu after editing
                         });
 
                         // Handle deleting the comment
@@ -370,6 +384,55 @@ import Layout from "../layouts/Layout.astro"
         .comment {
             font-size: 14px;
             color: #555;
+        }
+
+        /* Comment menu container */
+        .comment-menu-container {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        /* Three-dot menu button */
+        .comment-menu-button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Dropdown menu options */
+        .comment-menu-options {
+            position: absolute;
+            top: 20px;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        /* Hide menu options by default */
+        .comment-menu-options.hidden {
+            display: none;
+        }
+
+        /* Buttons inside the menu */
+        .comment-menu-options button {
+            background: none;
+            border: none;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Hover effect for menu buttons */
+        .comment-menu-options button:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </Layout>
