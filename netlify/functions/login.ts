@@ -72,15 +72,17 @@ export async function handler(event,context) {
 
     const responseData = await userCredentials.json();
 
+    console.log("User credentials response data:", responseData);
+
     if (!Array.isArray(responseData) || responseData.length === 0) {
         return {
-            statusCode: 401,
+            statusCode: 404,
             headers,
             body: JSON.stringify({ error: "User not found" }),
         };
     }
 
-    console.log("User credentials response data:", responseData);
+    console.log("User credentials response data passing checks");
 
     const user = responseData[0];
     
