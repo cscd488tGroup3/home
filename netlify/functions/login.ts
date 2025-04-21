@@ -98,6 +98,8 @@ export async function handler(event,context) {
             body: JSON.stringify({ error: "Invalid credentials" }),
         };
     } else {
+        // check for an existing session before creating a new session
+
         // create a new session for the user
         const newToken = generateSessionToken();
         const session = await createSession(newToken, uid);
