@@ -76,7 +76,7 @@ export async function handler(event,context) {
 
     if (!Array.isArray(responseData) || responseData.length === 0) {
         return {
-            statusCode: 401,
+            statusCode: 404,
             headers,
             body: JSON.stringify({ error: "User not found" }),
         };
