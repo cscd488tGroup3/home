@@ -72,6 +72,8 @@ export async function handler(event,context) {
 
     const responseData = await userCredentials.json();
 
+    console.log("User credentials response data:", responseData);
+
     if (!Array.isArray(responseData) || responseData.length === 0) {
         return {
             statusCode: 401,
@@ -80,7 +82,7 @@ export async function handler(event,context) {
         };
     }
 
-    console.log("User credentials response data:", responseData);
+    console.log("User credentials response data passing checks");
 
     const user = responseData[0];
     
