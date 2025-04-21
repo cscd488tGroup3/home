@@ -12,11 +12,15 @@ export async function handler(event,context) {
 
     const origin = event.headers.origin;
 
+    console.log("Origin:", origin);
+
     const headers = {
         "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://cscd488group3-bloombuddy.netlify.app", // Default to the first allowed origin
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type"
     };
+
+    console.log("Headers:", headers);
     
     // handle prefilght request
     if (event.httpMethod === "OPTIONS") {
@@ -27,6 +31,8 @@ export async function handler(event,context) {
         };
     }    
 
+    console.log("Preflight request handled");
+
     // Check if the request method is POST
     // If not, return a 405 Method Not Allowed response
     if (event.httpMethod !== "POST") {
@@ -36,13 +42,20 @@ export async function handler(event,context) {
         };
     }
 
+    console.log("POST request received");
+
     const body = JSON.parse(event.body);
     const uid = body.uid;
     const hashpass = body.hashpass;
 
+    console.log("Request body:", body);
+    console.log("UID:", uid);
+    console.log("Hashpass:", hashpass);
+
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
-    
+
+    console.log("Environment variable USR_DB:", USR_DB);
 
     // Query the database for the user
     const userCredentials = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/password?uid=${uid}&auth=${USR_DB}`);
@@ -55,6 +68,8 @@ export async function handler(event,context) {
         };
     }
 
+    console.log("User credentials response status:", userCredentials.status);
+
     const responseData = await userCredentials.json();
 
     if (!Array.isArray(responseData) || responseData.length === 0) {
@@ -64,6 +79,8 @@ export async function handler(event,context) {
             body: JSON.stringify({ error: "User not found" }),
         };
     }
+
+    console.log("User credentials response data:", responseData);
 
     const user = responseData[0];
     

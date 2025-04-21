@@ -38,7 +38,7 @@ import "../styles/global.css";
         async function handleSubmit(event: {
             preventDefault: () => void;
             target: any;
-            }) {
+            }): Promise<void> {
             event.preventDefault();
 
             const form = event.target;
