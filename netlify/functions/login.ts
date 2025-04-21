@@ -45,7 +45,7 @@ export async function handler(event,context) {
     console.log("POST request received");
 
     const body = JSON.parse(event.body);
-    const uid = body.uid;
+    const uid = body.username;
     const hashpass = body.hashpass;
 
     console.log("Request body:", body);
