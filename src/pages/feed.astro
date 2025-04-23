@@ -9,7 +9,7 @@ import Layout from "../layouts/Layout.astro"
     <button id="toggleFormButton" style="border: 1px solid black; border-radius: 8px; padding: 10px; background-color: transparent; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); cursor: pointer;">Create Post</button>
 
     <!-- Form for creating a new post (hidden by default) -->
-    <form id="postForm" style="display: none;">    
+    <form id="postForm" >    
         <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label>
         <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required style="display: none;">
         <label for="caption">Caption the Post:</label>
@@ -228,7 +228,7 @@ import Layout from "../layouts/Layout.astro"
         });
     </script>
 
-    <style>
+    <!-- <style>
         /* Container for all posts */
         #postContainer {
             display: flex;
@@ -449,5 +449,5 @@ import Layout from "../layouts/Layout.astro"
         .comment-menu-options button:hover {
             background-color: #f0f0f0;
         }
-    </style>
+    </style> -->
 </Layout>
