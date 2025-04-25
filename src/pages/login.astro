@@ -70,8 +70,13 @@ import "../styles/global.css";
                 }
 
                 const result = await response.json();
+
+                // Store the username in local storage
+                localStorage.setItem("username", data.username);
+
+                // Redirect to the feed page
                 alert("Login successful!");
-                console.log(result); // Optionally log the result for debugging
+                window.location.href = "/feed"; // Adjust the path to your feed page
             } catch (error) {
                 // Handle network or unexpected errors
                 console.error("Error during login:", error);
