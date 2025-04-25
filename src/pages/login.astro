@@ -59,7 +59,13 @@ import "../styles/global.css";
                 if (!response.ok) {
                     // Handle non-200 responses
                     const errorResult = await response.json();
-                    alert(`Error: ${errorResult.error || "Login failed"}`);
+                    if (response.status === 401) {
+                        alert("Error: Incorrect username or password.");
+                    } else if (response.status >= 500) {
+                        alert("Error: Server issue. Please try again later.");
+                    } else {
+                        alert(`Error: ${errorResult.error || "Login failed"}`);
+                    }
                     return;
                 }
 
@@ -69,7 +75,7 @@ import "../styles/global.css";
             } catch (error) {
                 // Handle network or unexpected errors
                 console.error("Error during login:", error);
-                alert("An error occurred while trying to log in. Please try again.");
+                alert("An error occurred on our end. Please check your connection or try again later.");
             }
         }
 
