@@ -3,24 +3,15 @@ const { pageTitle } = Astro.props;
 import "../styles/global.css";
 import Date from "../components/Date.astro";
 import Time from "../components/Time.astro";
-import { validateSessionToken, invalidateStaleSessions } from "../lib/authenticate";
 
-await invalidateStaleSessions();
-
-// const sessionToken = Astro.cookies.get("session")?.value ?? null;
-// let username = "Guest";
+// NO need to invalidate sessions manually here
+// await invalidateStaleSessions(); <-- REMOVE THIS
 
 const user = Astro.locals.user;
 const session = Astro.locals.session;
 const username = user ? `User ${user.id}` : "Guest";
-
-if (session) {
-  const { session, user } = await validateSessionToken(session);
-  if (session && user) {
-    username = `User ${user.id}`;
-  }
-}
 ---
+
 
 <!-- This file containes the base layout for pages on the Bloom Buddy website. It includes the header, footer, and a slot for page content. The header contains the logo, date, time, and a navigation bar. The footer contains copyright information. -->
 <!doctype html>
@@ -66,6 +57,8 @@ if (session) {
 				<!-- Time -->
 				<Time/>
 			</div>
+
+			<div>Logged in as: {username}</div>
 			
 			<!-- the right side of the header contains the navbar -->
 			<nav class="nav">
