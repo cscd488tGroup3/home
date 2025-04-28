@@ -21,20 +21,24 @@ import "../styles/global.css";
          * hashPassword hashes the password
          * @param password - The password to hash.
          */
-        async function hashPassword(password) {
+        async function hashPassword(password: FormDataEntryValue | undefined) {
             const encoder = new TextEncoder();
-            const data = encoder.encode(password);
+            const data = encoder.encode(password as string);
             const hashBuffer = await crypto.subtle.digest("SHA-256", data);
             return Array.from(new Uint8Array(hashBuffer))
-                .map((b) => b.toString(16).padStart(2, "0"))
-                .join("");
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
         }
-
+        
         /**
          * handleSubmit handles the form submission
          * @param event - The event object.
+         * @returns {Promise<void>} - A promise that resolves when the form is submitted.
          */
-        async function handleSubmit(event) {
+        async function handleSubmit(event: {
+            preventDefault: () => void;
+            target: any;
+            }): Promise<void> {
             event.preventDefault();
 
             const form = event.target;
@@ -47,48 +51,32 @@ import "../styles/global.css";
             // Remove the password from the data object
             delete data.password;
 
-            console.log("Submitting login form...");
-            console.log("Payload being sent:", data);
+            //console.log(data);
 
-            try {
-                const response = await fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data),
-                    credentials: "include",
-                });
+            //Send data to the Astro API route
+            const response = await fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include"
+            });
 
-                console.log("Response status:", response.status);
+            //const result = await response.json();
+            //console.log(result);
 
-                if (!response.ok) {
-                    let errorResult;
-                    try {
-                        errorResult = await response.json();
-                    } catch (parseError) {
-                        console.error("Failed to parse error response:", parseError);
-                    }
-                    console.log("Error response:", errorResult);
-                    alert(`Error: ${errorResult?.error || "Login failed with status " + response.status}`);
-                    return;
-                }
-
-                const result = await response.json();
-                console.log("Login successful:", result);
-
-                localStorage.setItem("username", data.username);
-                window.location.href = "/feed";
-            } catch (error) {
-                console.error("Error during login:", error);
-                alert("A network error occurred. Please check your connection or try again later.");
+            if (response.ok) {
+                window.location.href = "/feed"; // Redirect to the feed
+                return result; // the result contains the cookie
+            } else {
+                alert(`Error: ${result.error}`);
             }
         }
-
+        
         const form = document.getElementById("loginForm");
         if (form) {
             form.addEventListener("submit", handleSubmit);
         } else {
             console.error("Form not found");
         }
-        console.log("Stored username:", localStorage.getItem("username"));
     </script>
 </Layout>
