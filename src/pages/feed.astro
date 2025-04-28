@@ -168,6 +168,23 @@ import Layout from "../layouts/Layout.astro"
                     liked = !liked; // Toggle the like state
                 });
 
+                // Handle editing the caption
+                const editCaptionButton = post.querySelector('.edit-caption');
+                editCaptionButton.addEventListener('click', () => {
+                    const captionElement = post.querySelector('.post-caption');
+                    const currentCaption = captionElement.textContent.trim();
+                    const newCaption = prompt('Edit your caption:', currentCaption);
+
+                    if (newCaption !== null && newCaption.trim() !== '') {
+                        if (newCaption.length > 200) {
+                            alert('Caption cannot exceed 200 characters.');
+                        } else {
+                            captionElement.textContent = newCaption.trim();
+                        }
+                    }
+                    menuOptions.classList.add('hidden'); // Hide the menu after editing
+                });
+
                 // Handle adding comments
                 commentButton.addEventListener('click', () => {
                     const username = "YourUsername"; // Replace with dynamic username if available
