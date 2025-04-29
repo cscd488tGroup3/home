@@ -3,12 +3,9 @@ const { pageTitle } = Astro.props;
 import "../styles/global.css";
 import Date from "../components/Date.astro";
 import Time from "../components/Time.astro";
+import { getSession } from "../utils/getSession";
 
-// NO need to invalidate sessions manually here
-// await invalidateStaleSessions(); <-- REMOVE THIS
-
-const user = Astro.locals.user;
-const session = Astro.locals.session;
+const { user, session } = await getSession(Astro);
 const username = user ? `User ${user.id}` : "Guest";
 ---
 
