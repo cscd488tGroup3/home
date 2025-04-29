@@ -70,7 +70,12 @@ import "../styles/global.css";
             if (response.ok) {
                 window.location.href = "/"; // redirect to home page
             } else {
-                alert(`Error: ${result.error}`);
+                try {
+                    const result = await response.json();
+                    alert(`Error: ${result.error || "Unknown error"}`);
+                } catch (e) {
+                    alert(`Unexpected error: ${e.message}`);
+                }
             }
         }
         
