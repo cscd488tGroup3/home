@@ -2,7 +2,7 @@ import { generateSessionToken } from "./authenticate";
 import { createSession } from "./authenticate";
 
 export async function handler(event,context) {
-    console.log("Incoming request origin:", event.headers.origin);
+    // console.log("Incoming request origin:", event.headers.origin);
     // headers
     const allowedOrigins = [
         "https://astro-d1-integration.ecrawford4.workers.dev",
@@ -12,7 +12,7 @@ export async function handler(event,context) {
 
     const origin = event.headers.origin;
 
-    console.log("Origin:", origin);
+    // console.log("Origin:", origin);
 
     const headers = {
         "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://cscd488group3-bloombuddy.netlify.app", // Default to the first allowed origin
@@ -20,7 +20,7 @@ export async function handler(event,context) {
         "Access-Control-Allow-Headers": "Content-Type"
     };
 
-    console.log("Headers:", headers);
+    // console.log("Headers:", headers);
     
     // handle prefilght request
     if (event.httpMethod === "OPTIONS") {
@@ -31,7 +31,7 @@ export async function handler(event,context) {
         };
     }    
 
-    console.log("Preflight request handled");
+    // console.log("Preflight request handled");
 
     // Check if the request method is POST
     // If not, return a 405 Method Not Allowed response
@@ -42,20 +42,20 @@ export async function handler(event,context) {
         };
     }
 
-    console.log("POST request received");
+    // console.log("POST request received");
 
     const body = JSON.parse(event.body);
     const uid = body.username;
     const hashpass = body.hashpass;
 
-    console.log("Request body:", body);
-    console.log("UID:", uid);
-    console.log("Hashpass:", hashpass);
+    // console.log("Request body:", body);
+    // console.log("UID:", uid);
+    // console.log("Hashpass:", hashpass);
 
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
 
-    console.log("Environment variable USR_DB:", USR_DB);
+    // console.log("Environment variable USR_DB:", USR_DB);
 
     // Query the database for the user
     const userCredentials = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/password?uid=${uid}&auth=${USR_DB}`);
@@ -68,11 +68,11 @@ export async function handler(event,context) {
         };
     }
 
-    console.log("User credentials response status:", userCredentials.status);
+    // console.log("User credentials response status:", userCredentials.status);
 
     const responseData = await userCredentials.json();
 
-    console.log("User credentials response data:", responseData);
+    // console.log("User credentials response data:", responseData);
 
     if (!Array.isArray(responseData) || responseData.length === 0) {
         return {
@@ -82,14 +82,14 @@ export async function handler(event,context) {
         };
     }
 
-    console.log("User credentials response data passing checks");
+    // console.log("User credentials response data passing checks");
 
     const user = responseData[0];
     
     // DEBUGGING
-    console.log("User credentials fetched:", user);
-    console.log("Provided hash:", hashpass);
-    console.log("Stored hash:", user.hashpass);
+    // console.log("User credentials fetched:", user);
+    // console.log("Provided hash:", hashpass);
+    // console.log("Stored hash:", user.hashpass);
 
     if (user.hashpass !== hashpass) {
         return {
