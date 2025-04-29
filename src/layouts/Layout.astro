@@ -7,9 +7,6 @@ import { getSession } from "../utils/getSession";
 
 const { user, session } = await getSession(Astro);
 
-console.log("Session:", session);
-console.log("User:", user);
-
 const username = user ? `User ${user.id}` : "Guest";
 ---
 
