@@ -14,6 +14,7 @@ import Layout from "../layouts/Layout.astro"
         <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required style="display: none;">
         <label for="caption">Caption the Post:</label>
         <input type="text" id="caption" name="caption" required>
+        <span id="captionCounter">0/200</span>
         <button type="submit">Create Post</button>
     </form>
 
@@ -27,6 +28,8 @@ import Layout from "../layouts/Layout.astro"
         const postContainer = document.getElementById('postContainer');
         const imageInput = document.getElementById('images');
         const fileLabel = document.getElementById('fileLabel');
+        const captionInput = document.getElementById('caption');
+        const captionCounter = document.getElementById('captionCounter');
 
         // Change "Choose File" to the selected file name when a file is chosen
         imageInput.addEventListener('change', () => {
@@ -34,6 +37,19 @@ import Layout from "../layouts/Layout.astro"
                 fileLabel.textContent = `Chosen File: ${imageInput.files[0].name}`; // Display the file name
             } else {
                 fileLabel.textContent = "Choose File"; // Revert to default if no file is selected
+            }
+        });
+
+        // Update caption character counter
+        captionInput.addEventListener('input', () => {
+            const typedCharacters = captionInput.value.length;
+            captionCounter.textContent = `${typedCharacters}/200`;
+
+            // Change the counter color if the limit is exceeded
+            if (typedCharacters > 200) {
+                captionCounter.style.color = 'red';
+            } else {
+                captionCounter.style.color = 'black';
             }
         });
 
@@ -52,19 +68,15 @@ import Layout from "../layouts/Layout.astro"
         postForm.addEventListener('submit', (event) => {
             event.preventDefault(); // Prevent default form submission behavior
 
-            const imageInput = document.getElementById('images');
-            const captionInput = document.getElementById('caption');
-            const fileLabel = document.getElementById('fileLabel');
-
             // Validate that an image is selected
             if (!imageInput || imageInput.files.length === 0) {
                 alert('Please select an image to post.');
                 return;
             }
 
-            // Validate that a caption is provided
-            if (!captionInput || captionInput.value.trim() === '') {
-                alert('Please enter a caption for the post.');
+            // Validate caption length
+            if (captionInput.value.length > 200) {
+                alert('Caption cannot exceed 200 characters.');
                 return;
             }
 
@@ -97,6 +109,7 @@ import Layout from "../layouts/Layout.astro"
                     </div>
                     <div class="comment-section">
                         <input type="text" class="comment-input" placeholder="Add a comment..." />
+                        <span class="commentCounter">0/200</span>
                         <button class="comment-button">Comment</button>
                         <div class="comments-list"></div>
                     </div>
@@ -111,8 +124,22 @@ import Layout from "../layouts/Layout.astro"
                 const likeButton = post.querySelector('.like-button');
                 const likeCount = post.querySelector('.like-count');
                 const commentInput = post.querySelector('.comment-input');
+                const commentCounter = post.querySelector('.commentCounter');
                 const commentButton = post.querySelector('.comment-button');
                 const commentsList = post.querySelector('.comments-list');
+
+                // Update comment character counter
+                commentInput.addEventListener('input', () => {
+                    const typedCharacters = commentInput.value.length;
+                    commentCounter.textContent = `${typedCharacters}/200`;
+
+                    // Change the counter color if the limit is exceeded
+                    if (typedCharacters > 200) {
+                        commentCounter.style.color = 'red';
+                    } else {
+                        commentCounter.style.color = 'black';
+                    }
+                });
 
                 // Toggle visibility of the menu options
                 menuButton.addEventListener('click', () => {
@@ -141,10 +168,33 @@ import Layout from "../layouts/Layout.astro"
                     liked = !liked; // Toggle the like state
                 });
 
+                // Handle editing the caption
+                const editCaptionButton = post.querySelector('.edit-caption');
+                editCaptionButton.addEventListener('click', () => {
+                    const captionElement = post.querySelector('.post-caption');
+                    const currentCaption = captionElement.textContent.trim();
+                    const newCaption = prompt('Edit your caption:', currentCaption);
+
+                    if (newCaption !== null && newCaption.trim() !== '') {
+                        if (newCaption.length > 200) {
+                            alert('Caption cannot exceed 200 characters.');
+                        } else {
+                            captionElement.textContent = newCaption.trim();
+                        }
+                    }
+                    menuOptions.classList.add('hidden'); // Hide the menu after editing
+                });
+
                 // Handle adding comments
                 commentButton.addEventListener('click', () => {
                     const username = "YourUsername"; // Replace with dynamic username if available
                     const commentText = commentInput.value.trim();
+
+                    if (commentText.length > 200) {
+                        alert('Comment cannot exceed 200 characters.');
+                        return;
+                    }
+
                     if (commentText) {
                         const comment = document.createElement('div');
                         comment.classList.add('comment');
@@ -163,6 +213,7 @@ import Layout from "../layouts/Layout.astro"
 
                         commentsList.appendChild(comment);
                         commentInput.value = ''; // Clear the input field
+                        commentCounter.textContent = '0/200'; // Reset the counter
 
                         const menuButton = comment.querySelector('.comment-menu-button');
                         const menuOptions = comment.querySelector('.comment-menu-options');
@@ -202,29 +253,11 @@ import Layout from "../layouts/Layout.astro"
 
             // Reset the form fields
             postForm.reset();
+            captionCounter.textContent = '0/200'; // Reset the caption counter
             imageInput.value = ""; // Clear the file input
             fileLabel.textContent = "Choose File"; // Reset the label text
             postForm.style.display = 'none'; // Hide the form after submission
             toggleFormButton.textContent = 'Create Post'; // Reset the button text
-        });
-    </script>
-
-    <script>
-        // filepath: /workspaces/home/src/pages/feed.astro
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add event listener for editing captions
-            document.addEventListener('click', (event) => {
-                if (event.target.classList.contains('edit-caption')) {
-                    const post = event.target.closest('.post');
-                    const captionElement = post.querySelector('.post-caption');
-                    const currentCaption = captionElement.textContent.trim();
-                    const newCaption = prompt('Edit your caption:', currentCaption);
-
-                    if (newCaption !== null && newCaption.trim() !== '') {
-                        captionElement.textContent = newCaption.trim();
-                    }
-                }
-            });
         });
     </script>
 
