@@ -332,8 +332,57 @@ import PlantInfo from "../components/plantInfo.astro";
             position: relative;
         }
 
-        /* Additional styles for the feed, posts, and form */
-        /* ...existing styles from the provided code... */
+        /* Center the form within the center column */
+        #postForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px; /* Add spacing between form elements */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* Limit the width of the form */
+            width: 100%; /* Take full width of the column */
+            box-sizing: border-box; /* Include padding and border in width */
+            margin: 0 auto; /* Center the form horizontally */
+        }
+
+        /* Ensure the file label and caption input are centered and stacked */
+        #fileLabel {
+            max-width: 100%; /* Prevent overflow */
+            width: 100%; /* Take full width of the form */
+            text-align: center; /* Center the text */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis for long text */
+            white-space: nowrap; /* Prevent text wrapping */
+            margin-bottom: 10px; /* Add spacing below the file label */
+        }
+
+        label[for="caption"] {
+            display: block; /* Ensure it is on its own line */
+            text-align: center; /* Center the text */
+            margin-top: 10px; /* Add spacing above the label */
+            margin-bottom: 5px; /* Add spacing below the label */
+            font-weight: bold; /* Optional: make the label bold */
+        }
+
+        #caption {
+            width: 100%; /* Take full width of the form */
+            max-width: 500px; /* Limit the width of the input box */
+            padding: 8px; /* Add padding inside the input box */
+            border: 1px solid #ccc; /* Add a border */
+            border-radius: 4px; /* Round the corners */
+            box-sizing: border-box; /* Include padding and border in width */
+        }
+
+        /* Style the caption counter */
+        #captionCounter {
+            font-size: 14px;
+            color: #555;
+            text-align: center; /* Center the counter text */
+        }
     </style>
 </Layout>
 
