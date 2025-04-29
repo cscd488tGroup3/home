@@ -62,10 +62,11 @@ import "../styles/global.css";
             });
 
             const result = await response.json();
+            console.log(result);
 
             if (response.ok) {
                 document.cookie = `session=${result.token}; Path=/; Secure; SameSite=Strict`;
-                window.location.href = "/";
+               // window.location.href = "/";
             } else {
                 alert(`Error: ${result.error}`);
             }
