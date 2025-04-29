@@ -350,41 +350,38 @@ import PlantInfo from "../components/plantInfo.astro";
         }
 
         /* Ensure the file label and caption input are centered and stacked */
-        #fileLabel, #caption, label[for="caption"], #captionCounter {
+        #fileLabel {
             max-width: 100%; /* Prevent overflow */
             width: 100%; /* Take full width of the form */
             text-align: center; /* Center the text */
             overflow: hidden; /* Hide overflowing text */
             text-overflow: ellipsis; /* Add ellipsis for long text */
             white-space: nowrap; /* Prevent text wrapping */
-        }
-
-        /* Add spacing between the file label and caption input */
-        #fileLabel {
-            margin-bottom: 10px;
+            margin-bottom: 10px; /* Add spacing below the file label */
         }
 
         label[for="caption"] {
-            margin-top: 10px;
+            display: block; /* Ensure it is on its own line */
+            text-align: center; /* Center the text */
+            margin-top: 10px; /* Add spacing above the label */
+            margin-bottom: 5px; /* Add spacing below the label */
+            font-weight: bold; /* Optional: make the label bold */
+        }
+
+        #caption {
+            width: 100%; /* Take full width of the form */
+            max-width: 500px; /* Limit the width of the input box */
+            padding: 8px; /* Add padding inside the input box */
+            border: 1px solid #ccc; /* Add a border */
+            border-radius: 4px; /* Round the corners */
+            box-sizing: border-box; /* Include padding and border in width */
         }
 
         /* Style the caption counter */
         #captionCounter {
             font-size: 14px;
             color: #555;
-        }
-
-        /* Prevent the form from overlapping with other columns */
-        .center-column {
-            overflow: hidden; /* Prevent content overflow */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Add spacing between the form and other elements */
-        .center-column > * {
-            margin-bottom: 20px;
+            text-align: center; /* Center the counter text */
         }
     </style>
 </Layout>
