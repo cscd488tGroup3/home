@@ -6,9 +6,6 @@ import tailwindcss from '@tailwindcss/vite';
 dotenv.config();
 
 export default defineConfig({
-  // middleware: [
-	// 	'./src/lib/authMiddleware.ts', // Adjust path as needed
-	// ],
   vite: {
     plugins: [tailwindcss()],
   },
