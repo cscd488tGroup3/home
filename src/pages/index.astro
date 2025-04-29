@@ -338,19 +338,19 @@ import PlantInfo from "../components/plantInfo.astro";
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px; /* Add spacing between form elements */
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 8px;
-            
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 100%; /* Ensure it doesn't overflow */
+            max-width: 600px; /* Limit the width of the form */
             width: 100%; /* Take full width of the column */
             box-sizing: border-box; /* Include padding and border in width */
+            margin: 0 auto; /* Center the form horizontally */
         }
 
-        /* Ensure the file label and caption input do not overflow */
-        #fileLabel, #caption {
+        /* Ensure the file label and caption input are centered and stacked */
+        #fileLabel, #caption, label[for="caption"], #captionCounter {
             max-width: 100%; /* Prevent overflow */
             width: 100%; /* Take full width of the form */
             text-align: center; /* Center the text */
@@ -359,20 +359,27 @@ import PlantInfo from "../components/plantInfo.astro";
             white-space: nowrap; /* Prevent text wrapping */
         }
 
+        /* Add spacing between the file label and caption input */
+        #fileLabel {
+            margin-bottom: 10px;
+        }
+
+        label[for="caption"] {
+            margin-top: 10px;
+        }
+
         /* Style the caption counter */
         #captionCounter {
             font-size: 14px;
             color: #555;
         }
 
-        /* Ensure the button is centered and styled */
-        #toggleFormButton {
-            margin: 0 auto;
-        }
-
         /* Prevent the form from overlapping with other columns */
         .center-column {
             overflow: hidden; /* Prevent content overflow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Add spacing between the form and other elements */
