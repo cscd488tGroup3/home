@@ -62,7 +62,7 @@ import "../styles/global.css";
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
-                credentials: "include" // receive the cookie
+                credentials: "include" // send the current domain so that we can recieve the cookie
             });
 
             const result = await response.json(); // set the cookie
