@@ -9,5 +9,7 @@ export async function getSession(context: APIContext) {
 		return { user: null, session: null };
 	}
 
+	console.log("(getSession.ts) Cookie:", context.cookies.get("session"));
+
 	return await validateSessionToken(token);
 }
