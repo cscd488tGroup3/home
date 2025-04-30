@@ -29,7 +29,7 @@ export async function createSession(token: string, userId: string): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${session.expiresAt.toISOString()}&sauth=${USR_SESSION}`);
+	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${encodeURIComponent(session.expiresAt.toISOString())}&sauth=${USR_SESSION}`);
 	return session;
 }
 
@@ -68,7 +68,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	// renew session
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?id=${session.id}&expires_at=${session.expiresAt.toISOString()}&sauth=${USR_SESSION}`);
+		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?id=${session.id}&expires_at=${encodeURIComponent(session.expiresAt.toISOString())}&sauth=${USR_SESSION}`);
 
 		if (!res.ok) {
 			throw new Error("Failed to renew session");
