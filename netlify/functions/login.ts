@@ -61,7 +61,8 @@ export async function handler(event, context) {
 
     const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 2; // 30 days or 2 hours
     const expires = new Date(Date.now() + maxAge * 1000).toUTCString();
-    const cookie = `session=${session.id}; Path=/; HttpOnly; Secure; SameSite=Strict; Expires=${expires}; Max-Age=${maxAge}`;
+    const cookie = `session=${session.id}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${expires}; Max-Age=${maxAge}`;
+
 
     return {
         statusCode: 200,
