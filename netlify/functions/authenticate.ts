@@ -64,6 +64,9 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const user: User = {
 		id: row.uid
 	};
+
+	console.log("(validateSessionToken) Final Session Object:", session);
+	console.log("(validateSessionToken) Final User Object:", user);
 	
 	// Delete the stale session
 	if (Date.now() >= session.expiresAt.getTime()) {
