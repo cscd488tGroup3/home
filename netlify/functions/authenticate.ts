@@ -45,21 +45,26 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	console.log("(validateSessionToken) Session ID:", sessionId);
 	console.log("(validateSessionToken) Raw token:", token);
 	
-	const row = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?id=${sessionId}&sauth=${USR_SESSION}`)
+	const data = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?id=${sessionId}&sauth=${USR_SESSION}`)
 		.then((res) => res.json())
+	console.log("(validateSessionToken) Data:", data);
+	
+	const row = data[0]; // handle response from the database
 	
 	console.log("(validateSessionToken) Row:", row);
 	if (row === null) {
 		return { session: null, user: null };
 	}
+
 	const session: Session = {
-		id: row[0],
-		userId: row[1],
-		expiresAt: new Date(row[2])
+		id: row.id,
+		userId: row.uid,
+		expiresAt: new Date(row.expires_at),
 	};
 	const user: User = {
-		id: row[1]
+		id: row.uid
 	};
+	
 	// Delete the stale session
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await invalidateSession(session.id);
