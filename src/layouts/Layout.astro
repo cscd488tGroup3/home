@@ -7,9 +7,12 @@ import { getSession } from "../utils/getSession";
 
 const { user, session } = await getSession(Astro);
 
+// Log the session and user information to the Netlify logs for debugging purposes
+console.log("(Layout.astro) User:", user);
+console.log("(Layout.astro) Session:", session);
+
 const username = user ? `User ${user.id}` : "Guest";
 ---
-
 
 <!-- This file containes the base layout for pages on the Bloom Buddy website. It includes the header, footer, and a slot for page content. The header contains the logo, date, time, and a navigation bar. The footer contains copyright information. -->
 <!doctype html>

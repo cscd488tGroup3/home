@@ -45,13 +45,6 @@ import PlantInfo from "../components/plantInfo.astro";
     </div>
 
     <script>
-        // console log the user and user session 
-        import { getSession } from "../utils/getSession";
-        const { user, session } = await getSession(Astro);
-        console.log("Session:", session);
-        console.log("User:", user);
-        // 
-
         // Get references to the form, toggle button, post container, and file input
         const postForm = document.getElementById('postForm');
         const toggleFormButton = document.getElementById('toggleFormButton');
