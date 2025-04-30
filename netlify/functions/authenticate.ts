@@ -29,7 +29,7 @@ export async function createSession(token: string, userId: string): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
+	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${session.expiresAt.toISOString()}&sauth=${USR_SESSION}`);
 	return session;
 }
 
@@ -41,18 +41,24 @@ export async function createSession(token: string, userId: string): Promise<Sess
  */
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	
+	console.log("(validateSessionToken) Session ID:", sessionId);
+	console.log("(validateSessionToken) Raw token:", token);
+	
 	const row = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?id=${sessionId}&sauth=${USR_SESSION}`)
 		.then((res) => res.json())
+	
+	console.log("(validateSessionToken) Row:", row);
 	if (row === null) {
 		return { session: null, user: null };
 	}
 	const session: Session = {
 		id: row[0],
 		userId: row[1],
-		expiresAt: row[2]
+		expiresAt: new Date(row[2])
 	};
 	const user: User = {
-		id: row[3]
+		id: row[1]
 	};
 	// Delete the stale session
 	if (Date.now() >= session.expiresAt.getTime()) {
@@ -62,7 +68,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	// renew session
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?id=${session.id}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
+		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?id=${session.id}&expires_at=${session.expiresAt.toISOString()}&sauth=${USR_SESSION}`);
 
 		if (!res.ok) {
 			throw new Error("Failed to renew session");
