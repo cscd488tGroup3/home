@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly USR_DB: string;
   readonly USR_DB_W: string;
   readonly USR_DB_W_ADMIN: string;
+  readonly TREFLE_API_KEY: string;
   readonly RAPIDAPI_KEY: string;
   readonly PERENUAL_KEY: string;
 }
