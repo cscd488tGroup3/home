@@ -199,3 +199,72 @@ img .logo {
     max-width: 12.5em;
     margin-top: 1.25em;
 }
+
+/* Styles for the About page */
+
+/* Team container grid layout */
+.team-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Individual team member card */
+.team-member {
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Team member image */
+.team-member img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+/* Team member name */
+.team-member h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+/* Team member description */
+.team-member p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Section for connecting with team members */
+.team-member h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #0073e6;
+}
+
+/* List of links */
+.link-list {
+    list-style: none;
+    padding: 0;
+}
+
+/* Individual link items */
+.link-list li {
+    margin-bottom: 5px;
+}
+
+/* Link styling */
+.link {
+    color: #0073e6;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+/* Link hover effect */
+.link:hover {
+    color: #005bb5;
+}
