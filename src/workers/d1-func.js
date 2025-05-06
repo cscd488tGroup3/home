@@ -376,7 +376,6 @@ export async function editComment(cid, uid, newContent, env) {
         throw new Error(`Database query failed: ${err.message}`);
     }
 }
-
 /**
  * deleteComment - delete a comment from the comments table
  * @param {*} cid 
