@@ -2,7 +2,7 @@
 Astro.props.pageTitle = "Account Info";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import { readUserInfoRequest } from "../../public/js/user.js";
+import { readUserInfoRequest, updateUserInfoRequest } from "../../public/js/user.js";
 const query = Astro.url.searchParams;
 const n = query.get("n");
 
@@ -23,15 +23,11 @@ try {
         auth: locals.runtime.env.USR_DB
     });
     if (res.status === 200) {
-        //console.log('ok');
         user = await res.json();
     } else { 
-        // if res is already json format (this might cause unexpected behavior if the response is not 200 and the response is already other json)
         error = res;
     }
 } catch (err) { 
-    // if the status is not 200
-    //console.log('error');
     error = { message: "Failed to fetch user data" };
 }
 ---
@@ -40,11 +36,62 @@ try {
     <h1>Account Info</h1>
     {user ? (
         <div>
-        <p><strong>Username:</strong> {user[0]?.uid}</p>
+            <p><strong>Username:</strong> {user[0]?.uid}</p>
             <p><strong>Name:</strong> {user[0]?.fname} {user[0]?.lname}</p>
             <p><strong>Email:</strong> {user[0]?.email}</p>
             <p><strong>Date of Birth:</strong> {user[0]?.dob}</p>
             <p><strong>Date of Joining:</strong> {user[0]?.doj}</p>
+            
+            <h2>Update Information</h2>
+            <form method="post" onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const updatedData = {
+                    uid: user[0]?.uid,
+                    fname: formData.get("fname"),
+                    lname: formData.get("lname"),
+                    email: formData.get("email"),
+                    dob: formData.get("dob"),
+                    password: formData.get("password"),
+                };
+                try {
+                    const res = await updateUserInfoRequest({
+                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/update',
+                        data: updatedData,
+                        auth: locals.runtime.env.USR_DB
+                    });
+                    if (res.status === 200) {
+                        alert("Information updated successfully!");
+                        location.reload();
+                    } else {
+                        alert("Failed to update information.");
+                    }
+                } catch (err) {
+                    alert("An error occurred while updating information.");
+                }
+            }}>
+                <label>
+                    First Name:
+                    <input type="text" name="fname" defaultValue={user[0]?.fname} required />
+                </label>
+                <label>
+                    Last Name:
+                    <input type="text" name="lname" defaultValue={user[0]?.lname} required />
+                </label>
+                <label>
+                    Email:
+                    <input type="email" name="email" defaultValue={user[0]?.email} required />
+                </label>
+                <label>
+                    Date of Birth:
+                    <input type="date" name="dob" defaultValue={user[0]?.dob} required />
+                </label>
+                <label>
+                    Password:
+                    <input type="password" name="password" required />
+                </label>
+                <button type="submit">Update</button>
+            </form>
         </div>
     ) : (
         <p>{error instanceof Response ? "Failed to fetch user data" : error?.message || "User not found"}</p>
