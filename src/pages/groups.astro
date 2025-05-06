@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+// import { createGroupRequest } from "../../public/js/groups.js";
+---
+
+<Layout>
+    <h1>Create a Group</h1>
+    <form id="createGroupForm" onSubmit={async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const groupData = {
+            name: formData.get("groupName"),
+        };
+        try {
+            const res = await createGroupRequest({
+                worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/groups',
+                data: groupData,
+            });
+            if (res.status === 200) {
+                alert("Group created successfully!");
+                e.target.reset();
+            } else {
+                alert("Failed to create group.");
+            }
+        } catch (err) {
+            alert("An error occurred while creating the group.");
+        }
+    }}>
+        <label for="groupName">Group Name:</label>
+        <input type="text" id="groupName" name="groupName" placeholder="Enter group name" required />
+        <button type="submit">Create Group</button>
+    </form>
+</Layout>
