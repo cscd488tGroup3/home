@@ -209,3 +209,263 @@ export async function deleteExpiredSessions(env) {
         throw new Error(`Database query failed: ${err.message}`);
     }
 }
+// ALL OF THIS IS NEW FOR THE NEXT SPRINT //
+
+/**
+ * addPost - insert a new post into the posts table
+ * @param {String} id represents the post id
+ * @param {String} caption represents the post caption
+ * @param {String} url represents the url to the image 
+ * @param {String} uid represents the user id
+ * @param {*} env 
+ * @returns 
+ */
+export async function addPost(id, caption, url, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO post (id, caption, url, uid) VALUES (?, ?, ?, ?);").bind(id, caption, url, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getPostByID - query the posts table for the post id
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getPostByID(id, env) { 
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE id = ?").bind(id).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllPostsFromUser - query the posts table for all posts by a particular user
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllPostsFromUser(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * editPost - update the caption of a post in the posts table
+ * @param {*} id 
+ * @param {*} uid 
+ * @param {*} newCaption 
+ * @param {*} env 
+ * @returns 
+ */
+export async function editPost(id, uid, newCaption, env) { 
+    try {
+        const {results} = await env.DB.prepare("UPDATE post SET caption = ? WHERE id = ? AND uid = ?").bind(newCaption, id, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * deletePost - delete a post from the posts table
+ * @param {*} id 
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deletePost(id, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM post WHERE id = ? AND uid = ?").bind(id, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * addComment - insert a new comment into the comments table
+ * @param {*} cid 
+ * @param {*} content 
+ * @param {*} uid 
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function addComment(cid, content, uid, id, env) { 
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO comment (cid, content, uid, id) VALUES (?, ?, ?, ?);").bind(cid, content, uid, id).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getComment - query the comments table for the comment id
+ * @param {*} cid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getComment(cid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE cid = ?").bind(cid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getParentPostByCommentID - query the posts table for the post id of a comment
+ * @param {*} cid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getParentPostByCommentID(cid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE id = (SELECT id FROM comment WHERE cid = ?)").bind(cid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllCommentsFromPost - query the comments table for all comments to a particular post
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllCommentsFromPost(id, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE id = ?").bind(id).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllCommentsFromUser - query the comments table for all comments by a particular user
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllCommentsFromUser(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * editComment - update the content of a comment in the comments table
+ * @param {*} cid 
+ * @param {*} uid 
+ * @param {*} newContent 
+ * @param {*} env 
+ * @returns 
+ */
+export async function editComment(cid, uid, newContent, env) { 
+    try {
+        const {results} = await env.DB.prepare("UPDATE comment SET content = ? WHERE cid = ? AND uid = ?").bind(newContent, cid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * deleteComment - delete a comment from the comments table
+ * @param {*} cid 
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deleteComment(cid, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM comment WHERE cid = ? AND uid = ?").bind(cid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * addReaction - insert a new reaction into the reaction table
+ * @param {*} rid 
+ * @param {*} uid 
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function addReaction(rid, uid, id, env) {
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO reaction (rid, uid, id) VALUES (?, ?, ?);").bind(rid, uid, id).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getReactionByPostID - query the reaction table for the reaction ids of the reactions to a post
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getReactionsByPostID(id, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM reaction WHERE id = ?").bind(id).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * countReactionsByPostID - query the reaction table for the number of reactions to a post
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function countReactionsByPostID(id, env) {
+    try {
+        const { results } = await env.DB.prepare("SELECT COUNT(*) AS count FROM reaction WHERE id = ?")
+            .bind(id)
+            .all();
+        return results[0]?.count ?? 0; // Return the count or 0 if no rows
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllReactionsFromUser - query the reaction table for all reactions by a particular user
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllReactionsFromUser(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM reaction WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * deleteReaction - delete a reaction from the reaction table
+ * @param {String} rid 
+ * @param {String} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deleteReaction(rid, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM reaction WHERE rid = ? AND uid = ?").bind(rid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+
