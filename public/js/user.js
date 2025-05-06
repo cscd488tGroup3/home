@@ -13,3 +13,14 @@ export async function readUserInfoRequest({worker, uid, auth }) {
         throw new Error(`Request failed: ${response.statusText}`);
     }
 }
+
+export async function updateUserInfoRequest({ worker, data, auth }) {
+    return fetch(worker, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth}`,
+        },
+        body: JSON.stringify(data),
+    });
+}
