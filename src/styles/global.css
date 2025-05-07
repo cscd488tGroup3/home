@@ -1,270 +1,140 @@
-/*
-This file contains our global styling. All styles derive from this main styling document
-*/
 @import "tailwindcss";
-
-/* 
-Set the global styles for all html elements
-*/
+/* Normalize base sizes */
 html {
-    background-color: rgb(189, 215, 206);
+	font-size: 16px;
+	box-sizing: border-box;
 }
 
-/* style the header */
+*, *::before, *::after {
+	box-sizing: inherit;
+}
+
+/* Prevent flex from squishing header items too tightly */
 header {
-    display: flex;
-    justify-content: space-between;
-    background-color: #088908;
-    padding: 0;
-    margin-bottom: 0.5em;
-    text-align: center;
-    color: #cbecca;
-    font-size: 1.25em;
-    font-weight: bold;
-    width: 100%;
+	flex-wrap: wrap;
 }
 
-header .logo {
-    font-size: 1.5em;
-    justify-content: flex-start;
+/* Prevent logos from being huge */
+.logo img {
+	max-width: 3rem;
+	height: auto;
 }
 
-header .nav {
-    margin-top: auto;
-    margin-bottom: auto
-}
-
-/* style the body */
+/* Fix global body and container scaling */
 body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+	font-size: 1rem;
+	line-height: 1.5;
 }
 
-/* style the footer */
-footer {
-    background-color: #014829;
-    padding: 0.625em;
-    text-align: center;
-    font-size: 0.875em;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
-
-footer .copyright {
-    color: #ffffff;
-    font-size: 1em;
-    margin-top: 00em;
-    display: block;
-}
-
-/* set default paragraph styling */
-p {
-    text-align: center;
-}
-
+/* Avoid generic div styling unless absolutely necessary */
 div {
-    padding: 1em;
-    border: #014829;
-    border-radius: 0.01em;
-    margin-top: 1.25em;
-    text-align: center;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
-#city {
-    border: 0.125em solid black;
-    padding: 0.3125em;
+/* Optional: constrain max-width of any oversized image */
+img {
+	max-width: 100%;
+	height: auto;
 }
 
-#Date, #Time {
-    display: block;
-    text-align: center;
-    margin: 0.625em auto;
+/* Global styles */
+html {
+	background-color: rgb(189, 215, 206);
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.625em;
-    margin-top: 1.25em;
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
 }
 
-label {
-    font-weight: bold;
-    margin-bottom: 0.3125em;
+/* Header */
+header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #088908;
+	padding: 0.5em 1em;
+	color: #cbecca;
+	font-size: 1.25em;
+	font-weight: bold;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-input[type="text"],
-input[type="password"] {
-    padding: 0.625em;
-    background-color: #cbecca;
-    border: 0.0625em solid #293b2c;
-    border-radius: 0.3125em;
-    width: 100%;
-    max-width: 18.75em;
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
 }
 
-button[type="submit"] {
-    background-color: #088908;
-    color: white;
-    padding: 0.625em 1.25em;
-    border: none;
-    border-radius: 0.3125em;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.logo img {
+	width: 3em;
+	height: auto;
 }
 
-button[type="submit"]:hover {
-    background-color: #066606;
+/* Date, Time, and User display */
+.date-time, .user-status {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.625em;
+	margin: 0;
+	padding: 0;
+	font-size: 0.8em;
+	font-weight: normal;
 }
 
+/* Navigation bar */
 .nav {
-    justify-content: right;
-    margin-top: 0em; /* Reduced margin */
+	display: flex;
+	align-items: center;
+	margin-left: auto;
 }
 
 .nav-list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    gap: 0.3125em; /* Reduced gap */
+	list-style: none;
+	padding: 0;
+	display: flex;
+	gap: 0.5em;
+	margin: 0;
 }
 
 .btn {
-    background-color: transparent;
-    border: none;
-    padding: 0;
+	background-color: transparent;
+	border: none;
+	padding: 0;
 }
 
 .nav-link {
-    text-decoration: none;
-    color: inherit;
-    padding: 0.125em 0.25em; /* Reduced padding */
-    border: 0.0625em solid black;
-    border-radius: 0.3125em;
-    transition: background-color 0.3s;
+	text-decoration: none;
+	color: inherit;
+	padding: 0.25em 0.5em;
+	border: 1px solid black;
+	border-radius: 0.25em;
+	transition: background-color 0.3s;
 }
 
 .nav-link:hover {
-    background-color: #cbecca;
+	background-color: #cbecca;
 }
 
-
-.auth-nav {
-    position: absolute;
-    top: 0.625em;
-    right: 0.625em;
+/* Footer */
+footer {
+	background-color: #014829;
+	padding: 0.625em;
+	text-align: center;
+	font-size: 0.875em;
+	position: fixed;
+	width: 100%;
+	bottom: 0;
 }
 
-.auth-list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.625em;
-}
-
-.auth-link {
-    text-decoration: none;
-    color: inherit;
-    padding: 0.625em 1.25em;
-    border-radius: 0.3125em;
-    transition: background-color 0.3s;
-}
-
-.auth-link:hover {
-    background-color: #f0f0f0;
-}
-
-
-.button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 0.625em;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-grow: 1;
-}
-
-img .logo {
-    width: 100%;
-    max-width: 12.5em;
-    margin-top: 1.25em;
-}
-
-/* Styles for the About page */
-
-/* Team container grid layout */
-.team-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-/* Individual team member card */
-.team-member {
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Team member image */
-.team-member img {
-    width: 100%;
-    height: auto;
-    border-radius: 50%;
-    margin-bottom: 15px;
-}
-
-/* Team member name */
-.team-member h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-/* Team member description */
-.team-member p {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
-
-/* Section for connecting with team members */
-.team-member h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #0073e6;
-}
-
-/* List of links */
-.link-list {
-    list-style: none;
-    padding: 0;
-}
-
-/* Individual link items */
-.link-list li {
-    margin-bottom: 5px;
-}
-
-/* Link styling */
-.link {
-    color: #0073e6;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-/* Link hover effect */
-.link:hover {
-    color: #005bb5;
-}
+footer .copyright {
+	color: #ffffff;
+	font-size: 1em;
+	margin

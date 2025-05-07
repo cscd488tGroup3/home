@@ -28,38 +28,21 @@ const username = user ? `User ${user.id}` : "Guest";
 	<body>
 		<header>
 			<!-- needs to overwrite global.css for now
-			 		may fix in the future -->
-			<div style="display: flex;
-						justify-content: center;
-						align-items: center;
-						gap: 0.625em;
-						margin: 0;
-						padding: 0;">
-				<img src="/bloom_buddy1.png" 
-				     alt="logo"
-					 style="width: 3em;
-							height: auto;
-							margin: 0;
-							padding: 0;" />
-				<h1 class="logo">Bloom Buddy</h1>
-			</div>
+				may fix in the future -->
+
+			<img class="logo" src="/bloom_buddy1.png" 
+					alt="logo"/>
+			<h1 class="logo">Bloom Buddy</h1>
+
 
 			<!-- Date and Time horizontally aligned and centered -->
-			<div style="display: flex; 
-						align-items: center; 
-						justify-content: center; 
-						gap: 0.625em;
-						margin: 0;
-						padding: 0;
-						font-size: .8em;
-    					font-weight: normal;">
-				<!-- Date -->
-				<Date/>
-				<!-- Time -->
-				<Time/>
-			</div>
 
-			<div>Logged in as: {username}</div>
+			<!-- Date -->
+			<Date/>
+			<!-- Time -->
+			<Time/>
+		
+			Logged in as: {username}
 			
 			<!-- the right side of the header contains the navbar -->
 			<nav class="nav">
@@ -92,7 +75,7 @@ const username = user ? `User ${user.id}` : "Guest";
 	</body>
 </html>
 
-<!-- overwrite style -->
+<!-- override style
 <style>
 	html,
 	body {
@@ -100,4 +83,4 @@ const username = user ? `User ${user.id}` : "Guest";
 		width: 100%;
 		height: 100%;
 	}
-</style>
+</style> -->
