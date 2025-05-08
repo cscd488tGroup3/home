@@ -1,6 +1,7 @@
 import { getCorsHeaders, handleOptionsRequest } from './corsPolicy.js';
 
-// For Trefle API
+// Commenting out Trefle API functionality
+/*
 export async function queryTrefle(plantQuery) {
     const TREFLE_API_KEY = import.meta.env.TREFLE_API_KEY;
     const url = `https://trefle.io/api/v1/plants/search?q=${plantQuery}&token=${TREFLE_API_KEY}`;
@@ -22,8 +23,9 @@ export async function queryTrefle(plantQuery) {
         throw new Error(`Trefle API Error: ${error.message}`);
     }
 }
+*/
 
-// Placeholder for Plant API 2
+// Keeping Perenual API functionality
 export async function queryPerenual(plantQuery) {
     const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
 
@@ -31,17 +33,37 @@ export async function queryPerenual(plantQuery) {
         const PerenualResponse = await fetch(`https://perenual.com/api/v2/species-list?key=${PERENUAL_KEY}&q=${plantQuery}`);
 
         if (!PerenualResponse.ok) {
-            throw new Error('Failed to fetch plant information from Plant API 2');
+            throw new Error('Failed to fetch plant information from Perenual API');
         }
 
         return await PerenualResponse.json();
     } catch (error) {
-        throw new Error(`Plant API 2 Error: ${error.message}`);
+        throw new Error(`Perenual API Error: ${error.message}`);
     }
 }
 
+/**
+ * Fetch detailed plant information from the Perenual API using the plant ID.
+ * @param {number} plantId - The ID of the plant.
+ * @returns {Promise<Object>} - Detailed plant information.
+ */
+export async function queryPerenualDetails(plantId) {
+    const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
 
-// Placeholder for Plant API 3 (may not be used, API requires plant id for specific plant information which would be odd to use in a search)
+    try {
+        const response = await fetch(`https://perenual.com/api/v2/species/details/${plantId}?key=${PERENUAL_KEY}`);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch detailed plant information from Perenual API');
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw new Error(`Perenual API Details Error: ${error.message}`);
+    }
+}
+
+// Commenting out Rapid API functionality
 /*
 export async function queryRapid(plantQuery) {
     const X_RAPIDAPI_KEY = import.meta.env.X_RAPIDAPI_KEY;
@@ -50,18 +72,18 @@ export async function queryRapid(plantQuery) {
         const RapidResponse = await fetch(`https://Rapid.example.com/search?query=${plantQuery}&apiKey=${X_RAPIDAPI_KEY}`);
 
         if (!RapidResponse.ok) {
-            throw new Error('Failed to fetch plant information from Plant API 3');
+            throw new Error('Failed to fetch plant information from Rapid API');
         }
 
         return await RapidResponse.json();
     } catch (error) {
-        throw new Error(`Plant API 3 Error: ${error.message}`);
+        throw new Error(`Rapid API Error: ${error.message}`);
     }
 }
 */
 
-
-// For Geolocation API
+// Commenting out Geolocation API functionality
+/*
 export async function queryGeoLocation(locationQuery) {
     const GEO_API_KEY = import.meta.env.GEO_API_KEY;
 
@@ -77,3 +99,4 @@ export async function queryGeoLocation(locationQuery) {
         throw new Error(`Geolocation API Error: ${error.message}`);
     }
 }
+*/

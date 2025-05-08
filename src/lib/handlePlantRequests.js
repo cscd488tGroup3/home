@@ -1,4 +1,4 @@
-import { queryTrefle, queryPerenual, queryRapid } from './queryAPIs';
+import { queryPerenual /*, queryTrefle, queryRapid */ } from './queryAPIs';
 import { getCorsHeaders, handleOptionsRequest } from './corsPolicy';
 
 export async function POST(event) {
@@ -18,18 +18,27 @@ export async function POST(event) {
         console.log(`Selected API: ${api}`); // Log the selected API
 
         switch (api.toLowerCase()) {
+            // Commented out Trefle API functionality
+            /*
             case 'trefle':
                 console.log(`Querying Trefle API with query: ${query}`);
                 plantInfo = await queryTrefle(query);
                 break;
+            */
+
             case 'perenual':
                 console.log(`Querying Perenual API with query: ${query}`);
                 plantInfo = await queryPerenual(query);
                 break;
-            // case 'rapid': // Commented out to disable the Rapid API call
-            //     console.log(`Querying Rapid API with query: ${query}`);
-            //     plantInfo = await queryRapid(query);
-            //     break;
+
+            // Commented out Rapid API functionality
+            /*
+            case 'rapid':
+                console.log(`Querying Rapid API with query: ${query}`);
+                plantInfo = await queryRapid(query);
+                break;
+            */
+
             default:
                 throw new Error('Invalid API specified');
         }
