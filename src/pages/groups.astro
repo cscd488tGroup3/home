@@ -90,45 +90,6 @@ import Layout from '../layouts/Layout.astro';
         </form>
     </div>
 
-    <!-- Role Assignment Section -->
-    <div id="roleAssignmentSection" style="display: none;">
-        <h2>Assign Roles</h2>
-        <form id="assignRoleForm" onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const roleData = {
-                userId: formData.get("userId"), // ID of the user to assign a role
-                role: formData.get("role"), // Role to assign
-            };
-
-            try {
-                const res = await assignRoleRequest({
-                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
-                    data: roleData,
-                });
-                if (res.status === 200) {
-                    alert("Role assigned successfully!");
-                } else {
-                    alert("Failed to assign role.");
-                }
-            } catch (err) {
-                alert("An error occurred while assigning the role.");
-            }
-        }}>
-            <label for="userId">User ID:</label>
-            <input type="text" id="userId" name="userId" placeholder="Enter user ID" required />
-
-            <label for="role">Select Role:</label>
-            <select id="role" name="role" required>
-                <option value="" disabled selected>Select a role</option>
-                <option value="admin">Admin</option>
-                <option value="member">Member</option>
-            </select>
-
-            <button type="submit">Assign Role</button>
-        </form>
-    </div>
-
     <!-- Group Management Section -->
     <div id="groupManagementSection" style="display: none;">
         <h2>Group Members</h2>
@@ -141,30 +102,11 @@ import Layout from '../layouts/Layout.astro';
         const groupMembersList = document.getElementById('groupMembersList');
         const groupManagementSection = document.getElementById('groupManagementSection');
 
-        // Get references to the checkboxes
-        const privateCheckbox = document.getElementById('isPrivate');
-        const publicCheckbox = document.getElementById('isPublic');
-        const roleAssignmentSection = document.getElementById('roleAssignmentSection');
-
-        // Add event listeners to ensure only one checkbox can be selected
-        privateCheckbox.addEventListener('change', () => {
-            if (privateCheckbox.checked) {
-                publicCheckbox.checked = false; // Uncheck the public checkbox
-            }
-        });
-
-        publicCheckbox.addEventListener('change', () => {
-            if (publicCheckbox.checked) {
-                privateCheckbox.checked = false; // Uncheck the private checkbox
-            }
-        });
-
         // Mock current user role (replace with actual backend data)
         const currentUserRole = "owner"; // Replace with actual role from your backend
 
         // Show management sections if the user is an owner or admin
         if (currentUserRole === "owner" || currentUserRole === "admin") {
-            roleAssignmentSection.style.display = "block";
             groupManagementSection.style.display = "block";
         }
 
@@ -181,6 +123,23 @@ import Layout from '../layouts/Layout.astro';
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `
                             <span>${member.name} (${member.role})</span>
+                            ${
+                                currentUserRole === "owner" || currentUserRole === "admin"
+                                    ? `
+                                    <div class="dropdown">
+                                        <button class="dropdown-button">⋮</button>
+                                        <div class="dropdown-menu">
+                                            ${
+                                                member.role === "member"
+                                                    ? `<button onclick="promoteToAdmin('${member.id}')">Promote to Admin</button>`
+                                                    : `<button onclick="demoteToMember('${member.id}')">Demote to Member</button>`
+                                            }
+                                            <button onclick="removeMember('${member.id}')">Remove</button>
+                                        </div>
+                                    </div>
+                                    `
+                                    : ''
+                            }
                         `;
                         groupMembersList.appendChild(listItem);
                     });
@@ -192,7 +151,103 @@ import Layout from '../layouts/Layout.astro';
             }
         }
 
+        // Function to promote a member to admin
+        async function promoteToAdmin(userId) {
+            try {
+                const res = await assignRoleRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
+                    data: { userId, role: "admin" },
+                });
+                if (res.status === 200) {
+                    alert("Member promoted to Admin successfully!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to promote member to Admin.");
+                }
+            } catch (err) {
+                alert("An error occurred while promoting the member.");
+            }
+        }
+
+        // Function to demote an admin to member
+        async function demoteToMember(userId) {
+            try {
+                const res = await assignRoleRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
+                    data: { userId, role: "member" },
+                });
+                if (res.status === 200) {
+                    alert("Admin demoted to Member successfully!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to demote admin to Member.");
+                }
+            } catch (err) {
+                alert("An error occurred while demoting the admin.");
+            }
+        }
+
+        // Function to remove a member
+        async function removeMember(userId) {
+            if (!confirm("Are you sure you want to remove this member?")) return;
+
+            try {
+                const res = await removeMemberRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/members',
+                    data: { userId },
+                });
+                if (res.status === 200) {
+                    alert("Member removed successfully!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to remove member.");
+                }
+            } catch (err) {
+                alert("An error occurred while removing the member.");
+            }
+        }
+
         // Load group members on page load
         loadGroupMembers();
     </script>
+
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown-menu button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </Layout>
