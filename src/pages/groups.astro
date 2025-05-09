@@ -67,6 +67,7 @@ import Layout from '../layouts/Layout.astro';
         <h2>Created Group</h2>
         <p><strong>Group Name:</strong> <span id="createdGroupName"></span></p>
         <p><strong>Group Type:</strong> <span id="createdGroupType"></span></p>
+        <button id="deleteGroupButton" class="delete-group-button">Delete Group</button>
     </div>
 
     <!-- Join Group Section -->
@@ -112,6 +113,9 @@ import Layout from '../layouts/Layout.astro';
         const createdGroupSection = document.getElementById('createdGroupSection');
         const createdGroupName = document.getElementById('createdGroupName');
         const createdGroupType = document.getElementById('createdGroupType');
+        const deleteGroupButton = document.getElementById('deleteGroupButton');
+
+        let currentGroupId = null; // Store the current group ID
 
         // Mock current user role (replace with actual backend data)
         const currentUserRole = "owner"; // Replace with actual role from your backend
@@ -123,10 +127,37 @@ import Layout from '../layouts/Layout.astro';
 
         // Function to display the created group
         function displayGroup(group) {
+            currentGroupId = group.id; // Store the group ID
             createdGroupName.textContent = group.gname;
             createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
             createdGroupSection.style.display = "block";
         }
+
+        // Function to delete the group
+        deleteGroupButton.addEventListener('click', async () => {
+            if (!currentGroupId) {
+                alert("No group to delete.");
+                return;
+            }
+
+            const confirmDelete = confirm("Are you sure you want to delete this group?");
+            if (!confirmDelete) return;
+
+            try {
+                const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/groups/${currentGroupId}`, {
+                    method: 'DELETE',
+                });
+                if (res.status === 200) {
+                    alert("Group deleted successfully.");
+                    createdGroupSection.style.display = "none";
+                    currentGroupId = null;
+                } else {
+                    alert("Failed to delete the group.");
+                }
+            } catch (err) {
+                alert("An error occurred while deleting the group.");
+            }
+        });
 
         // Function to load group members
         async function loadGroupMembers() {
