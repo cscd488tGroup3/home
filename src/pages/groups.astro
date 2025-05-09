@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
         e.preventDefault();
         const formData = new FormData(e.target);
         const groupData = {
-            Gname: formData.get("groupName"),
+            gname: formData.get("groupName"),
             isPrivate: formData.get("isPrivate") === "on", // Check if the private checkbox is checked
             isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
             role: "owner", // Automatically assign the creator as the "Owner"
@@ -66,12 +66,12 @@ import Layout from '../layouts/Layout.astro';
         <form id="joinGroupForm" onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            const Gid = formData.get("groupId");
+            const gid = formData.get("groupId");
 
             try {
                 const res = await joinGroupRequest({
                     worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/join',
-                    data: { Gid },
+                    data: { gid },
                 });
                 if (res.status === 200) {
                     alert("You have successfully joined the group as a Member!");
