@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-// import { createGroupRequest } from "../../public/js/groups.js";
+// import { createGroupRequest, assignRoleRequest } from "../../public/js/groups.js";
 ---
 
 <Layout>
@@ -12,6 +12,7 @@ import Layout from '../layouts/Layout.astro';
             name: formData.get("groupName"),
             isPrivate: formData.get("isPrivate") === "on", // Check if the private checkbox is checked
             isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
+            role: "owner", // Automatically assign the creator as the "Owner"
         };
 
         // Ensure one option is selected
@@ -32,7 +33,7 @@ import Layout from '../layouts/Layout.astro';
                 data: groupData,
             });
             if (res.status === 200) {
-                alert("Group created successfully!");
+                alert("Group created successfully! You are now the Owner.");
                 e.target.reset();
             } else {
                 alert("Failed to create group.");
@@ -59,10 +60,50 @@ import Layout from '../layouts/Layout.astro';
         <button type="submit">Create Group</button>
     </form>
 
+    <!-- Role Assignment Section -->
+    <div id="roleAssignmentSection" style="display: none;">
+        <h2>Assign Roles</h2>
+        <form id="assignRoleForm" onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const roleData = {
+                userId: formData.get("userId"), // ID of the user to assign a role
+                role: formData.get("role"), // Role to assign
+            };
+
+            try {
+                const res = await assignRoleRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
+                    data: roleData,
+                });
+                if (res.status === 200) {
+                    alert("Role assigned successfully!");
+                } else {
+                    alert("Failed to assign role.");
+                }
+            } catch (err) {
+                alert("An error occurred while assigning the role.");
+            }
+        }}>
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" name="userId" placeholder="Enter user ID" required />
+
+            <label for="role">Select Role:</label>
+            <select id="role" name="role" required>
+                <option value="" disabled selected>Select a role</option>
+                <option value="admin">Admin</option>
+                <option value="member">Member</option>
+            </select>
+
+            <button type="submit">Assign Role</button>
+        </form>
+    </div>
+
     <script>
         // Get references to the checkboxes
         const privateCheckbox = document.getElementById('isPrivate');
         const publicCheckbox = document.getElementById('isPublic');
+        const roleAssignmentSection = document.getElementById('roleAssignmentSection');
 
         // Add event listeners to ensure only one checkbox can be selected
         privateCheckbox.addEventListener('change', () => {
@@ -76,5 +117,11 @@ import Layout from '../layouts/Layout.astro';
                 privateCheckbox.checked = false; // Uncheck the private checkbox
             }
         });
+
+        // Show role assignment section if the user is an owner or admin
+        const currentUserRole = "owner"; // Replace with actual role from your backend
+        if (currentUserRole === "owner" || currentUserRole === "admin") {
+            roleAssignmentSection.style.display = "block";
+        }
     </script>
 </Layout>
