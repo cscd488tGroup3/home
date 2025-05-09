@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-// import { createGroupRequest, assignRoleRequest, joinGroupRequest, fetchGroupMembers, removeMemberRequest } from "../../public/js/groups.js";
 ---
 
 <Layout>
@@ -9,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
         e.preventDefault();
         const formData = new FormData(e.target);
         const groupData = {
-            name: formData.get("groupName"),
+            Gname: formData.get("groupName"),
             isPrivate: formData.get("isPrivate") === "on", // Check if the private checkbox is checked
             isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
             role: "owner", // Automatically assign the creator as the "Owner"
@@ -67,12 +66,12 @@ import Layout from '../layouts/Layout.astro';
         <form id="joinGroupForm" onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            const groupId = formData.get("groupId");
+            const Gid = formData.get("groupId");
 
             try {
                 const res = await joinGroupRequest({
                     worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/join',
-                    data: { groupId },
+                    data: { Gid },
                 });
                 if (res.status === 200) {
                     alert("You have successfully joined the group as a Member!");
@@ -91,9 +90,9 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <!-- Group Management Section -->
-    <div id="groupManagementSection" style="display: none;">
+    <div id="groupManagementSection" class="group-management-section">
         <h2>Group Members</h2>
-        <ul id="groupMembersList">
+        <ul id="groupMembersList" class="group-members-list">
             <!-- Members will be dynamically populated here -->
         </ul>
     </div>
@@ -151,103 +150,7 @@ import Layout from '../layouts/Layout.astro';
             }
         }
 
-        // Function to promote a member to admin
-        async function promoteToAdmin(userId) {
-            try {
-                const res = await assignRoleRequest({
-                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
-                    data: { userId, role: "admin" },
-                });
-                if (res.status === 200) {
-                    alert("Member promoted to Admin successfully!");
-                    loadGroupMembers(); // Refresh the member list
-                } else {
-                    alert("Failed to promote member to Admin.");
-                }
-            } catch (err) {
-                alert("An error occurred while promoting the member.");
-            }
-        }
-
-        // Function to demote an admin to member
-        async function demoteToMember(userId) {
-            try {
-                const res = await assignRoleRequest({
-                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
-                    data: { userId, role: "member" },
-                });
-                if (res.status === 200) {
-                    alert("Admin demoted to Member successfully!");
-                    loadGroupMembers(); // Refresh the member list
-                } else {
-                    alert("Failed to demote admin to Member.");
-                }
-            } catch (err) {
-                alert("An error occurred while demoting the admin.");
-            }
-        }
-
-        // Function to remove a member
-        async function removeMember(userId) {
-            if (!confirm("Are you sure you want to remove this member?")) return;
-
-            try {
-                const res = await removeMemberRequest({
-                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/members',
-                    data: { userId },
-                });
-                if (res.status === 200) {
-                    alert("Member removed successfully!");
-                    loadGroupMembers(); // Refresh the member list
-                } else {
-                    alert("Failed to remove member.");
-                }
-            } catch (err) {
-                alert("An error occurred while removing the member.");
-            }
-        }
-
         // Load group members on page load
         loadGroupMembers();
     </script>
-
-    <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
-
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        .dropdown-menu button {
-            display: block;
-            width: 100%;
-            padding: 8px 12px;
-            border: none;
-            background: none;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .dropdown-menu button:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
 </Layout>
