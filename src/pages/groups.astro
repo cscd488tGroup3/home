@@ -9,20 +9,13 @@ import Layout from '../layouts/Layout.astro';
         const formData = new FormData(e.target);
         const groupData = {
             gname: formData.get("groupName"),
-            isPrivate: formData.get("isPrivate") === "on", // Check if the private checkbox is checked
-            isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
-            role: "owner", // Automatically assign the creator as the "Owner"
+            isPrivate: formData.get("isPrivate") === "on",
+            isPublic: formData.get("isPublic") === "on",
+            role: "owner",
         };
 
-        // Ensure one option is selected
         if (!groupData.isPrivate && !groupData.isPublic) {
             alert("You must select either Private or Public.");
-            return;
-        }
-
-        // Ensure only one option is selected
-        if (groupData.isPrivate && groupData.isPublic) {
-            alert("You can only select either Private or Public, not both.");
             return;
         }
 
@@ -32,11 +25,11 @@ import Layout from '../layouts/Layout.astro';
                 data: groupData,
             });
             if (res.status === 200) {
-                const createdGroup = await res.json(); // Get the created group details
+                const createdGroup = await res.json();
                 alert("Group created successfully! You are now the Owner.");
                 e.target.reset();
-                displayGroup(createdGroup); // Display the created group
-                loadGroupMembers(); // Load members after group creation
+                displayGroup(createdGroup);
+                loadGroupMembers();
             } else {
                 alert("Failed to create group.");
             }
@@ -47,7 +40,6 @@ import Layout from '../layouts/Layout.astro';
         <label for="groupName">Group Name:</label>
         <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
 
-        <!-- Checkbox container for private and public group -->
         <div class="checkbox-container">
             <div>
                 <input type="checkbox" id="isPublic" name="isPublic" />
@@ -70,6 +62,42 @@ import Layout from '../layouts/Layout.astro';
         <button id="deleteGroupButton" class="delete-group-button">Delete Group</button>
     </div>
 
+    <!-- Group Posts Section -->
+    <div id="groupPostsSection" style="display: none;">
+        <h2>Group Posts</h2>
+        <form id="createPostForm" onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const postData = {
+                gid: currentGroupId, // Group ID to associate the post
+                content: formData.get("postContent"),
+            };
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData),
+                });
+                if (res.status === 200) {
+                    alert("Post created successfully!");
+                    e.target.reset();
+                    loadGroupPosts(); // Reload posts after creating a new one
+                } else {
+                    alert("Failed to create post.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the post.");
+            }
+        }}>
+            <textarea id="postContent" name="postContent" placeholder="Write your post here..." required></textarea>
+            <button type="submit">Post</button>
+        </form>
+        <ul id="groupPostsList" class="group-posts-list">
+            <!-- Posts will be dynamically populated here -->
+        </ul>
+    </div>
+
     <!-- Join Group Section -->
     <div id="joinGroupSection">
         <h2>Join a Group</h2>
@@ -85,7 +113,7 @@ import Layout from '../layouts/Layout.astro';
                 });
                 if (res.status === 200) {
                     alert("You have successfully joined the group as a Member!");
-                    loadGroupMembers(); // Refresh the member list
+                    loadGroupMembers();
                 } else {
                     alert("Failed to join the group.");
                 }
@@ -114,26 +142,45 @@ import Layout from '../layouts/Layout.astro';
         const createdGroupName = document.getElementById('createdGroupName');
         const createdGroupType = document.getElementById('createdGroupType');
         const deleteGroupButton = document.getElementById('deleteGroupButton');
+        const groupPostsSection = document.getElementById('groupPostsSection');
+        const groupPostsList = document.getElementById('groupPostsList');
 
         let currentGroupId = null; // Store the current group ID
 
-        // Mock current user role (replace with actual backend data)
-        const currentUserRole = "owner"; // Replace with actual role from your backend
+        const currentUserRole = "owner";
 
-        // Show management sections if the user is an owner or admin
         if (currentUserRole === "owner" || currentUserRole === "admin") {
             groupManagementSection.style.display = "block";
         }
 
-        // Function to display the created group
         function displayGroup(group) {
-            currentGroupId = group.id; // Store the group ID
+            currentGroupId = group.id;
             createdGroupName.textContent = group.gname;
             createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
             createdGroupSection.style.display = "block";
+            groupPostsSection.style.display = "block";
+            loadGroupPosts(); // Load posts for the group
         }
 
-        // Function to delete the group
+        async function loadGroupPosts() {
+            try {
+                const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts?gid=${currentGroupId}`);
+                if (res.status === 200) {
+                    const posts = await res.json();
+                    groupPostsList.innerHTML = ''; // Clear the list
+                    posts.forEach((post) => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = post.content;
+                        groupPostsList.appendChild(listItem);
+                    });
+                } else {
+                    alert("Failed to load posts.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading posts.");
+            }
+        }
+
         deleteGroupButton.addEventListener('click', async () => {
             if (!currentGroupId) {
                 alert("No group to delete.");
@@ -150,6 +197,7 @@ import Layout from '../layouts/Layout.astro';
                 if (res.status === 200) {
                     alert("Group deleted successfully.");
                     createdGroupSection.style.display = "none";
+                    groupPostsSection.style.display = "none";
                     currentGroupId = null;
                 } else {
                     alert("Failed to delete the group.");
@@ -159,7 +207,6 @@ import Layout from '../layouts/Layout.astro';
             }
         });
 
-        // Function to load group members
         async function loadGroupMembers() {
             try {
                 const res = await fetchGroupMembers({
@@ -167,29 +214,12 @@ import Layout from '../layouts/Layout.astro';
                 });
                 if (res.status === 200) {
                     const members = await res.json();
-                    groupMembersList.innerHTML = ''; // Clear the list
+                    groupMembersList.innerHTML = '';
                     members.forEach((member) => {
-                        const gmid = member.id; // Group member ID
+                        const gmid = member.id;
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `
                             <span>${member.name} (${member.role})</span>
-                            ${
-                                currentUserRole === "owner" || currentUserRole === "admin"
-                                    ? `
-                                    <div class="dropdown">
-                                        <button class="dropdown-button">⋮</button>
-                                        <div class="dropdown-menu">
-                                            ${
-                                                member.role === "member"
-                                                    ? `<button onclick="promoteToAdmin('${gmid}')">Promote to Admin</button>`
-                                                    : `<button onclick="demoteToMember('${gmid}')">Demote to Member</button>`
-                                            }
-                                            <button onclick="removeMember('${gmid}')">Remove</button>
-                                        </div>
-                                    </div>
-                                    `
-                                    : ''
-                            }
                         `;
                         groupMembersList.appendChild(listItem);
                     });
@@ -201,7 +231,22 @@ import Layout from '../layouts/Layout.astro';
             }
         }
 
-        // Load group members on page load
         loadGroupMembers();
+
+        const isPublicCheckbox = document.getElementById('isPublic');
+        const isPrivateCheckbox = document.getElementById('isPrivate');
+
+        // Ensure only one checkbox can be selected at a time
+        isPublicCheckbox.addEventListener('change', () => {
+            if (isPublicCheckbox.checked) {
+                isPrivateCheckbox.checked = false;
+            }
+        });
+
+        isPrivateCheckbox.addEventListener('change', () => {
+            if (isPrivateCheckbox.checked) {
+                isPublicCheckbox.checked = false;
+            }
+        });
     </script>
 </Layout>
