@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-// import { createGroupRequest, assignRoleRequest } from "../../public/js/groups.js";
+// import { createGroupRequest, assignRoleRequest, joinGroupRequest, fetchGroupMembers } from "../../public/js/groups.js";
 ---
 
 <Layout>
@@ -35,6 +35,7 @@ import Layout from '../layouts/Layout.astro';
             if (res.status === 200) {
                 alert("Group created successfully! You are now the Owner.");
                 e.target.reset();
+                loadGroupMembers(); // Load members after group creation
             } else {
                 alert("Failed to create group.");
             }
@@ -59,6 +60,35 @@ import Layout from '../layouts/Layout.astro';
 
         <button type="submit">Create Group</button>
     </form>
+
+    <!-- Join Group Section -->
+    <div id="joinGroupSection">
+        <h2>Join a Group</h2>
+        <form id="joinGroupForm" onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const groupId = formData.get("groupId");
+
+            try {
+                const res = await joinGroupRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/join',
+                    data: { groupId },
+                });
+                if (res.status === 200) {
+                    alert("You have successfully joined the group as a Member!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to join the group.");
+                }
+            } catch (err) {
+                alert("An error occurred while joining the group.");
+            }
+        }}>
+            <label for="groupId">Group ID:</label>
+            <input type="text" id="groupId" name="groupId" placeholder="Enter group ID" required />
+            <button type="submit">Join Group</button>
+        </form>
+    </div>
 
     <!-- Role Assignment Section -->
     <div id="roleAssignmentSection" style="display: none;">
@@ -99,7 +129,18 @@ import Layout from '../layouts/Layout.astro';
         </form>
     </div>
 
+    <!-- Group Management Section -->
+    <div id="groupManagementSection" style="display: none;">
+        <h2>Group Members</h2>
+        <ul id="groupMembersList">
+            <!-- Members will be dynamically populated here -->
+        </ul>
+    </div>
+
     <script>
+        const groupMembersList = document.getElementById('groupMembersList');
+        const groupManagementSection = document.getElementById('groupManagementSection');
+
         // Get references to the checkboxes
         const privateCheckbox = document.getElementById('isPrivate');
         const publicCheckbox = document.getElementById('isPublic');
@@ -118,10 +159,40 @@ import Layout from '../layouts/Layout.astro';
             }
         });
 
-        // Show role assignment section if the user is an owner or admin
+        // Mock current user role (replace with actual backend data)
         const currentUserRole = "owner"; // Replace with actual role from your backend
+
+        // Show management sections if the user is an owner or admin
         if (currentUserRole === "owner" || currentUserRole === "admin") {
             roleAssignmentSection.style.display = "block";
+            groupManagementSection.style.display = "block";
         }
+
+        // Function to load group members
+        async function loadGroupMembers() {
+            try {
+                const res = await fetchGroupMembers({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/members',
+                });
+                if (res.status === 200) {
+                    const members = await res.json();
+                    groupMembersList.innerHTML = ''; // Clear the list
+                    members.forEach((member) => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <span>${member.name} (${member.role})</span>
+                        `;
+                        groupMembersList.appendChild(listItem);
+                    });
+                } else {
+                    alert("Failed to load group members.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading group members.");
+            }
+        }
+
+        // Load group members on page load
+        loadGroupMembers();
     </script>
 </Layout>
