@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-// import { createGroupRequest } from "../../public/js/groups.js";
+// import { createGroupRequest, assignRoleRequest, joinGroupRequest, fetchGroupMembers } from "../../public/js/groups.js";
 ---
 
 <Layout>
@@ -10,15 +10,32 @@ import Layout from '../layouts/Layout.astro';
         const formData = new FormData(e.target);
         const groupData = {
             name: formData.get("groupName"),
+            isPrivate: formData.get("isPrivate") === "on", // Check if the private checkbox is checked
+            isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
+            role: "owner", // Automatically assign the creator as the "Owner"
         };
+
+        // Ensure one option is selected
+        if (!groupData.isPrivate && !groupData.isPublic) {
+            alert("You must select either Private or Public.");
+            return;
+        }
+
+        // Ensure only one option is selected
+        if (groupData.isPrivate && groupData.isPublic) {
+            alert("You can only select either Private or Public, not both.");
+            return;
+        }
+
         try {
             const res = await createGroupRequest({
                 worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/groups',
                 data: groupData,
             });
             if (res.status === 200) {
-                alert("Group created successfully!");
+                alert("Group created successfully! You are now the Owner.");
                 e.target.reset();
+                loadGroupMembers(); // Load members after group creation
             } else {
                 alert("Failed to create group.");
             }
@@ -27,7 +44,210 @@ import Layout from '../layouts/Layout.astro';
         }
     }}>
         <label for="groupName">Group Name:</label>
-        <input type="text" id="groupName" name="groupName" placeholder="Enter group name" required />
+        <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
+
+        <!-- Checkbox container for private and public group -->
+        <div class="checkbox-container">
+            <div>
+                <input type="checkbox" id="isPublic" name="isPublic" />
+                <label for="isPublic">Public Group</label>
+            </div>
+            <div>
+                <input type="checkbox" id="isPrivate" name="isPrivate" />
+                <label for="isPrivate">Private Group</label>
+            </div>
+        </div>
+
         <button type="submit">Create Group</button>
     </form>
+
+    <!-- Join Group Section -->
+    <div id="joinGroupSection">
+        <h2>Join a Group</h2>
+        <form id="joinGroupForm" onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const groupId = formData.get("groupId");
+
+            try {
+                const res = await joinGroupRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/join',
+                    data: { groupId },
+                });
+                if (res.status === 200) {
+                    alert("You have successfully joined the group as a Member!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to join the group.");
+                }
+            } catch (err) {
+                alert("An error occurred while joining the group.");
+            }
+        }}>
+            <label for="groupId">Group ID:</label>
+            <input type="text" id="groupId" name="groupId" placeholder="Enter group ID" required />
+            <button type="submit">Join Group</button>
+        </form>
+    </div>
+
+    <!-- Group Management Section -->
+    <div id="groupManagementSection" style="display: none;">
+        <h2>Group Members</h2>
+        <ul id="groupMembersList">
+            <!-- Members will be dynamically populated here -->
+        </ul>
+    </div>
+
+    <script>
+        const groupMembersList = document.getElementById('groupMembersList');
+        const groupManagementSection = document.getElementById('groupManagementSection');
+
+        // Mock current user role (replace with actual backend data)
+        const currentUserRole = "owner"; // Replace with actual role from your backend
+
+        // Show management sections if the user is an owner or admin
+        if (currentUserRole === "owner" || currentUserRole === "admin") {
+            groupManagementSection.style.display = "block";
+        }
+
+        // Function to load group members
+        async function loadGroupMembers() {
+            try {
+                const res = await fetchGroupMembers({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/members',
+                });
+                if (res.status === 200) {
+                    const members = await res.json();
+                    groupMembersList.innerHTML = ''; // Clear the list
+                    members.forEach((member) => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <span>${member.name} (${member.role})</span>
+                            ${
+                                currentUserRole === "owner" || currentUserRole === "admin"
+                                    ? `
+                                    <div class="dropdown">
+                                        <button class="dropdown-button">⋮</button>
+                                        <div class="dropdown-menu">
+                                            ${
+                                                member.role === "member"
+                                                    ? `<button onclick="promoteToAdmin('${member.id}')">Promote to Admin</button>`
+                                                    : `<button onclick="demoteToMember('${member.id}')">Demote to Member</button>`
+                                            }
+                                            <button onclick="removeMember('${member.id}')">Remove</button>
+                                        </div>
+                                    </div>
+                                    `
+                                    : ''
+                            }
+                        `;
+                        groupMembersList.appendChild(listItem);
+                    });
+                } else {
+                    alert("Failed to load group members.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading group members.");
+            }
+        }
+
+        // Function to promote a member to admin
+        async function promoteToAdmin(userId) {
+            try {
+                const res = await assignRoleRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
+                    data: { userId, role: "admin" },
+                });
+                if (res.status === 200) {
+                    alert("Member promoted to Admin successfully!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to promote member to Admin.");
+                }
+            } catch (err) {
+                alert("An error occurred while promoting the member.");
+            }
+        }
+
+        // Function to demote an admin to member
+        async function demoteToMember(userId) {
+            try {
+                const res = await assignRoleRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/roles',
+                    data: { userId, role: "member" },
+                });
+                if (res.status === 200) {
+                    alert("Admin demoted to Member successfully!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to demote admin to Member.");
+                }
+            } catch (err) {
+                alert("An error occurred while demoting the admin.");
+            }
+        }
+
+        // Function to remove a member
+        async function removeMember(userId) {
+            if (!confirm("Are you sure you want to remove this member?")) return;
+
+            try {
+                const res = await removeMemberRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/members',
+                    data: { userId },
+                });
+                if (res.status === 200) {
+                    alert("Member removed successfully!");
+                    loadGroupMembers(); // Refresh the member list
+                } else {
+                    alert("Failed to remove member.");
+                }
+            } catch (err) {
+                alert("An error occurred while removing the member.");
+            }
+        }
+
+        // Load group members on page load
+        loadGroupMembers();
+    </script>
+
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown-menu button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </Layout>

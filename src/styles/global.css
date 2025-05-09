@@ -268,3 +268,17 @@ img .logo {
 .link:hover {
     color: #005bb5;
 }
+
+/* Container for the checkboxes */
+.checkbox-container {
+    display: flex; /* Arrange checkboxes side by side */
+    gap: 20px; /* Add spacing between the two options */
+    margin-top: 10px; /* Add some spacing above the container */
+}
+
+/* Styling for each checkbox and its label */
+.checkbox-container div {
+    display: flex; /* Align checkbox and label horizontally */
+    align-items: center; /* Align the checkbox and label vertically */
+    gap: 5px; /* Add spacing between the checkbox and label */
+}
