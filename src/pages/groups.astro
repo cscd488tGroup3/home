@@ -119,6 +119,7 @@ import Layout from '../layouts/Layout.astro';
                     const members = await res.json();
                     groupMembersList.innerHTML = ''; // Clear the list
                     members.forEach((member) => {
+                        const gmid = member.id; // Group member ID
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `
                             <span>${member.name} (${member.role})</span>
@@ -130,10 +131,10 @@ import Layout from '../layouts/Layout.astro';
                                         <div class="dropdown-menu">
                                             ${
                                                 member.role === "member"
-                                                    ? `<button onclick="promoteToAdmin('${member.id}')">Promote to Admin</button>`
-                                                    : `<button onclick="demoteToMember('${member.id}')">Demote to Member</button>`
+                                                    ? `<button onclick="promoteToAdmin('${gmid}')">Promote to Admin</button>`
+                                                    : `<button onclick="demoteToMember('${gmid}')">Demote to Member</button>`
                                             }
-                                            <button onclick="removeMember('${member.id}')">Remove</button>
+                                            <button onclick="removeMember('${gmid}')">Remove</button>
                                         </div>
                                     </div>
                                     `
