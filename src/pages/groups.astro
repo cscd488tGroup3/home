@@ -10,7 +10,16 @@ import Layout from '../layouts/Layout.astro';
         const formData = new FormData(e.target);
         const groupData = {
             name: formData.get("groupName"),
+            isPrivate: formData.get("isPrivate") === "on", // Check if the private checkbox is checked
+            isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
         };
+
+        // Ensure only one option is selected
+        if (groupData.isPrivate && groupData.isPublic) {
+            alert("You can only select either Private or Public, not both.");
+            return;
+        }
+
         try {
             const res = await createGroupRequest({
                 worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/groups',
@@ -27,7 +36,39 @@ import Layout from '../layouts/Layout.astro';
         }
     }}>
         <label for="groupName">Group Name:</label>
-        <input type="text" id="groupName" name="groupName" placeholder="Enter group name" required />
+        <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
+
+        <!-- Checkbox container for private and public group -->
+        <div class="checkbox-container">
+            <div>
+                <input type="checkbox" id="isPublic" name="isPublic" />
+                <label for="isPublic">Public Group</label>
+            </div>
+            <div>
+                <input type="checkbox" id="isPrivate" name="isPrivate" />
+                <label for="isPrivate">Private Group</label>
+            </div>
+        </div>
+
         <button type="submit">Create Group</button>
     </form>
+
+    <script>
+        // Get references to the checkboxes
+        const privateCheckbox = document.getElementById('isPrivate');
+        const publicCheckbox = document.getElementById('isPublic');
+
+        // Add event listeners to ensure only one checkbox can be selected
+        privateCheckbox.addEventListener('change', () => {
+            if (privateCheckbox.checked) {
+                publicCheckbox.checked = false; // Uncheck the public checkbox
+            }
+        });
+
+        publicCheckbox.addEventListener('change', () => {
+            if (publicCheckbox.checked) {
+                privateCheckbox.checked = false; // Uncheck the private checkbox
+            }
+        });
+    </script>
 </Layout>
