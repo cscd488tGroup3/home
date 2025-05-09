@@ -14,6 +14,12 @@ import Layout from '../layouts/Layout.astro';
             isPublic: formData.get("isPublic") === "on", // Check if the public checkbox is checked
         };
 
+        // Ensure one option is selected
+        if (!groupData.isPrivate && !groupData.isPublic) {
+            alert("You must select either Private or Public.");
+            return;
+        }
+
         // Ensure only one option is selected
         if (groupData.isPrivate && groupData.isPublic) {
             alert("You can only select either Private or Public, not both.");
