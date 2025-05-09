@@ -32,8 +32,10 @@ import Layout from '../layouts/Layout.astro';
                 data: groupData,
             });
             if (res.status === 200) {
+                const createdGroup = await res.json(); // Get the created group details
                 alert("Group created successfully! You are now the Owner.");
                 e.target.reset();
+                displayGroup(createdGroup); // Display the created group
                 loadGroupMembers(); // Load members after group creation
             } else {
                 alert("Failed to create group.");
@@ -59,6 +61,13 @@ import Layout from '../layouts/Layout.astro';
 
         <button type="submit">Create Group</button>
     </form>
+
+    <!-- Display Created Group Section -->
+    <div id="createdGroupSection" style="display: none;">
+        <h2>Created Group</h2>
+        <p><strong>Group Name:</strong> <span id="createdGroupName"></span></p>
+        <p><strong>Group Type:</strong> <span id="createdGroupType"></span></p>
+    </div>
 
     <!-- Join Group Section -->
     <div id="joinGroupSection">
@@ -100,6 +109,9 @@ import Layout from '../layouts/Layout.astro';
     <script>
         const groupMembersList = document.getElementById('groupMembersList');
         const groupManagementSection = document.getElementById('groupManagementSection');
+        const createdGroupSection = document.getElementById('createdGroupSection');
+        const createdGroupName = document.getElementById('createdGroupName');
+        const createdGroupType = document.getElementById('createdGroupType');
 
         // Mock current user role (replace with actual backend data)
         const currentUserRole = "owner"; // Replace with actual role from your backend
@@ -107,6 +119,13 @@ import Layout from '../layouts/Layout.astro';
         // Show management sections if the user is an owner or admin
         if (currentUserRole === "owner" || currentUserRole === "admin") {
             groupManagementSection.style.display = "block";
+        }
+
+        // Function to display the created group
+        function displayGroup(group) {
+            createdGroupName.textContent = group.gname;
+            createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
+            createdGroupSection.style.display = "block";
         }
 
         // Function to load group members
