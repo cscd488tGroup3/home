@@ -466,4 +466,50 @@ export async function deleteReaction(rid, uid, env) {
     }
 }
 
+// USER PRIV DATABASE ADAPTER //
 
+/**
+ * getUserPriv returns the user's privacy setting by the uid
+ * @param {*} env the environment variables
+ * @param {*} uid representing the user id
+ * @returns results a json object containing int priv representing the user's privacy setting
+ */
+export async function getUserPriv(env, uid) {
+    try {
+        const {results} = await env.DB.prepare("SELECT FROM user_priv WHERE uid = ?").bind(uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * setUserPriv inserts a new user privacy setting into the database
+ * @param {*} env the environment variables
+ * @param {string} uid representing the user id
+ * @param {int} priv representing the user's privacy setting
+ */
+export async function setUserPriv(env, uid, priv) {
+    // if (priv !== 0 & priv !== 1) {
+    //     throw new Error(`Bad Params`)
+    // }
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO user_priv (uid, priv) VALUES (?, ?)").bind(uid, priv).run();
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateUserPriv updates the user's privacy setting
+ * @param {*} env the environment variable
+ * @param {string} uid representing the user id
+ * @param {int} priv representing the user's privacy setting
+ */
+export async function updateUserPriv(env, uid, priv){
+    try {
+        const {results} = await env.DB.prepare("UPDATE user_priv SET priv=? WHERE uid=?").bind(priv, uid).run();
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}

@@ -8,7 +8,7 @@ import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, write
  */
 function addCorsHeaders(response) {
     const headers = new Headers(response.headers);
-    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); // Or your specific frontend URL
+    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); 
     headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     return new Response(response.body, { ...response, headers });
@@ -299,7 +299,6 @@ export default {
         // api/write/info
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
-            //const email = url.searchParams.get("email");
             const fname = url.searchParams.get("fname");
             const lname = url.searchParams.get("lname");
             const dob = url.searchParams.get("dob");
