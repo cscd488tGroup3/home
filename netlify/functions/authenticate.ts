@@ -45,11 +45,11 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	console.log("(validateSessionToken) Session ID:", sessionId);
 	console.log("(validateSessionToken) Raw token:", token);
 	
-	const data = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?id=${sessionId}&sauth=${USR_SESSION}`)
+	const data = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?usid=${sessionId}&sauth=${USR_SESSION}`)
 		.then((res) => res.json())
 	console.log("(validateSessionToken) Data:", data);
 	
-	const row = data[0].id; // handle response from the database
+	const row = data[0]; // handle response from the database
 	
 	console.log("(validateSessionToken) Row:", row);
 	if (row === null) {
@@ -57,7 +57,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	}
 
 	const session: Session = {
-		id: row.id,
+		id: row.usid,
 		userId: row.uid,
 		expiresAt: new Date(row.expires_at),
 	};
@@ -76,7 +76,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	// renew session
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?id=${session.id}&expires_at=${encodeURIComponent(session.expiresAt.toISOString())}&sauth=${USR_SESSION}`);
+		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?usid=${session.id}&expires_at=${encodeURIComponent(session.expiresAt.toISOString())}&sauth=${USR_SESSION}`);
 
 		if (!res.ok) {
 			throw new Error("Failed to renew session");
@@ -92,7 +92,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
  * @throws Error if the request fails
  */
 export async function invalidateSession(sessionId: string): Promise<void> {
-	const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/delete?id=${sessionId}&sauth=${USR_SESSION}`);
+	const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/delete?usid=${sessionId}&sauth=${USR_SESSION}`);
 
 	if (!res.ok) {
 		throw new Error("Failed to invalidate session");
