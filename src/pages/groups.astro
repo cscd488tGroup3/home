@@ -224,11 +224,20 @@ import Layout from '../layouts/Layout.astro';
                         listItem.style.alignItems = "center";
                         listItem.innerHTML = `
                             <span>${user.name} (${user.email || user.username || user.id})</span>
-                            ${
-                                displayingAllUsers && currentGroupId
-                                ? `<button class="invite-btn" onclick="inviteUserToGroup('${user.id}')">Invite</button>`
-                                : ''
-                            }
+                            <div style="display: flex; gap: 0.5em;">
+                                ${
+                                    displayingAllUsers && currentGroupId
+                                    ? `<button class="invite-btn" onclick="inviteUserToGroup('${user.id}')">Invite</button>`
+                                    : ''
+                                }
+                                ${
+                                    currentUserRole === "owner" && currentGroupId && user.role !== "owner"
+                                    ? user.role === "admin"
+                                        ? `<button class="demote-btn" onclick="demoteToMember('${user.id}')">Demote to Member</button>`
+                                        : `<button class="promote-btn" onclick="promoteToAdmin('${user.id}')">Promote to Admin</button>`
+                                    : ''
+                                }
+                            </div>
                         `;
                         groupMembersList.appendChild(listItem);
                     });
