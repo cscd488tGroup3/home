@@ -29,7 +29,7 @@ export async function createSession(token: string, userId: string): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${encodeURIComponent(session.expiresAt.toISOString())}&sauth=${USR_SESSION}`);
+	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?usid=${session.id}&uid=${session.userId}&expires_at=${encodeURIComponent(session.expiresAt.toISOString())}&sauth=${USR_SESSION}`);
 	return session;
 }
 
