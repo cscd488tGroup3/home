@@ -304,7 +304,7 @@ export default {
             const lname = url.searchParams.get("lname");
             const dob = url.searchParams.get("dob");
             const doj = url.searchParams.get("doj");
-            if(!uid || !email || !fname || !lname || !dob || !doj) {
+            if(!uid || !fname || !lname || !dob || !doj) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
