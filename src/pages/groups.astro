@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-    <h1>Create a Group</h1>
+    <h1><u>Create a Group</u></h1>
     <form id="createGroupForm" onSubmit={async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -100,7 +100,7 @@ import Layout from '../layouts/Layout.astro';
 
     <!-- Join Group Section -->
     <div id="joinGroupSection">
-        <h2>Join a Group</h2>
+        <h2><u>Join a Group</u></h2>
         <form id="joinGroupForm" onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -129,7 +129,7 @@ import Layout from '../layouts/Layout.astro';
 
     <!-- Group Management Section -->
     <div id="groupManagementSection" class="group-management-section">
-        <h2>All Users</h2>
+        <h2><u>Users List</u></h2>
         <ul id="groupMembersList" class="group-members-list">
             <!-- Users will be dynamically populated here -->
         </ul>
