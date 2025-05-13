@@ -50,7 +50,7 @@ export async function handler(event,context) {
         };
 
         // Send account info to worker
-        const infoResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/info?uid=${accountInfo.uid}&email=${accountInfo.email}&fname=${accountInfo.fname}&lname=${accountInfo.lname}&dob=${accountInfo.dob}&doj=${accountInfo.doj}&auth=${USR_DB}&wauth=${USR_DB_W}`);
+        const infoResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/info?uid=${accountInfo.uid}&fname=${accountInfo.fname}&lname=${accountInfo.lname}&dob=${accountInfo.dob}&doj=${accountInfo.doj}&auth=${USR_DB}&wauth=${USR_DB_W}`);
 
         if (!infoResponse.ok) {
             throw new Error('Failed to write account info');
