@@ -207,6 +207,9 @@ import Layout from '../layouts/Layout.astro';
             }
         });
 
+        // Set this flag to true when displaying all users
+        const displayingAllUsers = true;
+
         async function loadGroupMembers() {
             try {
                 // Fetch all users from your API
@@ -216,8 +219,16 @@ import Layout from '../layouts/Layout.astro';
                     groupMembersList.innerHTML = '';
                     users.forEach((user) => {
                         const listItem = document.createElement('li');
+                        listItem.style.display = "flex";
+                        listItem.style.justifyContent = "space-between";
+                        listItem.style.alignItems = "center";
                         listItem.innerHTML = `
                             <span>${user.name} (${user.email || user.username || user.id})</span>
+                            ${
+                                displayingAllUsers && currentGroupId
+                                ? `<button class="invite-btn" onclick="inviteUserToGroup('${user.id}')">Invite</button>`
+                                : ''
+                            }
                         `;
                         groupMembersList.appendChild(listItem);
                     });
@@ -228,6 +239,28 @@ import Layout from '../layouts/Layout.astro';
                 alert("An error occurred while loading users.");
             }
         }
+
+        // Invite user to group function
+        window.inviteUserToGroup = async function(userId) {
+            if (!currentGroupId) {
+                alert("Please select or create a group first.");
+                return;
+            }
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ groupId: currentGroupId, userId }),
+                });
+                if (res.status === 200) {
+                    alert("User invited to group!");
+                } else {
+                    alert("Failed to invite user.");
+                }
+            } catch (err) {
+                alert("An error occurred while inviting the user.");
+            }
+        };
 
         loadGroupMembers();
 
