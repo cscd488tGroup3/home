@@ -3,97 +3,139 @@ Astro.props.pageTitle = "Account Info";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
 import { readUserInfoRequest, updateUserInfoRequest } from "../../public/js/user.js";
-const query = Astro.url.searchParams;
-const n = query.get("n");
+import { getSession } from "../utils/getSession.ts";
 
-let user = null;
-let error = null;
+const { user: sessionUser } = await getSession(Astro);
+const username = sessionUser ? `User ${sessionUser.id}` : "Guest";
+
 let locals = {
     runtime: {
         env: {
             USR_DB: import.meta.env.USR_DB
         }
     }
-}; // Define locals
+};
+
+let accountInfo = null;
+let error = null;
 
 try {
-    const res = await readUserInfoRequest({
+    const infoRes = await readUserInfoRequest({
         worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
-        uid: n, // get uid from query string
+        uid: username,
         auth: locals.runtime.env.USR_DB
     });
-    if (res.status === 200) {
-        user = await res.json();
-    } else { 
-        error = res;
+
+    if (infoRes.status === 200) {
+        const userInfo = await infoRes.json();
+
+        const adminRes = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uid: username,
+                auth: locals.runtime.env.USR_DB
+            })
+        });
+
+        if (adminRes.status === 200) {
+            const adminData = await adminRes.json();
+            accountInfo = [{
+                ...userInfo[0],
+                email: adminData.email
+            }];
+        } else {
+            error = { message: "Failed to fetch email from admin API" };
+        }
+    } else {
+        error = { message: "Failed to fetch basic user info" };
     }
-} catch (err) { 
-    error = { message: "Failed to fetch user data" };
+} catch (err) {
+    error = { message: "An unexpected error occurred while fetching user data" };
 }
 ---
-
 <Layout>
     <h1>Account Info</h1>
-    {user ? (
+    {accountInfo ? (
         <div>
-            <p><strong>Username:</strong> {user[0]?.uid}</p>
-            <p><strong>Name:</strong> {user[0]?.fname} {user[0]?.lname}</p>
-            <p><strong>Email:</strong> {user[0]?.email}</p>
-            <p><strong>Date of Birth:</strong> {user[0]?.dob}</p>
-            <p><strong>Date of Joining:</strong> {user[0]?.doj}</p>
-            
-            <h2>Update Information</h2>
-            <form method="post" onSubmit={async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const updatedData = {
-                    uid: user[0]?.uid,
-                    fname: formData.get("fname"),
-                    lname: formData.get("lname"),
-                    email: formData.get("email"),
-                    dob: formData.get("dob"),
-                    password: formData.get("password"),
-                };
-                try {
+            <p><strong>Username:</strong> {username}</p>
+
+            <!-- Field block -->
+            <label>
+                First Name:
+                <input type="text" id="fname" defaultValue={accountInfo[0]?.fname} />
+                <button type="button" onClick={async () => {
+                    const value = document.getElementById("fname").value;
                     const res = await updateUserInfoRequest({
-                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/update',
-                        data: updatedData,
+                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
+                        data: { uid: username, fname: value },
                         auth: locals.runtime.env.USR_DB
                     });
-                    if (res.status === 200) {
-                        alert("Information updated successfully!");
-                        location.reload();
-                    } else {
-                        alert("Failed to update information.");
+                    alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
+                }}>Save</button>
+            </label>
+
+            <label>
+                Last Name:
+                <input type="text" id="lname" defaultValue={accountInfo[0]?.lname} />
+                <button type="button" onClick={async () => {
+                    const value = document.getElementById("lname").value;
+                    const res = await updateUserInfoRequest({
+                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
+                        data: { uid: username, lname: value },
+                        auth: locals.runtime.env.USR_DB
+                    });
+                    alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
+                }}>Save</button>
+            </label>
+
+            <label>
+                Email:
+                <input type="email" id="email" defaultValue={accountInfo[0]?.email} />
+                <button type="button" onClick={async () => {
+                    const value = document.getElementById("email").value;
+                    const res = await updateUserInfoRequest({
+                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
+                        data: { uid: username, email: value },
+                        auth: locals.runtime.env.USR_DB
+                    });
+                    alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
+                }}>Save</button>
+            </label>
+
+            <label>
+                Date of Birth:
+                <input type="date" id="dob" defaultValue={accountInfo[0]?.dob} />
+                <button type="button" onClick={async () => {
+                    const value = document.getElementById("dob").value;
+                    const res = await updateUserInfoRequest({
+                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
+                        data: { uid: username, dob: value },
+                        auth: locals.runtime.env.USR_DB
+                    });
+                    alert(res.status === 200 ? "Date of birth updated!" : "Failed to update date of birth.");
+                }}>Save</button>
+            </label>
+
+            <label>
+                Password:
+                <input type="password" id="password" />
+                <button type="button" onClick={async () => {
+                    const value = document.getElementById("password").value;
+                    if (!value) {
+                        alert("Password cannot be empty.");
+                        return;
                     }
-                } catch (err) {
-                    alert("An error occurred while updating information.");
-                }
-            }}>
-                <label>
-                    First Name:
-                    <input type="text" name="fname" defaultValue={user[0]?.fname} required />
-                </label>
-                <label>
-                    Last Name:
-                    <input type="text" name="lname" defaultValue={user[0]?.lname} required />
-                </label>
-                <label>
-                    Email:
-                    <input type="email" name="email" defaultValue={user[0]?.email} required />
-                </label>
-                <label>
-                    Date of Birth:
-                    <input type="date" name="dob" defaultValue={user[0]?.dob} required />
-                </label>
-                <label>
-                    Password:
-                    <input type="password" name="password" required />
-                </label>
-                <button type="submit">Update</button>
-            </form>
+                    const res = await updateUserInfoRequest({
+                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
+                        data: { uid: username, password: value },
+                        auth: locals.runtime.env.USR_DB
+                    });
+                    alert(res.status === 200 ? "Password updated!" : "Failed to update password.");
+                }}>Save</button>
+            </label>
         </div>
     ) : (
-        <p>{error instanceof Response ? "Failed to fetch user data" : error?.message || "User not found"}</p>
+        <p>{error?.message || "User not found"}</p>
     )}
 </Layout>
