@@ -52,17 +52,18 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const row = data[0]; // handle response from the database
 	
 	console.log("(validateSessionToken) Row:", row);
-	if (row === null) {
+	if (!row) {
 		return { session: null, user: null };
 	}
 
 	const session: Session = {
-		id: row.usid,
+		id: row.usid,    //just the string, not the whole row
 		userId: row.uid,
-		expiresAt: new Date(row.expires_at),
+		expiresAt: new Date(row.expires_at),  //should now parse correctly
 	};
+
 	const user: User = {
-		id: row.uid
+		id: row.uid,
 	};
 
 	console.log("(validateSessionToken) Final Session Object:", session);
