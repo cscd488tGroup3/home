@@ -64,7 +64,6 @@ export async function getPasswordByEmail(email, env) {
 /**
  * writeNewUser - insert a new user into the info table
  * @param {String} uid 
- * @param {String} email 
  * @param {String} fname 
  * @param {String} lname 
  * @param {Date} dob 
@@ -72,9 +71,9 @@ export async function getPasswordByEmail(email, env) {
  * @param {*} env 
  * @returns status message of the database
  */
-export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
+export async function writeNewUser(uid, fname, lname, dob, doj, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO info (uid, email, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?, ?);").bind(uid, email, fname, lname, dob, doj).run();
+        const {results} = await env.DB.prepare("INSERT INTO info (uid, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?);").bind(uid, fname, lname, dob, doj).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -104,15 +103,15 @@ export async function writeNewPassword(uid, email, hashpass, env) {
 
 /**
  * addSession - insert a new session into the user_session table
- * @param {*} id the session id
+ * @param {*} usid the session id
  * @param {String} uid the user id
  * @param {Date} expires_at the date and time of expiration in ISO format
  * @param {*} env  
  * @returns 
  */
-export async function addSession(id, uid, expires_at, env) {
+export async function addSession(usid, uid, expires_at, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO user_session (id, uid, expires_at) VALUES (?, ?, ?);").bind(id, uid, expires_at).run();
+        const {results} = await env.DB.prepare("INSERT INTO user_session (usid, uid, expires_at) VALUES (?, ?, ?);").bind(usid, uid, expires_at).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -121,13 +120,13 @@ export async function addSession(id, uid, expires_at, env) {
 
 /**
  * getSession - query the user_session table for the session id and the expiration date
- * @param {*} id 
+ * @param {*} usid 
  * @param {*} env 
  * @returns 
  */
-export async function getSession(id, env) {
+export async function getSession(usid, env) {
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM user_session WHERE id = ?").bind(id).all();
+        const {results} = await env.DB.prepare("SELECT * FROM user_session WHERE usid = ?").bind(usid).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -151,13 +150,13 @@ export async function getAllSessions(uid, env) {
 
 /**
  * deleteSession - delete a session from the user_session table
- * @param {*} id 
+ * @param {*} usid 
  * @param {*} env 
  * @returns 
  */
-export async function deleteSession(id, env) {
+export async function deleteSession(usid, env) {
     try {
-        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE id = ?").bind(id).run();
+        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE usid = ?").bind(usid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -181,14 +180,14 @@ export async function deleteAllSessions(uid, env) {
 
 /**
  * renewSession - update the expiration date of a session in the user_session table
- * @param {*} id 
+ * @param {*} usid 
  * @param {Date} expires_at 
  * @param {*} env 
  * @returns 
  */
-export async function renewSession(id, expires_at, env) {
+export async function renewSession(usid, expires_at, env) {
     try {
-        const {results} = await env.DB.prepare("UPDATE user_session SET expires_at = ? WHERE id = ?").bind(expires_at, id).run();
+        const {results} = await env.DB.prepare("UPDATE user_session SET expires_at = ? WHERE usid = ?").bind(expires_at, usid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);

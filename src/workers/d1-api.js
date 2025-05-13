@@ -55,17 +55,17 @@ export default {
             // add a new session
 
             // get the session params from the querystring
-            const id = url.searchParams.get("id");
+            const usid = url.searchParams.get("usid");
             const uid = url.searchParams.get("uid");
             const expires_at = url.searchParams.get("expires_at");
 
             // check for the session params
-            if (!id || !uid || !expires_at) {
+            if (!usid || !uid || !expires_at) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
             try {
-                const response = await addSession(id, uid, expires_at, env);
+                const response = await addSession(usid, uid, expires_at, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -83,13 +83,13 @@ export default {
             // add a new session
 
             // get the session params from the querystring
-            const id = url.searchParams.get("id");
+            const usid = url.searchParams.get("usid");
             const uid = url.searchParams.get("uid");
 
             // check for the session params
-            if (!id && !uid) {
+            if (!usid && !uid) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
-            } else if (!id) {
+            } else if (!usid) {
                 // get all sessions
                 try {
                     const response = await getAllSessions(uid, env);
@@ -104,7 +104,7 @@ export default {
             }
             // get a single session
             try {
-                const response = await getSession(id, env);
+                const response = await getSession(usid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -122,13 +122,13 @@ export default {
             // add a new session
 
             // get the session params from the querystring
-            const id = url.searchParams.get("id");
+            const usid = url.searchParams.get("usid");
             const uid = url.searchParams.get("uid");
 
             // check for the session params
-            if (!id && !uid) {
+            if (!usid && !uid) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
-            } else if (!id) {
+            } else if (!usid) {
                 // delete all sessions
                 try {
                     const response = await deleteAllSessions(uid, env);
@@ -143,7 +143,7 @@ export default {
             }
             // delete a single session
             try {
-                const response = await deleteSession(id, env);
+                const response = await deleteSession(usid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -161,16 +161,16 @@ export default {
             // add a new session
 
             // get the session params from the querystring
-            const id = url.searchParams.get("id");
+            const usid = url.searchParams.get("usid");
             const expires_at = url.searchParams.get("expires_at");
 
             // check for the session params
-            if (!id || !expires_at) {
+            if (!usid || !expires_at) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
             try {
-                const response = await renewSession(id, expires_at, env);
+                const response = await renewSession(usid, expires_at, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -299,17 +299,17 @@ export default {
         // api/write/info
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
-            const email = url.searchParams.get("email");
+            //const email = url.searchParams.get("email");
             const fname = url.searchParams.get("fname");
             const lname = url.searchParams.get("lname");
             const dob = url.searchParams.get("dob");
             const doj = url.searchParams.get("doj");
-            if(!uid || !email || !fname || !lname || !dob || !doj) {
+            if(!uid || !fname || !lname || !dob || !doj) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
             try {
-                const response = await writeNewUser(uid, email, fname, lname, dob, doj, env);
+                const response = await writeNewUser(uid, fname, lname, dob, doj, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },

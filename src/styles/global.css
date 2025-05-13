@@ -268,3 +268,56 @@ img .logo {
 .link:hover {
     color: #005bb5;
 }
+
+/* Container for the checkboxes */
+.checkbox-container {
+    display: flex; /* Arrange checkboxes side by side */
+    gap: 20px; /* Add spacing between the two options */
+    margin-top: 10px; /* Add some spacing above the container */
+}
+
+/* Styling for each checkbox and its label */
+.checkbox-container div {
+    display: flex; /* Align checkbox and label horizontally */
+    align-items: center; /* Align the checkbox and label vertically */
+    gap: 5px; /* Add spacing between the checkbox and label */
+}
+
+/* Dropdown styling for group management (from groups.astro) */
+.dropdown {
+    position: relative; /* Position the dropdown relative to its parent */
+    display: inline-block; /* Display inline for alignment */
+}
+
+.dropdown-button {
+    background: none; /* Remove default button styling */
+    border: none; /* Remove border */
+    cursor: pointer; /* Change cursor to pointer */
+    font-size: 18px; /* Set font size */
+}
+
+.dropdown-menu {
+    display: none; /* Hide the menu by default */
+    position: absolute; /* Position the menu relative to the dropdown */
+    background-color: white; /* Set background color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+    z-index: 1; /* Ensure it appears above other elements */
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block; /* Show the menu when hovering over the dropdown */
+}
+
+.dropdown-menu button {
+    display: block; /* Make buttons block-level elements */
+    width: 100%; /* Make buttons take full width */
+    padding: 8px 12px; /* Add padding for spacing */
+    border: none; /* Remove border */
+    background: none; /* Remove background */
+    text-align: left; /* Align text to the left */
+    cursor: pointer; /* Change cursor to pointer */
+}
+
+.dropdown-menu button:hover {
+    background-color: #f0f0f0; /* Add hover effect */
+}

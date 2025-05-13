@@ -1,24 +1,35 @@
 ---
 import Layout from '../layouts/Layout.astro';
-// import { createGroupRequest } from "../../public/js/groups.js";
 ---
 
 <Layout>
-    <h1>Create a Group</h1>
+    <h1><u>Create a Group</u></h1>
     <form id="createGroupForm" onSubmit={async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const groupData = {
-            name: formData.get("groupName"),
+            gname: formData.get("groupName"),
+            isPrivate: formData.get("isPrivate") === "on",
+            isPublic: formData.get("isPublic") === "on",
+            role: "owner",
         };
+
+        if (!groupData.isPrivate && !groupData.isPublic) {
+            alert("You must select either Private or Public.");
+            return;
+        }
+
         try {
             const res = await createGroupRequest({
                 worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/groups',
                 data: groupData,
             });
             if (res.status === 200) {
-                alert("Group created successfully!");
+                const createdGroup = await res.json();
+                alert("Group created successfully! You are now the Owner.");
                 e.target.reset();
+                displayGroup(createdGroup);
+                loadGroupMembers();
             } else {
                 alert("Failed to create group.");
             }
@@ -27,7 +38,255 @@ import Layout from '../layouts/Layout.astro';
         }
     }}>
         <label for="groupName">Group Name:</label>
-        <input type="text" id="groupName" name="groupName" placeholder="Enter group name" required />
+        <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
+
+        <div class="checkbox-container">
+            <div>
+                <input type="checkbox" id="isPublic" name="isPublic" />
+                <label for="isPublic">Public Group</label>
+            </div>
+            <div>
+                <input type="checkbox" id="isPrivate" name="isPrivate" />
+                <label for="isPrivate">Private Group</label>
+            </div>
+        </div>
+
         <button type="submit">Create Group</button>
     </form>
+
+    <!-- Display Created Group Section -->
+    <div id="createdGroupSection" style="display: none;">
+        <h2>Created Group</h2>
+        <p><strong>Group Name:</strong> <span id="createdGroupName"></span></p>
+        <p><strong>Group Type:</strong> <span id="createdGroupType"></span></p>
+        <button id="deleteGroupButton" class="delete-group-button">Delete Group</button>
+    </div>
+
+    <!-- Group Posts Section -->
+    <div id="groupPostsSection" style="display: none;">
+        <h2>Group Posts</h2>
+        <form id="createPostForm" onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const postData = {
+                gid: currentGroupId, // Group ID to associate the post
+                content: formData.get("postContent"),
+            };
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData),
+                });
+                if (res.status === 200) {
+                    alert("Post created successfully!");
+                    e.target.reset();
+                    loadGroupPosts(); // Reload posts after creating a new one
+                } else {
+                    alert("Failed to create post.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the post.");
+            }
+        }}>
+            <textarea id="postContent" name="postContent" placeholder="Write your post here..." required></textarea>
+            <button type="submit">Post</button>
+        </form>
+        <ul id="groupPostsList" class="group-posts-list">
+            <!-- Posts will be dynamically populated here -->
+        </ul>
+    </div>
+
+    <!-- Join Group Section -->
+    <div id="joinGroupSection">
+        <h2><u>Join a Group</u></h2>
+        <form id="joinGroupForm" onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const gid = formData.get("groupId");
+
+            try {
+                const res = await joinGroupRequest({
+                    worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/join',
+                    data: { gid },
+                });
+                if (res.status === 200) {
+                    alert("You have successfully joined the group as a Member!");
+                    loadGroupMembers();
+                } else {
+                    alert("Failed to join the group.");
+                }
+            } catch (err) {
+                alert("An error occurred while joining the group.");
+            }
+        }}>
+            <label for="groupId">Group ID:</label>
+            <input type="text" id="groupId" name="groupId" placeholder="Enter group ID" required />
+            <button type="submit">Join Group</button>
+        </form>
+    </div>
+
+    <!-- Group Management Section -->
+    <div id="groupManagementSection" class="group-management-section">
+        <h2><u>Users List</u></h2>
+        <ul id="groupMembersList" class="group-members-list">
+            <!-- Users will be dynamically populated here -->
+        </ul>
+    </div>
+
+    <script>
+        const groupMembersList = document.getElementById('groupMembersList');
+        const groupManagementSection = document.getElementById('groupManagementSection');
+        const createdGroupSection = document.getElementById('createdGroupSection');
+        const createdGroupName = document.getElementById('createdGroupName');
+        const createdGroupType = document.getElementById('createdGroupType');
+        const deleteGroupButton = document.getElementById('deleteGroupButton');
+        const groupPostsSection = document.getElementById('groupPostsSection');
+        const groupPostsList = document.getElementById('groupPostsList');
+
+        let currentGroupId = null; // Store the current group ID
+
+        const currentUserRole = "owner";
+
+        if (currentUserRole === "owner" || currentUserRole === "admin") {
+            groupManagementSection.style.display = "block";
+        }
+
+        function displayGroup(group) {
+            currentGroupId = group.id;
+            createdGroupName.textContent = group.gname;
+            createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
+            createdGroupSection.style.display = "block";
+            groupPostsSection.style.display = "block";
+            loadGroupPosts(); // Load posts for the group
+        }
+
+        async function loadGroupPosts() {
+            try {
+                const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts?gid=${currentGroupId}`);
+                if (res.status === 200) {
+                    const posts = await res.json();
+                    groupPostsList.innerHTML = ''; // Clear the list
+                    posts.forEach((post) => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = post.content;
+                        groupPostsList.appendChild(listItem);
+                    });
+                } else {
+                    alert("Failed to load posts.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading posts.");
+            }
+        }
+
+        deleteGroupButton.addEventListener('click', async () => {
+            if (!currentGroupId) {
+                alert("No group to delete.");
+                return;
+            }
+
+            const confirmDelete = confirm("Are you sure you want to delete this group?");
+            if (!confirmDelete) return;
+
+            try {
+                const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/groups/${currentGroupId}`, {
+                    method: 'DELETE',
+                });
+                if (res.status === 200) {
+                    alert("Group deleted successfully.");
+                    createdGroupSection.style.display = "none";
+                    groupPostsSection.style.display = "none";
+                    currentGroupId = null;
+                } else {
+                    alert("Failed to delete the group.");
+                }
+            } catch (err) {
+                alert("An error occurred while deleting the group.");
+            }
+        });
+
+        // Set this flag to true when displaying all users
+        const displayingAllUsers = true;
+
+        async function loadGroupMembers() {
+            try {
+                // Fetch all users from your API
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/users');
+                if (res.status === 200) {
+                    const users = await res.json();
+                    groupMembersList.innerHTML = '';
+                    users.forEach((user) => {
+                        const listItem = document.createElement('li');
+                        listItem.style.display = "flex";
+                        listItem.style.justifyContent = "space-between";
+                        listItem.style.alignItems = "center";
+                        listItem.innerHTML = `
+                            <span>${user.name} (${user.email || user.username || user.id})</span>
+                            <div style="display: flex; gap: 0.5em;">
+                                ${
+                                    displayingAllUsers && currentGroupId
+                                    ? `<button class="invite-btn" onclick="inviteUserToGroup('${user.id}')">Invite</button>`
+                                    : ''
+                                }
+                                ${
+                                    currentUserRole === "owner" && currentGroupId && user.role !== "owner"
+                                    ? user.role === "admin"
+                                        ? `<button class="demote-btn" onclick="demoteToMember('${user.id}')">Demote to Member</button>`
+                                        : `<button class="promote-btn" onclick="promoteToAdmin('${user.id}')">Promote to Admin</button>`
+                                    : ''
+                                }
+                            </div>
+                        `;
+                        groupMembersList.appendChild(listItem);
+                    });
+                } else {
+                    alert("Failed to load users.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading users.");
+            }
+        }
+
+        // Invite user to group function
+        window.inviteUserToGroup = async function(userId) {
+            if (!currentGroupId) {
+                alert("Please select or create a group first.");
+                return;
+            }
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ groupId: currentGroupId, userId }),
+                });
+                if (res.status === 200) {
+                    alert("User invited to group!");
+                } else {
+                    alert("Failed to invite user.");
+                }
+            } catch (err) {
+                alert("An error occurred while inviting the user.");
+            }
+        };
+
+        loadGroupMembers();
+
+        const isPublicCheckbox = document.getElementById('isPublic');
+        const isPrivateCheckbox = document.getElementById('isPrivate');
+
+        // Ensure only one checkbox can be selected at a time
+        isPublicCheckbox.addEventListener('change', () => {
+            if (isPublicCheckbox.checked) {
+                isPrivateCheckbox.checked = false;
+            }
+        });
+
+        isPrivateCheckbox.addEventListener('change', () => {
+            if (isPrivateCheckbox.checked) {
+                isPublicCheckbox.checked = false;
+            }
+        });
+    </script>
 </Layout>
