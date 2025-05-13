@@ -1,75 +1,87 @@
 ---
-import { queryPerenual} from '../lib/queryAPIs.js'; // Ensure queryPerenual is exported and imported
-import {getPlantRecommendations} from '../lib/recommendations.js';
+import { getPlantRecommendations } from '../lib/recommendations.js'; // Ensure this path is correct
+
 ---
 
 <!-- Plant Display -->
 <section class="backdrop-blur-md bg-white/50">
-    <h1>Plant name: <span class="plant-name">Plant</span></h1>
-    <h2>Reproduction: <span class="plant-reproduction">Fruit/Vegetable</span></h2>
-    <h3>Lighting Time: <span class="plant-lighting">Lighting</span></h3>
-    <h4>Climate: <span class="plant-climate">Climate</span></h4>
-    <h5>Water Amount: <span class="plant-water">Water</span></h5>
-    <h6>Soil Type: <span class="plant-soil">Soil</span></h6>
+    <h1>Plant Name: <span class="plant-name">Plant</span></h1>
+    <h2>Scientific Name: <span class="plant-scientific-name">Scientific Name</span></h2>
+    <h3>Type: <span class="plant-type">Type</span></h3>
+    <h4>Cycle: <span class="plant-cycle">Cycle</span></h4>
+    <h5>Watering: <span class="plant-watering">Watering</span></h5>
+    <h6>Sunlight: <span class="plant-sunlight">Sunlight</span></h6>
+    <p>Description: <span class="plant-description">Description</span></p>
+    <img id="plant-image" src="" alt="Plant Image" />
 </section>
 
-<div>
-    <label for="apiSelect">Select API:</label>
-    <select id="apiSelect">
-        <option value="trefle">Trefle</option>
-        <option value="perenual">Perenual</option>
-        <option value="rapid">Rapid</option>
-    </select>
-</div>
-
 <script>
-    // DOM elements
-    const plantNameElement = document.querySelector('.plant-name') as HTMLElement | null;
-    const plantClimateElement = document.querySelector('.plant-climate') as HTMLElement | null;
-    const apiSelect = document.getElementById('apiSelect') as HTMLSelectElement | null;
+    interface PlantDetails {
+        commonName: string;
+        scientificName: string;
+        type: string;
+        cycle: string;
+        watering: string;
+        sunlight: string;
+        description: string;
+        default_image?: {
+            regular_url: string;
+        };
+    }
 
-    // Function to fetch plant data from the server-side API
-    async function fetchPlantInfo(plantName: string, api: string) {
+    // DOM elements for updating the UI
+    const plantNameElement = document.querySelector('.plant-name');
+    const plantScientificNameElement = document.querySelector('.plant-scientific-name');
+    const plantTypeElement = document.querySelector('.plant-type');
+    const plantCycleElement = document.querySelector('.plant-cycle');
+    const plantWateringElement = document.querySelector('.plant-watering');
+    const plantSunlightElement = document.querySelector('.plant-sunlight');
+    const plantDescriptionElement = document.querySelector('.plant-description');
+    const plantImageElement = document.getElementById('plant-image') as HTMLImageElement | null;
+    const fetchPlantButton = document.getElementById('fetchPlantButton');
+    const plantNameInput = document.getElementById('plantNameInput') as HTMLInputElement | null;
+
+    // Function to fetch plant information and update the UI
+    async function fetchPlantInfo(plantName: string) {
+        if (!plantName) {
+            alert('Please enter a plant name.');
+            return;
+        }
+
         try {
-            const response = await fetch('/api/handlePlantRequests', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: plantName, api }),
-            });
+            const plantDetails: PlantDetails = await getPlantRecommendations(plantName);
 
-            const data = await response.json();
-
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-
-            if (data) {
-                updatePlantDisplay(data);
-            } else {
-                alert('Plant not found');
-            }
+            // Update the UI with the fetched plant details
+            if (plantNameElement) plantNameElement.textContent = plantDetails.commonName || 'Unknown';
+            if (plantScientificNameElement) plantScientificNameElement.textContent = plantDetails.scientificName || 'Unknown';
+            if (plantTypeElement) plantTypeElement.textContent = plantDetails.type || 'Unknown';
+            if (plantCycleElement) plantCycleElement.textContent = plantDetails.cycle || 'Unknown';
+            if (plantWateringElement) plantWateringElement.textContent = plantDetails.watering || 'Unknown';
+            if (plantSunlightElement) plantSunlightElement.textContent = plantDetails.sunlight || 'Unknown';
+            if (plantDescriptionElement) plantDescriptionElement.textContent = plantDetails.description || 'No description available.';
+            if (plantImageElement) plantImageElement.src = plantDetails.default_image?.regular_url || '';
         } catch (error) {
             console.error('Error fetching plant info:', error);
-            alert('Failed to fetch plant information');
+            alert('Failed to fetch plant information.');
         }
     }
 
-    // Update the plant display with the fetched data
-    function updatePlantDisplay(data: any) {
-        if (plantNameElement) plantNameElement.textContent = data.name || 'Unknown';
-        if (plantClimateElement) plantClimateElement.textContent = data.climate || 'Unknown';
+    // Add event listener to the button
+    if (fetchPlantButton) {
+        fetchPlantButton.addEventListener('click', () => {
+            if (plantNameInput) {
+                fetchPlantInfo(plantNameInput.value.trim());
+            }
+        });
+    } else {
+        console.error('Fetch plant button not found.');
     }
 
-    // Listen for the custom "plantSearch" event
+    // Listen for the custom 'plantSearch' event dispatched by Plant.astro
     window.addEventListener('plantSearch', (event) => {
-        const plantName = (event as CustomEvent).detail.plantName;
-        const api = apiSelect?.value; // Get the selected API from the dropdown
-        if (plantName && api) {
-            fetchPlantInfo(plantName, api.toLowerCase());
-        } else {
-            alert('Please select an API.');
-        }
+        const customEvent = event as CustomEvent<{ plantName: string }>;
+        const plantName = customEvent.detail.plantName;
+        fetchPlantInfo(plantName);
     });
 </script>
 
@@ -78,7 +90,7 @@ import {getPlantRecommendations} from '../lib/recommendations.js';
     section {
         position: absolute;
         left: 22%;
-        top: 45%;
+        top: 55%;
         transform: translate(-50%, -50%);
         padding: 20px;
         border-radius: 10px;
@@ -94,5 +106,23 @@ import {getPlantRecommendations} from '../lib/recommendations.js';
         margin: 5px;
         padding: 10px;
         font-size: 16px;
+    }
+
+    input {
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    img {
+        max-width: 300px;
+        margin-top: 10px;
     }
 </style>
