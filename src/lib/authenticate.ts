@@ -29,7 +29,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?id=${session.id}&uid=${session.userId}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
+	await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/new?usid=${session.id}&uid=${session.userId}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
 	return session;
 }
 
@@ -41,7 +41,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
  */
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const row = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?id=${sessionId}&sauth=${USR_SESSION}`)
+	const row = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/get?usid=${sessionId}&sauth=${USR_SESSION}`)
 		.then((res) => res.json())
 	if (row === null) {
 		return { session: null, user: null };
@@ -62,7 +62,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	// renew session
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?id=${session.id}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
+		const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/renew?usid=${session.id}&expires_at=${session.expiresAt}&sauth=${USR_SESSION}`);
 
 		if (!res.ok) {
 			throw new Error("Failed to renew session");
@@ -78,7 +78,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
  * @throws Error if the request fails
  */
 export async function invalidateSession(sessionId: string): Promise<void> {
-	const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/delete?id=${sessionId}&sauth=${USR_SESSION}`);
+	const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/sessions/delete?usid=${sessionId}&sauth=${USR_SESSION}`);
 
 	if (!res.ok) {
 		throw new Error("Failed to invalidate session");
