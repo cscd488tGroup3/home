@@ -1,5 +1,5 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -312,6 +312,10 @@ export default {
             const email = url.searchParams.get("email");
             const hashpass = url.searchParams.get("hashpass");
 
+            if(!uid || (!fname && !lname && !dob && !email && !hashpass)) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
             const results = [];
 
             try {
@@ -333,6 +337,51 @@ export default {
                 })
             );
         }
+
+        /* api to handle the privacy setting */
+
+        // api/priv/update
+        if (url.pathname === "/api/priv/update") {
+            const uid = url.searchParams.get("uid");
+            const priv = url.searchParams.get("priv");
+
+            if(!uid || !priv) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            try {
+                const response = await updateUserPriv(env, uid, priv);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // api/priv/init
+        if (url.pathname === "/api/priv/init") {
+            const uid = url.searchParams.get("uid");
+
+            if(!uid) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            const priv = 0; // default privacy is public
+
+            try {
+                const response = await setUserPriv(env, uid, priv);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        /* API to handle the info table */
 
         // api/write/info
         if (url.pathname === "/api/write/info") {
