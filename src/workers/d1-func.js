@@ -518,6 +518,88 @@ export async function updateUserPriv(env, uid, priv){
     }
 }
 
+/* UPDATE USER INFO FUNCTIONS */
+
+/**
+ * updateFname updates fname in the info table
+ * @param {*} uid representing the user id
+ * @param {*} fname representing the user's first name
+ * @param {*} env representing the environment variables
+ * @returns 
+ */
+export async function updateFname(uid, fname, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE info SET fname = ? WHERE uid = ?").bind(fname, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateLname updates lname in the info table
+ * @param {*} uid representing the user id
+ * @param {*} lname representing the user's last name
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateLname(uid, lname, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE info SET lname = ? WHERE uid = ?").bind(lname, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateDOB updates dob in the info table
+ * @param {*} uid representing the user id
+ * @param {*} dob representing the user's date of birth
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateDOB(uid, dob, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE info SET dob = ? WHERE uid = ?").bind(dob, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateEmail updates email in the admin table
+ * @param {*} uid representing the user id
+ * @param {*} email representing the user's email
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateEmail(uid, email, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE admin SET email = ? WHERE uid = ?").bind(email, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateHashpass updates hashpass in the admin table
+ * @param {*} uid representing the user id
+ * @param {*} hashpass representing the user's hashed password
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateHashpass(uid, hashpass, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE admin SET hashpass = ? WHERE uid = ?").bind(hashpass, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
 /* GROUP DATABASE FUNCTIONS */
 
 /*  */
