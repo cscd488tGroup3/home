@@ -1,7 +1,8 @@
-/* 
-    This file contains the functions that interact with the database.
-    The functions are used in the worker (./d1-api.js) to perform database operations.
-*/
+/**
+ * This file contains the functions used in `d1-api.js` to interact with the database in perscribed ways
+ */
+
+/* INFO, ADMIN DATABASE FUNCTIONS */
 
 /**
  * getUserByUid - query all admin table info by uid
@@ -99,7 +100,7 @@ export async function writeNewPassword(uid, email, hashpass, env) {
     }
 }
 
-/// untested implementation ///
+/* SESSION DATABASE FUNCTIONS */
 
 /**
  * addSession - insert a new session into the user_session table
@@ -208,7 +209,8 @@ export async function deleteExpiredSessions(env) {
         throw new Error(`Database query failed: ${err.message}`);
     }
 }
-// ALL OF THIS IS NEW FOR THE NEXT SPRINT //
+
+/* POST, COMMENTS, REACTON DATABASE FUNCTIONS */
 
 /**
  * addPost - insert a new post into the posts table
@@ -219,9 +221,9 @@ export async function deleteExpiredSessions(env) {
  * @param {*} env 
  * @returns 
  */
-export async function addPost(id, caption, url, uid, env) { 
+export async function addPost(pid, caption, url, uid, env) { 
     try {
-        const {results} = await env.DB.prepare("INSERT INTO post (id, caption, url, uid) VALUES (?, ?, ?, ?);").bind(id, caption, url, uid).run();
+        const {results} = await env.DB.prepare("INSERT INTO post (pid, caption, url, uid) VALUES (?, ?, ?, ?);").bind(pid, caption, url, uid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -233,9 +235,9 @@ export async function addPost(id, caption, url, uid, env) {
  * @param {*} env 
  * @returns 
  */
-export async function getPostByID(id, env) { 
+export async function getPostByID(pid, env) { 
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM post WHERE id = ?").bind(id).all();
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE id = ?").bind(pid).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -263,9 +265,9 @@ export async function getAllPostsFromUser(uid, env) {
  * @param {*} env 
  * @returns 
  */
-export async function editPost(id, uid, newCaption, env) { 
+export async function editPost(pid, uid, newCaption, env) { 
     try {
-        const {results} = await env.DB.prepare("UPDATE post SET caption = ? WHERE id = ? AND uid = ?").bind(newCaption, id, uid).run();
+        const {results} = await env.DB.prepare("UPDATE post SET caption = ? WHERE pid = ? AND uid = ?").bind(newCaption, pid, uid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -278,9 +280,9 @@ export async function editPost(id, uid, newCaption, env) {
  * @param {*} env 
  * @returns 
  */
-export async function deletePost(id, uid, env) { 
+export async function deletePost(pid, uid, env) { 
     try {
-        const {results} = await env.DB.prepare("DELETE FROM post WHERE id = ? AND uid = ?").bind(id, uid).run();
+        const {results} = await env.DB.prepare("DELETE FROM post WHERE pid = ? AND uid = ?").bind(pid, uid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -291,13 +293,13 @@ export async function deletePost(id, uid, env) {
  * @param {*} cid 
  * @param {*} content 
  * @param {*} uid 
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} env 
  * @returns 
  */
-export async function addComment(cid, content, uid, id, env) { 
+export async function addComment(cid, content, uid, pid, env) { 
     try {
-        const {results} = await env.DB.prepare("INSERT INTO comment (cid, content, uid, id) VALUES (?, ?, ?, ?);").bind(cid, content, uid, id).run();
+        const {results} = await env.DB.prepare("INSERT INTO comment (cid, content, uid, pid) VALUES (?, ?, ?, ?);").bind(cid, content, uid, pid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -325,7 +327,7 @@ export async function getComment(cid, env) {
  */
 export async function getParentPostByCommentID(cid, env) {
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM post WHERE id = (SELECT id FROM comment WHERE cid = ?)").bind(cid).all();
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE pid = (SELECT pid FROM comment WHERE cid = ?)").bind(cid).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -337,9 +339,9 @@ export async function getParentPostByCommentID(cid, env) {
  * @param {*} env 
  * @returns 
  */
-export async function getAllCommentsFromPost(id, env) {
+export async function getAllCommentsFromPost(pid, env) {
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE id = ?").bind(id).all();
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE pid = ?").bind(pid).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -394,13 +396,13 @@ export async function deleteComment(cid, uid, env) {
  * addReaction - insert a new reaction into the reaction table
  * @param {*} rid 
  * @param {*} uid 
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} env 
  * @returns 
  */
-export async function addReaction(rid, uid, id, env) {
+export async function addReaction(rid, uid, pid, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO reaction (rid, uid, id) VALUES (?, ?, ?);").bind(rid, uid, id).run();
+        const {results} = await env.DB.prepare("INSERT INTO reaction (rid, uid, pid) VALUES (?, ?, ?);").bind(rid, uid, pid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -408,13 +410,13 @@ export async function addReaction(rid, uid, id, env) {
 }
 /**
  * getReactionByPostID - query the reaction table for the reaction ids of the reactions to a post
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} env 
  * @returns 
  */
-export async function getReactionsByPostID(id, env) {
+export async function getReactionsByPostID(pid, env) {
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM reaction WHERE id = ?").bind(id).all();
+        const {results} = await env.DB.prepare("SELECT * FROM reaction WHERE id = ?").bind(pid).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -422,13 +424,13 @@ export async function getReactionsByPostID(id, env) {
 }
 /**
  * countReactionsByPostID - query the reaction table for the number of reactions to a post
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} env 
  * @returns 
  */
-export async function countReactionsByPostID(id, env) {
+export async function countReactionsByPostID(pid, env) {
     try {
-        const { results } = await env.DB.prepare("SELECT COUNT(*) AS count FROM reaction WHERE id = ?")
+        const { results } = await env.DB.prepare("SELECT COUNT(*) AS count FROM reaction WHERE pid = ?")
             .bind(id)
             .all();
         return results[0]?.count ?? 0; // Return the count or 0 if no rows
@@ -466,7 +468,7 @@ export async function deleteReaction(rid, uid, env) {
     }
 }
 
-// USER PRIV DATABASE ADAPTER //
+// USER PRIV DATABASE FUNCTIONS //
 
 /**
  * getUserPriv returns the user's privacy setting by the uid
@@ -495,6 +497,7 @@ export async function setUserPriv(env, uid, priv) {
     // }
     try {
         const {results} = await env.DB.prepare("INSERT INTO user_priv (uid, priv) VALUES (?, ?)").bind(uid, priv).run();
+        return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
     }
@@ -509,7 +512,12 @@ export async function setUserPriv(env, uid, priv) {
 export async function updateUserPriv(env, uid, priv){
     try {
         const {results} = await env.DB.prepare("UPDATE user_priv SET priv=? WHERE uid=?").bind(priv, uid).run();
+        return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
     }
 }
+
+/* GROUP DATABASE FUNCTIONS */
+
+/*  */
