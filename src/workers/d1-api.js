@@ -1,5 +1,5 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -46,6 +46,10 @@ export default {
         if (!auth && !wauth && !aauth && !sauth) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
+
+        /* POST API */
+
+        /* SESSION API */
 
         // create a new session
         if (url.pathname === "/sessions/new") {
@@ -294,6 +298,40 @@ export default {
         // check for the write key
         if (!wauth || wauth !== env.USR_DB_W) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
+        }
+
+        /** 
+         * api/edit/info 
+         * routine for editing the user info
+         */
+        if (url.pathname === "/api/edit/info") {
+            const uid = url.searchParams.get("uid");
+            const fname = url.searchParams.get("fname");
+            const lname = url.searchParams.get("lname");
+            const dob = url.searchParams.get("dob");
+            const email = url.searchParams.get("email");
+            const hashpass = url.searchParams.get("hashpass");
+
+            const results = [];
+
+            try {
+                if (fname) results.push(await updateFname(uid, fname, env)); 
+                if (lname) results.push(await updateLname(uid, lname, env));
+                if (dob) results.push(await updateDOB(uid, dob, env));
+                if (email) results.push(await updateEmail(uid, email, env));
+                if (hashpass) results.push(await updateHashpass(uid, hashpass, env));
+            } catch (err) {
+                return addCorsHeaders(
+                    new Response(JSON.stringify({ error: err.message }), { status: 500 })
+                );
+            }
+
+            return addCorsHeaders(
+                new Response(JSON.stringify({ message: "Update(s) successful", results }), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" }
+                })
+            );
         }
 
         // api/write/info
