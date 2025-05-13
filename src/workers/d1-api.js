@@ -299,7 +299,7 @@ export default {
         // api/write/info
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
-            const email = url.searchParams.get("email");
+            //const email = url.searchParams.get("email");
             const fname = url.searchParams.get("fname");
             const lname = url.searchParams.get("lname");
             const dob = url.searchParams.get("dob");
@@ -309,7 +309,7 @@ export default {
             }
 
             try {
-                const response = await writeNewUser(uid, email, fname, lname, dob, doj, env);
+                const response = await writeNewUser(uid, fname, lname, dob, doj, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },

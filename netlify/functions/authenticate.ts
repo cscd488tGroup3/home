@@ -49,7 +49,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		.then((res) => res.json())
 	console.log("(validateSessionToken) Data:", data);
 	
-	const row = data[0]; // handle response from the database
+	const row = data[0].id; // handle response from the database
 	
 	console.log("(validateSessionToken) Row:", row);
 	if (row === null) {

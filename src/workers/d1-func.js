@@ -64,7 +64,6 @@ export async function getPasswordByEmail(email, env) {
 /**
  * writeNewUser - insert a new user into the info table
  * @param {String} uid 
- * @param {String} email 
  * @param {String} fname 
  * @param {String} lname 
  * @param {Date} dob 
@@ -72,9 +71,9 @@ export async function getPasswordByEmail(email, env) {
  * @param {*} env 
  * @returns status message of the database
  */
-export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
+export async function writeNewUser(uid, fname, lname, dob, doj, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO info (uid, email, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?, ?);").bind(uid, email, fname, lname, dob, doj).run();
+        const {results} = await env.DB.prepare("INSERT INTO info (uid, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?);").bind(uid, fname, lname, dob, doj).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
