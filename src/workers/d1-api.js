@@ -1,5 +1,5 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -8,7 +8,7 @@ import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, write
  */
 function addCorsHeaders(response) {
     const headers = new Headers(response.headers);
-    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); // Or your specific frontend URL
+    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); 
     headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     return new Response(response.body, { ...response, headers });
@@ -46,6 +46,10 @@ export default {
         if (!auth && !wauth && !aauth && !sauth) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
+
+        /* POST API */
+
+        /* SESSION API */
 
         // create a new session
         if (url.pathname === "/sessions/new") {
@@ -291,15 +295,116 @@ export default {
             }
         }
 
+        // api/priv/get
+        if (url.pathname === "/api/priv/get") {
+            const uid = url.searchParams.get("uid");
+
+            if(!uid || !priv) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            try {
+                const response = await getUserPriv(env, uid);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
         // check for the write key
         if (!wauth || wauth !== env.USR_DB_W) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
 
+        /** 
+         * api/edit/info 
+         * routine for editing the user info
+         */
+        if (url.pathname === "/api/edit/info") {
+            const uid = url.searchParams.get("uid");
+            const fname = url.searchParams.get("fname");
+            const lname = url.searchParams.get("lname");
+            const dob = url.searchParams.get("dob");
+            const email = url.searchParams.get("email");
+            const hashpass = url.searchParams.get("hashpass");
+
+            if(!uid || (!fname && !lname && !dob && !email && !hashpass)) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            const results = [];
+
+            try {
+                if (fname) results.push(await updateFname(uid, fname, env)); 
+                if (lname) results.push(await updateLname(uid, lname, env));
+                if (dob) results.push(await updateDOB(uid, dob, env));
+                if (email) results.push(await updateEmail(uid, email, env));
+                if (hashpass) results.push(await updateHashpass(uid, hashpass, env));
+            } catch (err) {
+                return addCorsHeaders(
+                    new Response(JSON.stringify({ error: err.message }), { status: 500 })
+                );
+            }
+
+            return addCorsHeaders(
+                new Response(JSON.stringify({ message: "Update(s) successful", results }), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" }
+                })
+            );
+        }
+
+        /* api to handle the privacy setting */
+
+        // api/priv/update
+        if (url.pathname === "/api/priv/update") {
+            const uid = url.searchParams.get("uid");
+            const priv = url.searchParams.get("priv");
+
+            if(!uid || !priv) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            try {
+                const response = await updateUserPriv(env, uid, priv);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // api/priv/init
+        if (url.pathname === "/api/priv/init") {
+            const uid = url.searchParams.get("uid");
+
+            if(!uid) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            const priv = 0; // default privacy is public
+
+            try {
+                const response = await setUserPriv(env, uid, priv);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        /* API to handle the info table */
+
         // api/write/info
         if (url.pathname === "/api/write/info") {
             const uid = url.searchParams.get("uid");
-            //const email = url.searchParams.get("email");
             const fname = url.searchParams.get("fname");
             const lname = url.searchParams.get("lname");
             const dob = url.searchParams.get("dob");
