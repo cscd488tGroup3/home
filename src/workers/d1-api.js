@@ -1,5 +1,5 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv, setUserPriv, getUserPriv } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -299,7 +299,7 @@ export default {
         if (url.pathname === "/api/priv/get") {
             const uid = url.searchParams.get("uid");
 
-            if(!uid || !priv) {
+            if(!uid) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
