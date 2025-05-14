@@ -478,7 +478,7 @@ export async function deleteReaction(rid, uid, env) {
  */
 export async function getUserPriv(env, uid) {
     try {
-        const {results} = await env.DB.prepare("SELECT FROM user_priv WHERE uid = ?").bind(uid).run();
+        const {results} = await env.DB.prepare("SELECT * FROM user_priv WHERE uid = ?").bind(uid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
