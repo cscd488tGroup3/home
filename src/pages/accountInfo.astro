@@ -19,29 +19,39 @@ let locals = {
 let accountInfo = null;
 let error = null;
 
-console.log("Username:", username);
-console.log("USR_DB:", locals.runtime.env.USR_DB);
-console.log("USR_DB_W:", locals.runtime.env.USR_DB_W);
+console.log("(accountInfo.astro) Username:", username);
+console.log("(accountInfo.astro) USR_DB:", locals.runtime.env.USR_DB);
+console.log("(accountInfo.astro) USR_DB_W:", locals.runtime.env.USR_DB_W);
 
 try {
     const infoRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/info?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
 
     if (infoRes.status === 200) {
-        const userInfo = await infoRes.json();
+        console.log("(accountInfo.astro) infoRes:", infoRes);
+        const infoData = await infoRes.json();
+        
+        console.log("(accountInfo.astro) infoData:", infoData);
 
         const adminRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
         
         if (adminRes.status === 200) {
+            console.log("(accountInfo.astro) adminRes:", adminRes);
             const adminData = await adminRes.json();
+
+            console.log("(accountInfo.astro) adminData:", adminData);
 
             const privRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
 
             if (privRes.status === 200) {
+                console.log("(accountInfo.astro) privRes:", privRes);
                 const privData = await privRes.json();
+
+                console.log("(accountInfo.astro) privData:", privData);
+
                 accountInfo = [{
-                ...userInfo[0],
-                email: adminData.email,
-                priv: privData.priv
+                ...infoData,
+                email: adminData,
+                priv: privData
             }]; 
             } else {
                 console.error("User info fetch error:", err);
@@ -60,7 +70,7 @@ try {
     error = { message: "An unexpected error occurred while fetching user data" };
 }
 
-console.log(accountInfo);
+console.log("(accountInfo.astro) accountInfo:", accountInfo);
 ---
 <Layout>
   <h1>Account Info</h1>
