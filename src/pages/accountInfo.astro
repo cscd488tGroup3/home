@@ -27,7 +27,7 @@ try {
     const infoRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/info?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
 
     if (infoRes.status === 200) {
-        console.log("(accountInfo.astro) infoRes:", infoRes);
+        //console.log("(accountInfo.astro) infoRes:", infoRes);
         const infoData = await infoRes.json();
         
         console.log("(accountInfo.astro) infoData:", infoData);
@@ -35,7 +35,7 @@ try {
         const adminRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
         
         if (adminRes.status === 200) {
-            console.log("(accountInfo.astro) adminRes:", adminRes);
+            //console.log("(accountInfo.astro) adminRes:", adminRes);
             const adminData = await adminRes.json();
 
             console.log("(accountInfo.astro) adminData:", adminData);
@@ -49,10 +49,13 @@ try {
                 console.log("(accountInfo.astro) privData:", privData);
 
                 accountInfo = [{
-                ...infoData,
-                email: adminData,
-                priv: privData
-            }]; 
+                    fname: infoData[0].fname,
+                    lname: infoData[0].lname, 
+                    dob: infoData[0].dob, 
+                    doj: infoData[0].doj, 
+                    email: adminData[0].email,
+                    priv: privData[0].priv
+                }]; 
             } else {
                 console.error("User info fetch error:", err);
                 error = {message: "Failed to fetch privacy setting from priv API"}
