@@ -2,7 +2,7 @@
 Astro.props.pageTitle = "Account Info";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import { readUserInfoRequest, updateUserInfoRequest } from "../../public/js/user.js";
+import { readUserInfoRequest } from "../../public/js/user.js";
 import { getSession } from "../utils/getSession.ts";
 
 const { user: sessionUser } = await getSession(Astro);
