@@ -2,7 +2,6 @@
 Astro.props.pageTitle = "Account Info";
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import { readUserInfoRequest, updateUserInfoRequest } from "../../public/js/user.js";
 import { getSession } from "../utils/getSession.ts";
 
 const { user: sessionUser } = await getSession(Astro);
@@ -20,36 +19,22 @@ let locals = {
 let accountInfo = null;
 let error = null;
 
+console.log("Username:", username);
+console.log("USR_DB:", locals.runtime.env.USR_DB);
+console.log("USR_DB_W:", locals.runtime.env.USR_DB_W);
+
 try {
-    const infoRes = await readUserInfoRequest({
-        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/info',
-        uid: username,
-        auth: locals.runtime.env.USR_DB
-    });
+    const infoRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/info?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
 
     if (infoRes.status === 200) {
         const userInfo = await infoRes.json();
 
-        const adminRes = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/admin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                uid: username,
-                auth: locals.runtime.env.USR_DB
-            })
-        });
+        const adminRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
         
         if (adminRes.status === 200) {
             const adminData = await adminRes.json();
 
-            const privRes = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    uid: username,
-                    auth: locals.runtime.env.USR_DB
-                })
-            });
+            const privRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
 
             if (privRes.status === 200) {
                 const privData = await privRes.json();
@@ -59,15 +44,19 @@ try {
                 priv: privData.priv
             }]; 
             } else {
+                console.error("User info fetch error:", err);
                 error = {message: "Failed to fetch privacy setting from priv API"}
             }
         } else {
+            console.error("User info fetch error:", err);
             error = { message: "Failed to fetch email from admin API" };
         }
     } else {
+        console.error("User info fetch error:", err);
         error = { message: "Failed to fetch basic user info" };
     }
 } catch (err) {
+    console.error("User info fetch error:", err);
     error = { message: "An unexpected error occurred while fetching user data" };
 }
 ---
@@ -85,7 +74,6 @@ try {
         <p><strong>Privacy:</strong> {accountInfo[0]?.priv}</p>
       </div>
 
-      <!-- 🔧 Editable Form Fields -->
       <h2>Update Information</h2>
       
       <label>

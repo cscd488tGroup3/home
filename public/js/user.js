@@ -1,26 +1,14 @@
-export async function readUserInfoRequest({worker, uid, auth }) {
-    const url = new URL(worker);
-    url.searchParams.append('uid', uid);
-    url.searchParams.append('auth', auth);
-
-    //console.log(url.href);
-
-    const response = await fetch(url.href);
+export async function readUserInfoRequest({ worker, uid, auth }) {
+    const response = await fetch(worker, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid, auth })
+    });
 
     if (response.status === 200) {
         return response;
     } else {
-        throw new Error(`Request failed: ${response.statusText}`);
+        const text = await response.text();
+        throw new Error(`Request failed: ${response.status} - ${text}`);
     }
 }
-
-// export async function updateUserInfoRequest({ worker, data, auth }) {
-//     return fetch(worker, {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${auth}`,
-//         },
-//         body: JSON.stringify(data),
-//     });
-// }
