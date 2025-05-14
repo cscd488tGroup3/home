@@ -48,7 +48,9 @@ export async function handler(event,context) {
         
         // Send password data to worker
         const passResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/admin?uid=${passData.uid}&email=${passData.email}&hashpass=${passData.hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
-        
+
+        console.log("passResponse: ", passResponse);
+
         if (!passResponse.ok) {
             throw new Error('Failed to write account password');
         }
@@ -65,16 +67,20 @@ export async function handler(event,context) {
         // Send account info to worker
         const infoResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/write/info?uid=${accountInfo.uid}&fname=${accountInfo.fname}&lname=${accountInfo.lname}&dob=${accountInfo.dob}&doj=${accountInfo.doj}&auth=${USR_DB}&wauth=${USR_DB_W}`);
 
+        console.log("infoResponse: ", infoResponse);
+        
         if (!infoResponse.ok) {
             throw new Error('Failed to write account info');
         }
 
         const privResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/init?uid=${accountInfo.uid}&auth=${USR_DB}&wauth=${USR_DB_W}`);
 
+        console.log("privResponse: ", privResponse);
+        
         if (!privResponse.ok) {
             throw new Error('Failed to initialize account privacy settings');
         }
-        
+
         return {
             statusCode: 200,
             body: JSON.stringify({ message: 'Account created successfully!' }),
