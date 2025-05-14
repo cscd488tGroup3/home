@@ -5,7 +5,7 @@ import "../styles/global.css";
 import { getSession } from "../utils/getSession.ts";
 
 const { user: sessionUser } = await getSession(Astro);
-const username = sessionUser ? `User ${sessionUser.id}` : "Guest";
+const username = sessionUser ? `${sessionUser.id}` : "Guest";
 
 let locals = {
     runtime: {
