@@ -11,7 +11,8 @@ const username = sessionUser ? `User ${sessionUser.id}` : "Guest";
 let locals = {
     runtime: {
         env: {
-            USR_DB: import.meta.env.USR_DB
+            USR_DB: import.meta.env.USR_DB,
+            USR_DB_W: import.meta.env.USR_DB_W
         }
     }
 };
@@ -71,87 +72,91 @@ try {
 }
 ---
 <Layout>
-    <h1>Account Info</h1>
-    {accountInfo ? (
-        <div>
-            <p><strong>Username:</strong> {username}</p>
+  <h1>Account Info</h1>
+  {accountInfo ? (
+    <div>
+      <!-- 🔹 Display Current Info -->
+      <div class="info-block">
+        <p><strong>Username:</strong> {username}</p>
+        <p><strong>First Name:</strong> {accountInfo[0]?.fname}</p>
+        <p><strong>Last Name:</strong> {accountInfo[0]?.lname}</p>
+        <p><strong>Email:</strong> {accountInfo[0]?.email}</p>
+        <p><strong>Date of Birth:</strong> {accountInfo[0]?.dob}</p>
+        <p><strong>Privacy:</strong> {accountInfo[0]?.priv}</p>
+      </div>
 
-            <!-- Field block -->
-            <label>
-                First Name:
-                <input type="text" id="fname" defaultValue={accountInfo[0]?.fname} />
-                <button type="button" onClick={async () => {
-                    const value = document.getElementById("fname").value;
-                    const res = await updateUserInfoRequest({
-                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
-                        data: { uid: username, fname: value },
-                        auth: locals.runtime.env.USR_DB
-                    });
-                    alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
-                }}>Save</button>
-            </label>
+      <!-- 🔧 Editable Form Fields -->
+      <h2>Update Information</h2>
+      
+      <label>
+        First Name:
+        <input type="text" id="fname" defaultValue={accountInfo[0]?.fname} />
+        <button type="button" onClick={async () => {
+          const value = document.getElementById("fname").value;
+          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&fname=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
+          alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
+        }}>Save</button>
+      </label>
 
-            <label>
-                Last Name:
-                <input type="text" id="lname" defaultValue={accountInfo[0]?.lname} />
-                <button type="button" onClick={async () => {
-                    const value = document.getElementById("lname").value;
-                    const res = await updateUserInfoRequest({
-                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
-                        data: { uid: username, lname: value },
-                        auth: locals.runtime.env.USR_DB
-                    });
-                    alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
-                }}>Save</button>
-            </label>
+      <label>
+        Last Name:
+        <input type="text" id="lname" defaultValue={accountInfo[0]?.lname} />
+        <button type="button" onClick={async () => {
+          const value = document.getElementById("lname").value;
+          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&lname=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
+          alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
+        }}>Save</button>
+      </label>
 
-            <label>
-                Email:
-                <input type="email" id="email" defaultValue={accountInfo[0]?.email} />
-                <button type="button" onClick={async () => {
-                    const value = document.getElementById("email").value;
-                    const res = await updateUserInfoRequest({
-                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
-                        data: { uid: username, email: value },
-                        auth: locals.runtime.env.USR_DB
-                    });
-                    alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
-                }}>Save</button>
-            </label>
+      <label>
+        Email:
+        <input type="email" id="email" defaultValue={accountInfo[0]?.email} />
+        <button type="button" onClick={async () => {
+          const value = document.getElementById("email").value;
+          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&email=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
+          alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
+        }}>Save</button>
+      </label>
 
-            <label>
-                Date of Birth:
-                <input type="date" id="dob" defaultValue={accountInfo[0]?.dob} />
-                <button type="button" onClick={async () => {
-                    const value = document.getElementById("dob").value;
-                    const res = await updateUserInfoRequest({
-                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
-                        data: { uid: username, dob: value },
-                        auth: locals.runtime.env.USR_DB
-                    });
-                    alert(res.status === 200 ? "Date of birth updated!" : "Failed to update date of birth.");
-                }}>Save</button>
-            </label>
+      <label>
+        Date of Birth:
+        <input type="date" id="dob" defaultValue={accountInfo[0]?.dob} />
+        <button type="button" onClick={async () => {
+          const value = document.getElementById("dob").value;
+          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&dob=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
+          alert(res.status === 200 ? "DOB updated!" : "Failed to update DOB.");
+        }}>Save</button>
+      </label>
 
-            <label>
-                Password:
-                <input type="password" id="password" />
-                <button type="button" onClick={async () => {
-                    const value = document.getElementById("password").value;
-                    if (!value) {
-                        alert("Password cannot be empty.");
-                        return;
-                    }
-                    const res = await updateUserInfoRequest({
-                        worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info',
-                        data: { uid: username, password: value },
-                        auth: locals.runtime.env.USR_DB
-                    });
-                    alert(res.status === 200 ? "Password updated!" : "Failed to update password.");
-                }}>Save</button>
-            </label>
-        </div>
-    ) : (
-        <p>{error?.message || "User not found"}</p>
-    )}
+      <label>
+        Password:
+        <input type="password" id="password" />
+        <button type="button" onClick={async () => {
+          const value = document.getElementById("password").value;
+          if (!value) {
+            alert("Password cannot be empty.");
+            return;
+          }
+          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&hashpass=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
+          alert(res.status === 200 ? "Password updated!" : "Failed to update password.");
+        }}>Save</button>
+      </label>
+
+      <label>
+        Privacy Setting:
+        <select id="priv" defaultValue={accountInfo[0]?.priv}>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+        <button type="button" onClick={async () => {
+          const value = document.getElementById("priv").value;
+          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/update?uid=${username}&priv=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
+          alert(res.status === 200 ? "Privacy updated!" : "Failed to update privacy.");
+        }}>Save</button>
+      </label>
+
+    </div>
+  ) : (
+    <p>{error?.message || "User not found"}</p>
+  )}
 </Layout>
