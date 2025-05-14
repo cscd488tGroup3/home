@@ -37,13 +37,29 @@ try {
                 auth: locals.runtime.env.USR_DB
             })
         });
-
+        
         if (adminRes.status === 200) {
             const adminData = await adminRes.json();
-            accountInfo = [{
+
+            const privRes = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    uid: username,
+                    auth: locals.runtime.env.USR_DB
+                })
+            });
+
+            if (privRes.status === 200) {
+                const privData = await privRes.json();
+                accountInfo = [{
                 ...userInfo[0],
-                email: adminData.email
-            }];
+                email: adminData.email,
+                priv: privData.priv
+            }]; 
+            } else {
+                error = {message: "Failed to fetch privacy setting from priv API"}
+            }
         } else {
             error = { message: "Failed to fetch email from admin API" };
         }

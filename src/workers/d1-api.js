@@ -295,6 +295,25 @@ export default {
             }
         }
 
+        // api/priv/get
+        if (url.pathname === "/api/priv/get") {
+            const uid = url.searchParams.get("uid");
+
+            if(!uid || !priv) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+
+            try {
+                const response = await getUserPriv(env, uid);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
         // check for the write key
         if (!wauth || wauth !== env.USR_DB_W) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
