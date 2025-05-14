@@ -69,7 +69,11 @@ export async function handler(event,context) {
             throw new Error('Failed to write account info');
         }
 
+        const privResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/init?uid=${accountInfo.uid}&auth=${USR_DB}&wauth=${USR_DB_W}`);
 
+        if (!privResponse.ok) {
+            throw new Error('Failed to initialize account privacy settings');
+        }
         
         return {
             statusCode: 200,
