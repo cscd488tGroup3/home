@@ -99,10 +99,16 @@ p#error-badge {
 
 div {
     padding: 1em;
-    border: #014829;
-    border-radius: 0.01em;
-    margin-top: 1.25em;
+    /* border: #014829;
+    border-radius: 0.01em; */
+    /* margin-top: 1.25em; */
     text-align: center;
+}
+
+div#info-block {
+    border: 0.0625em solid #014829;
+    border-radius: 1em;
+    background: #088908;
 }
 
 #city {

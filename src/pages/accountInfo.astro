@@ -79,8 +79,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
   <h1>Account Info</h1>
   {accountInfo ? (
     <div>
-      <!-- 🔹 Display Current Info -->
-      <div class="info-block">
+      <div class="info-block" id="info-block">
         <p><strong>Username:</strong> {username}</p>
         <p><strong>First Name:</strong> {accountInfo[0]?.fname}</p>
         <p><strong>Last Name:</strong> {accountInfo[0]?.lname}</p>
