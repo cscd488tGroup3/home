@@ -109,14 +109,19 @@ div#info-block {
     border: 0.0625em solid #014829;
     border-radius: 1em;
     background: #56b90671;
+    padding: 1em;
+    width: fit-content;
 }
 
-div#info-block p {
-    text-align: left;
-    width: max-content;
+div.info-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    /* min-width: 250px; Optional: adjust width as needed */
+    margin-bottom: 0.3em;
 }
 
-div#info-block p#right {
+span.right {
     text-align: right;
 }
 
