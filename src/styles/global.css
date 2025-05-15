@@ -162,9 +162,13 @@ form {
 label {
     font-weight: bold;
     margin-bottom: 0.3125em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 input[type="text"],
+input[type="email"],
 input[type="password"] {
     padding: 0.625em;
     background-color: #cbecca;
