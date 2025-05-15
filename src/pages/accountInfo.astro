@@ -95,7 +95,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       <label>
         First Name:
         <input type="text" id="fname" defaultValue={accountInfo[0]?.fname} />
-        <button type="button" onClick={async () => {
+        <button id="search-button" type="button" onClick={async () => {
           const value = document.getElementById("fname").value;
           const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&fname=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
           alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
@@ -105,7 +105,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       <label>
         Last Name:
         <input type="text" id="lname" defaultValue={accountInfo[0]?.lname} />
-        <button type="button" onClick={async () => {
+        <button id="search-button" type="button" onClick={async () => {
           const value = document.getElementById("lname").value;
           const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&lname=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
           alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
@@ -115,7 +115,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       <label>
         Email:
         <input type="email" id="email" defaultValue={accountInfo[0]?.email} />
-        <button type="button" onClick={async () => {
+        <button id="search-button" type="button" onClick={async () => {
           const value = document.getElementById("email").value;
           const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&email=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
           alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
@@ -125,7 +125,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       <label>
         Date of Birth:
         <input type="date" id="dob" defaultValue={accountInfo[0]?.dob} />
-        <button type="button" onClick={async () => {
+        <button id="search-button" type="button" onClick={async () => {
           const value = document.getElementById("dob").value;
           const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&dob=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
           alert(res.status === 200 ? "DOB updated!" : "Failed to update DOB.");
@@ -135,7 +135,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       <label>
         Password:
         <input type="password" id="password" />
-        <button type="button" onClick={async () => {
+        <button id="search-button" type="button" onClick={async () => {
           const value = document.getElementById("password").value;
           if (!value) {
             alert("Password cannot be empty.");
@@ -152,7 +152,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
           <option value="public">Public</option>
           <option value="private">Private</option>
         </select>
-        <button type="button" onClick={async () => {
+        <button id="search-button" type="button" onClick={async () => {
           const value = document.getElementById("priv").value;
           const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/update?uid=${username}&priv=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
           alert(res.status === 200 ? "Privacy updated!" : "Failed to update privacy.");
