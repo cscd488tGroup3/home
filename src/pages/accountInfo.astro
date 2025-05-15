@@ -80,13 +80,14 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
   {accountInfo ? (
     <div>
       <div class="info-block" id="info-block">
-        <p><strong>Username:</strong> <p id="right">{username}</p></p>
-        <p><strong>First Name:</strong> <p id="right">{accountInfo[0]?.fname}</p></p>
-        <p><strong>Last Name:</strong> <p id="right">{accountInfo[0]?.lname}</p></p>
-        <p><strong>Email:</strong> <p id="right">{accountInfo[0]?.email}</p></p>
-        <p><strong>Date of Birth:</strong> <p id="right">{accountInfo[0]?.dob}</p></p>
-        <p><strong>Privacy:</strong> <p id="right">{accountInfo[0]?.priv}</p></p>
+        <div class="info-row"><strong>Username:</strong> <span class="right">pit</span></div>
+        <div class="info-row"><strong>First Name:</strong> <span class="right">Privlnit</span></div>
+        <div class="info-row"><strong>Last Name:</strong> <span class="right">Test</span></div>
+        <div class="info-row"><strong>Email:</strong> <span class="right">printe@baba.com</span></div>
+        <div class="info-row"><strong>Date of Birth:</strong> <span class="right">2008-08-08</span></div>
+        <div class="info-row"><strong>Privacy:</strong> <span class="right">0</span></div>
       </div>
+
 
       <h2>Update Information</h2>
       <form>
