@@ -82,6 +82,21 @@ p {
     text-align: center;
 }
 
+p#error-badge {
+    border: 0.0625em solid #480101;
+    border-radius: 1em;
+    padding: .5em;
+    padding-left: .75em;
+    padding-right: .75em;
+    background-color: #ecddca;
+    text-align: left;
+    font-weight: 500;
+    font-style: oblique;
+    color: #480101;
+    margin-top: 3em;
+    font-size: 1.05em;
+}
+
 div {
     padding: 1em;
     border: #014829;
