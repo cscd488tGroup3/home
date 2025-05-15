@@ -70,7 +70,7 @@ try {
     }
 } catch (err) {
     console.error("User info fetch error:", err);
-    error = { message: "An unexpected error occurred while fetching user data" };
+    error = { message: "An unexpected error occurred while fetching\nuser data. In case you are logged in as Guest,\nplease log in to view your account information." };
 }
 
 console.log("(accountInfo.astro) accountInfo:", accountInfo);
@@ -90,7 +90,8 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       </div>
 
       <h2>Update Information</h2>
-      
+      <form>
+
       <label>
         First Name:
         <input type="text" id="fname" defaultValue={accountInfo[0]?.fname} />
@@ -157,9 +158,10 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
           alert(res.status === 200 ? "Privacy updated!" : "Failed to update privacy.");
         }}>Save</button>
       </label>
+  </form>
 
     </div>
   ) : (
-    <p>{error?.message || "User not found"}</p>
+    <p id="error-badge" style="white-space: pre-line;">{error?.message || "User not found"}</p>
   )}
 </Layout>
