@@ -34,6 +34,22 @@ header .nav {
     margin-bottom: auto
 }
 
+h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #024b00;
+}
+
+/* h1 .logo {
+    color: #cbecca;
+} */
+
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #166b13;
+}
+
 /* style the body */
 body {
     display: flex;
@@ -85,12 +101,47 @@ div {
     margin: 0.625em auto;
 }
 
+button#search-button {
+    margin-top: 0.625em; 
+    padding-left: 0.625em;
+    padding-right: 0.625em;
+    padding-top: 0.125em;
+    padding-bottom: 0.125em;
+    border: 0.0625em solid black; 
+    border-radius: 0.3125em;
+    background-color: #cbecca;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    filter: brightness(90%);
+}
+
+button:active {
+    filter: brightness(80%);
+}
+
+section#plant,
+section#city {
+    background-color: ;
+      padding: 1.25em; /* 20px */
+      border-radius: 0.625em; /* 10px */
+      box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* 4px 8px */
+  }
+
 form {
+    background-color: #56b90671;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.625em;
     margin-top: 1.25em;
+    padding-left: 2em; 
+    padding-right: 2em;
+    padding-bottom: 2em;
+    border:1px solid #005bb5;
+    border-radius: 1em;
 }
 
 label {
@@ -142,15 +193,21 @@ button[type="submit"]:hover {
 
 .nav-link {
     text-decoration: none;
-    color: inherit;
+    color: #cbecca;
     padding: 0.125em 0.25em; /* Reduced padding */
     border: 0.0625em solid black;
+    background-color: #066606;
     border-radius: 0.3125em;
     transition: background-color 0.3s;
+    font-weight: 500;
 }
 
 .nav-link:hover {
-    background-color: #cbecca;
+    color: brightness(120%);
+}
+
+.nav-link:active {
+    filter: brightness(90%);
 }
 
 
