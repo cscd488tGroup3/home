@@ -41,7 +41,7 @@ const username = user ? `${user.id}` : "Guest";
 							height: auto;
 							margin: 0;
 							padding: 0;" />
-				<h1 class="logo">Bloom Buddy</h1>
+				<h1 class="logo" style="color: #cbecca;">Bloom Buddy</h1>
 			</div>
 
 			<!-- Date and Time horizontally aligned and centered -->
@@ -49,17 +49,33 @@ const username = user ? `${user.id}` : "Guest";
 						align-items: center; 
 						justify-content: center; 
 						gap: 0.625em;
-						margin: 0;
-						padding: 0;
+						margin: .3em;
+						margin-top: auto;
+						margin-bottom: auto;
+						padding: .4em;
+						border: 1px solid #cbecca;
+						border-radius: .3em;
 						font-size: .8em;
-    					font-weight: normal;">
+    					font-weight: bold;">
 				<!-- Date -->
 				<Date/>
 				<!-- Time -->
 				<Time/>
 			</div>
 
-			<div>Logged in as: {username}</div>
+			<div style="display: flex; 
+						align-items: center; 
+						justify-content: center; 
+						gap: 0.625em;
+						margin: .3em;
+						margin-top: auto;
+						margin-bottom: auto;
+						padding: .4em;
+						border: 1px solid #cbecca;
+						border-radius: .3em;
+						font-size: .8em;
+    					font-weight: bold;">
+				Logged in as: {username}</div>
 			
 			<!-- the right side of the header contains the navbar -->
 			<nav class="nav">
@@ -92,13 +108,3 @@ const username = user ? `${user.id}` : "Guest";
 		</footer>
 	</body>
 </html>
-
-<!-- overwrite style -->
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
