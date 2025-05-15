@@ -108,7 +108,16 @@ div {
 div#info-block {
     border: 0.0625em solid #014829;
     border-radius: 1em;
-    background: #088908;
+    background: #56b90671;
+}
+
+div#info-block p {
+    text-align: left;
+    width: max-content;
+}
+
+div#info-block p#right {
+    text-align: right;
 }
 
 #city {
