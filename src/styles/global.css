@@ -110,7 +110,7 @@ div#info-block {
     border-radius: 1em;
     background: #56b90671;
     padding: 1em;
-    width: fit-content;
+    /* width: fit-content; */
 }
 
 div.info-row {
