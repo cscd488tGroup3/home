@@ -1,5 +1,4 @@
 ---
-import { getPlantRecommendations } from '../lib/recommendations.js'; // Ensure this path is correct
 
 ---
 
@@ -29,7 +28,6 @@ import { getPlantRecommendations } from '../lib/recommendations.js'; // Ensure t
         };
     }
 
-    // DOM elements for updating the UI
     const plantNameElement = document.querySelector('.plant-name');
     const plantScientificNameElement = document.querySelector('.plant-scientific-name');
     const plantTypeElement = document.querySelector('.plant-type');
@@ -38,20 +36,17 @@ import { getPlantRecommendations } from '../lib/recommendations.js'; // Ensure t
     const plantSunlightElement = document.querySelector('.plant-sunlight');
     const plantDescriptionElement = document.querySelector('.plant-description');
     const plantImageElement = document.getElementById('plant-image') as HTMLImageElement | null;
-    const fetchPlantButton = document.getElementById('fetchPlantButton');
-    const plantNameInput = document.getElementById('plantNameInput') as HTMLInputElement | null;
 
-    // Function to fetch plant information and update the UI
     async function fetchPlantInfo(plantName: string) {
         if (!plantName) {
             alert('Please enter a plant name.');
             return;
         }
-
         try {
-            const plantDetails: PlantDetails = await getPlantRecommendations(plantName);
+            const res = await fetch(`/.netlify/functions/plant?name=${encodeURIComponent(plantName)}`);
+            if (!res.ok) throw new Error('Failed to fetch plant info');
+            const plantDetails: PlantDetails = await res.json();
 
-            // Update the UI with the fetched plant details
             if (plantNameElement) plantNameElement.textContent = plantDetails.commonName || 'Unknown';
             if (plantScientificNameElement) plantScientificNameElement.textContent = plantDetails.scientificName || 'Unknown';
             if (plantTypeElement) plantTypeElement.textContent = plantDetails.type || 'Unknown';
@@ -66,22 +61,9 @@ import { getPlantRecommendations } from '../lib/recommendations.js'; // Ensure t
         }
     }
 
-    // Add event listener to the button
-    if (fetchPlantButton) {
-        fetchPlantButton.addEventListener('click', () => {
-            if (plantNameInput) {
-                fetchPlantInfo(plantNameInput.value.trim());
-            }
-        });
-    } else {
-        console.error('Fetch plant button not found.');
-    }
-
-    // Listen for the custom 'plantSearch' event dispatched by Plant.astro
     window.addEventListener('plantSearch', (event) => {
         const customEvent = event as CustomEvent<{ plantName: string }>;
-        const plantName = customEvent.detail.plantName;
-        fetchPlantInfo(plantName);
+        fetchPlantInfo(customEvent.detail.plantName);
     });
 </script>
 
