@@ -123,15 +123,14 @@ import PlantInfo from "../components/plantInfo.astro";
 
             const reader = new FileReader();
             reader.onload = function (event) {
-                // Save post data to localStorage
                 const posts = getSavedPosts();
                 posts.push({
                     image: event.target.result,
                     caption: caption,
-                    // Add other fields as needed
+                    liked: false // Track like state per post
                 });
                 savePosts(posts);
-                renderPost({ image: event.target.result, caption: caption });
+                renderPost({ image: event.target.result, caption: caption, liked: false });
             };
 
             reader.readAsDataURL(file);
@@ -145,7 +144,7 @@ import PlantInfo from "../components/plantInfo.astro";
         });
 
         // Function to render a post (refactor your post creation code into this)
-        function renderPost({ image, caption }) {
+        function renderPost({ image, caption, liked = false }) {
             const post = document.createElement('div');
             post.classList.add('post');
             post.innerHTML = `
@@ -161,8 +160,8 @@ import PlantInfo from "../components/plantInfo.astro";
                 </div>
                 <p class="post-caption">${caption}</p>
                 <div class="reaction-container">
-                    <button class="like-button">👍 Like</button>
-                    <span class="like-count">0</span>
+                    <button class="like-button">${liked ? '👎 Unlike' : '👍 Like'}</button>
+                    <span class="like-count">${liked ? 1 : 0}</span>
                 </div>
                 <div class="comment-section">
                     <input type="text" class="comment-input" placeholder="Add a comment..." />
@@ -215,17 +214,26 @@ import PlantInfo from "../components/plantInfo.astro";
                 }
             });
 
-            let liked = false;
+            // Set initial liked state
+            let likedState = liked;
+
             likeButton.addEventListener('click', () => {
-                let count = parseInt(likeCount.textContent, 10);
-                if (liked) {
-                    likeCount.textContent = count - 1;
-                    likeButton.textContent = '👍 Like';
-                } else {
-                    likeCount.textContent = count + 1;
-                    likeButton.textContent = '👎 Unlike';
+                let posts = getSavedPosts();
+                // Find the post in localStorage
+                const index = posts.findIndex(p => p.image === image && p.caption === caption);
+                if (index !== -1) {
+                    if (likedState) {
+                        likeCount.textContent = '0';
+                        likeButton.textContent = '👍 Like';
+                        posts[index].liked = false;
+                    } else {
+                        likeCount.textContent = '1';
+                        likeButton.textContent = '👎 Unlike';
+                        posts[index].liked = true;
+                    }
+                    likedState = !likedState;
+                    savePosts(posts);
                 }
-                liked = !liked;
             });
 
             const editCaptionButton = post.querySelector('.edit-caption');
