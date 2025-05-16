@@ -38,5 +38,12 @@ export async function handler(event,context) {
     const USR_DB_W = process.env.USR_DB_W;
     const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
 
-    
+    try {
+        const fNameResponse = await fetch();
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
+    }
 }
