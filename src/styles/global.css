@@ -138,6 +138,8 @@ span.right {
 }
 
 button#search-button,
+button#plant-search-button,
+button#city-search-button,
 button#edit-fname,
 button#edit-lname,
 button#edit-email,

@@ -4,11 +4,11 @@
 <!-- City Input Form -->
 <section id="plant" class="city bg-white/50">
   <input type="text" id="city-input" placeholder="Enter city name" />
-  <button id="search-button">Search</button>
+  <button id="city-search-button">Search</button>
 </section>
 
 <script>
-  const searchButton = document.getElementById('search-button') as HTMLButtonElement;
+  const citySearchButton = document.getElementById('city-search-button') as HTMLButtonElement;
   const cityInput = document.getElementById('city-input') as HTMLInputElement;
 
   const searchCity = () => {
@@ -20,7 +20,7 @@
     }
   };
 
-  searchButton?.addEventListener('click', searchCity);
+  citySearchButton?.addEventListener('click', searchCity);
 
   cityInput?.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
