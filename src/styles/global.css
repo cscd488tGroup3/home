@@ -137,7 +137,14 @@ span.right {
     margin: 0.625em auto;
 }
 
-button#search-button {
+button#search-button,
+button#edit-fname,
+button#edit-lname,
+button#edit-email,
+button#edit-dob,
+button#edit-password,
+button#edit-priv
+ {
     margin-top: 0.625em; 
     padding-left: 0.625em;
     padding-right: 0.625em;
