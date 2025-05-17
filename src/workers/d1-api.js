@@ -69,7 +69,21 @@ export default {
         }
         
         // edit a post
-        if (url.pathname === "/post/edit") {}
+        if (url.pathname === "/post/edit") {
+            const pid = url.searchParams.get("pid");
+            const caption = url.searchParams.get("caption");
+            const uid = url.searchParams.get("uid");
+
+            try {
+                const response = await editPost(pid, uid, caption, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
         // delete a post
         if (url.pathname === "/post/delete") {}
