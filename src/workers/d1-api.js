@@ -75,7 +75,7 @@ export default {
         if (url.pathname === "/post/delete") {}
 
         // get a post by post id
-        if (url.pathname === "/postl/get/p") {
+        if (url.pathname === "/post/get/p") {
             const pid = url.searchParams.get("pid");
 
             try {
@@ -90,7 +90,7 @@ export default {
         }
 
         // get all posts from user
-        if (url.pathname === "/postl/get/u") {
+        if (url.pathname === "/post/get/u") {
             const uid = url.searchParams.get("uid");
 
             try {
