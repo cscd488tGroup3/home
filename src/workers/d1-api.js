@@ -1,4 +1,5 @@
 // D1-powered Cloudflare API worker
+import { resolveTripleslashReference } from 'typescript';
 import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv, setUserPriv, getUserPriv } from './d1-func.js';
 
 /**
@@ -74,10 +75,34 @@ export default {
         if (url.pathname === "/post/delete") {}
 
         // get a post by post id
-        if (url.pathname === "/postl/get/p") {}
+        if (url.pathname === "/postl/get/p") {
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await getPostByID(pid);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: {"Content-Type": "application/json"},
+                }))
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
 
         // get all posts from user
-        if (url.pathname === "/postl/get/u") {}
+        if (url.pathname === "/postl/get/u") {
+            const uid = url.searchParams.get("uid");
+
+            try {
+                const response = await getAllPostsFromUser(uid);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: {"Content-Type": "application/json"},
+                }))
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
         // add a comment
         if (url.pathname === "/comment/create") {}
