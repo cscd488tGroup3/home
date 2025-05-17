@@ -50,13 +50,34 @@ export default {
         /* POST API */
 
         // create a new post
-        if (url.pathname === "/post/create") {}
+        if (url.pathname === "/post/create") {
+            const pid = url.searchParams.get("pid");
+            const caption = url.searchParams.get("caption");
+            const url = url.searchParams.get("url");
+            const uid = url.searchParams.get("uid");
+
+            try {
+                const response = await addPost(pid, caption, url, uid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
         // edit a post
         if (url.pathname === "/post/edit") {}
         
         // delete a post
         if (url.pathname === "/post/delete") {}
+
+        // get a post by post id
+        if (url.pathname === "/postl/get/p") {}
+
+        // get all posts from user
+        if (url.pathname === "/postl/get/u") {}
         
         // add a comment
         if (url.pathname === "/comment/create") {}
