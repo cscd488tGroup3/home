@@ -49,6 +49,32 @@ export default {
 
         /* POST API */
 
+        // create a new post
+        if (url.pathname === "/post/create") {}
+        
+        // edit a post
+        if (url.pathname === "/post/edit") {}
+        
+        // delete a post
+        if (url.pathname === "/post/delete") {}
+        
+        // add a comment
+        if (url.pathname === "/comment/create") {}
+        
+        // edit a comment
+        if (url.pathname === "/comment/delete") {}
+        
+        // delete a comment
+        if (url.pathname === "/comment/delete") {}
+        
+        // add a reaction
+        if (url.pathname === "/reaction") {}
+
+        // remove a reaction
+        if (url.pathname === "/reaction/remove") {}
+        
+        /* GROUP API */ 
+
         /* SESSION API */
 
         // create a new session
