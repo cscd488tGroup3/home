@@ -10,6 +10,7 @@
     <h4>Cycle: <span class="plant-cycle">Cycle</span></h4>
     <h5>Watering: <span class="plant-watering">Watering</span></h5>
     <h6>Sunlight: <span class="plant-sunlight">Sunlight</span></h6>
+    <h6>Pruning: <span class="plant-pruning">Pruning</span></h6>
     <p>Description: <span class="plant-description">Description</span></p>
     <img id="plant-image" src="" alt="Plant Image" />
 </section>
@@ -22,6 +23,7 @@
         cycle: string;
         watering: string;
         sunlight: string;
+        pruning?: string;
         description: string;
         default_image?: {
             regular_url: string;
@@ -34,6 +36,7 @@
     const plantCycleElement = document.querySelector('.plant-cycle');
     const plantWateringElement = document.querySelector('.plant-watering');
     const plantSunlightElement = document.querySelector('.plant-sunlight');
+    const plantPruningElement = document.querySelector('.plant-pruning');
     const plantDescriptionElement = document.querySelector('.plant-description');
     const plantImageElement = document.getElementById('plant-image') as HTMLImageElement | null;
 
@@ -51,8 +54,9 @@
             if (plantScientificNameElement) plantScientificNameElement.textContent = plantDetails.scientificName || 'Unknown';
             if (plantTypeElement) plantTypeElement.textContent = plantDetails.type || 'Unknown';
             if (plantCycleElement) plantCycleElement.textContent = plantDetails.cycle || 'Unknown';
-            if (plantWateringElement) plantWateringElement.textContent = plantDetails.watering || 'Unknown';
-            if (plantSunlightElement) plantSunlightElement.textContent = plantDetails.sunlight || 'Unknown';
+            if (plantWateringElement) plantWateringElement.textContent = plantDetails.watering || 'No watering info.';
+            if (plantSunlightElement) plantSunlightElement.textContent = plantDetails.sunlight || 'No sunlight info.';
+            if (plantPruningElement) plantPruningElement.textContent = plantDetails.pruning || 'No pruning info.';
             if (plantDescriptionElement) plantDescriptionElement.textContent = plantDetails.description || 'No description available.';
             if (plantImageElement) plantImageElement.src = plantDetails.default_image?.regular_url || '';
         } catch (error) {
@@ -67,7 +71,6 @@
     });
 </script>
 
-<!-- Styling -->
 <style>
     section {
         position: absolute;

@@ -30,13 +30,12 @@ export async function queryPerenual(plantQuery) {
     const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
 
     try {
-        const PerenualResponse = await fetch(`https://perenual.com/api/v2/species-list?key=${PERENUAL_KEY}&q=${plantQuery}`);
-
-        if (!PerenualResponse.ok) {
+        const response = await fetch(`https://perenual.com/api/species-care-guide-list?key=${PERENUAL_KEY}&q=${plantQuery}`);
+        if (!response.ok) {
             throw new Error('Failed to fetch plant information from Perenual API');
         }
-
-        return await PerenualResponse.json();
+        const result = await response.json();
+        return result.data; // Only return the array of plants
     } catch (error) {
         throw new Error(`Perenual API Error: ${error.message}`);
     }
