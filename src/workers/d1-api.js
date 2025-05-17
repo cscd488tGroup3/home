@@ -1,6 +1,6 @@
 // D1-powered Cloudflare API worker
 import { resolveTripleslashReference } from 'typescript';
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv, setUserPriv, getUserPriv } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv, setUserPriv, getUserPriv, getComment, getParentPostByCommentID } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -125,25 +125,127 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
-                }))
+                }));
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
         
         // add a comment
-        if (url.pathname === "/comment/create") {}
+        if (url.pathname === "/comment/create") {
+            const cid = url.searchParams.get("cid");
+            const caption = url.searchParams.get("caption");
+            const uid = url.searchParams.get("uid");
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await addComment(cid, caption, uid, pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // get a comment by cid
+        if (url.pathname === "/comment/get/c") {
+            const cid = url.searchParams.get("cid");
+
+            try {
+                const response = await getComment(cid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // get the parent post of a comment
+        if(url.pathname === "/comment/get/c/parent") {
+            const cid = url.searchParams.get("cid");
+
+            try {
+                const response = await getParentPostByCommentID(cid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // get all comments on a post
+        if(url.pathname === "comment/get/p/all") {
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await getAllCommentsFromPost(pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
+        // get all comments from a user
+        if(url.pathname === "comment/get/u/all") {
+            const uid = url.searchParams.get("uid");
+
+            try {
+                const response = await getAllCommentsFromUser(uid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
         // edit a comment
-        if (url.pathname === "/comment/delete") {}
+        if (url.pathname === "/comment/edit") {
+            const cid = url.searchParams.get("cid");
+            const uid = url.searchParams.get("uid");
+            const content = url.searchParams.get("content");
+
+            try {
+                const response = await editComment(cid, uid, content, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
         // delete a comment
-        if (url.pathname === "/comment/delete") {}
-        
-        // add a reaction
-        if (url.pathname === "/reaction") {}
+        if (url.pathname === "/comment/delete") {
+            const cid = url.searchParams.get("cid");
+            const uid = url.searchParams.get("uid");
 
-        // remove a reaction
+            try {
+                const response = await deleteComment(cid, uid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+        
+        // add a reaction to a post
+        if (url.pathname === "/reaction/add") {}
+
+        // remove a reaction from a post
         if (url.pathname === "/reaction/remove") {}
         
         /* GROUP API */ 
