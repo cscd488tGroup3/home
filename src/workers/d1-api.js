@@ -86,7 +86,20 @@ export default {
         }
         
         // delete a post
-        if (url.pathname === "/post/delete") {}
+        if (url.pathname === "/post/delete") {
+            const pid = url.searchParams.get("pid");
+            const uid = url.searchParams.get("uid");
+
+            try {
+                const response = await deletePost(pid, uid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: {"Content-Type": "application/json"},
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
 
         // get a post by post id
         if (url.pathname === "/post/get/p") {
@@ -97,7 +110,7 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
-                }))
+                }));
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }

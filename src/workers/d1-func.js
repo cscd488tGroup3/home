@@ -259,7 +259,7 @@ export async function getAllPostsFromUser(uid, env) {
 }
 /**
  * editPost - update the caption of a post in the posts table
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} uid 
  * @param {*} newCaption 
  * @param {*} env 
@@ -275,7 +275,7 @@ export async function editPost(pid, uid, newCaption, env) {
 }
 /**
  * deletePost - delete a post from the posts table
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} uid 
  * @param {*} env 
  * @returns 
