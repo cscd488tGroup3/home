@@ -1,7 +1,6 @@
-// filepath: /workspaces/home/src/pages/api/plant.js
-import { getPlantRecommendations } from '../../src/lib/recommendations.js';
+const { getPlantRecommendations } = require('../../src/lib/recommendations.js');
 
-export async function handler(event) {
+exports.handler = async function(event) {
     const plantName = event.queryStringParameters?.name;
     if (!plantName) {
         return {
@@ -21,4 +20,4 @@ export async function handler(event) {
             body: JSON.stringify({ error: e.message }),
         };
     }
-}
+};
