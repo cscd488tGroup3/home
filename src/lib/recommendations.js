@@ -34,7 +34,7 @@ export async function getPlantRecommendations(plantQuery) {
             sunlight: careSections.sunlight || 'No sunlight info.',
             pruning: careSections.pruning || 'No pruning info.',
         };
-
+        console.log('Generated care plan:', carePlan);
         return carePlan;
     } catch (error) {
         console.error('Error generating recommendations:', error.message);
