@@ -1,12 +1,12 @@
 <!-- Plant Input Form -->
 <section id="plant" class="city bg-white/50">
     <input type="text" id="plant-input" placeholder="Enter plant name" />
-    <button id="search-button" >Search</button>
+    <button id="plant-search-button" >Search</button>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const searchButton = document.getElementById('search-button');
+        const plantSearchButton = document.getElementById('plant-search-button');
         const plantInput = document.getElementById('plant-input');
 
         const searchPlant = () => {
@@ -18,7 +18,7 @@
             }
         };
 
-        searchButton?.addEventListener('click', searchPlant);
+        plantSearchButton?.addEventListener('click', searchPlant);
 
         plantInput?.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
