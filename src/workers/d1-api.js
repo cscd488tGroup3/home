@@ -180,7 +180,7 @@ export default {
         }
 
         // get all comments on a post
-        if(url.pathname === "comment/get/p/all") {
+        if(url.pathname === "/comment/get/p/all") {
             const pid = url.searchParams.get("pid");
 
             try {
@@ -195,7 +195,7 @@ export default {
         }
         
         // get all comments from a user
-        if(url.pathname === "comment/get/u/all") {
+        if(url.pathname === "/comment/get/u/all") {
             const uid = url.searchParams.get("uid");
 
             try {
