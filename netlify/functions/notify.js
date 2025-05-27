@@ -32,6 +32,8 @@ export async function handler(event, context) {
     }
 
     const EMAIL = process.env.EMAIL;
+    
+    console.log(EMAIL);
 
     const resend = new Resend(EMAIL);
 
