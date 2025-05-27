@@ -4,39 +4,7 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
     <h1><u>Create a Group</u></h1>
-    <form id="createGroupForm" onSubmit={async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const groupData = {
-            gname: formData.get("groupName"),
-            isPrivate: formData.get("isPrivate") === "on",
-            isPublic: formData.get("isPublic") === "on",
-            role: "owner",
-        };
-
-        if (!groupData.isPrivate && !groupData.isPublic) {
-            alert("You must select either Private or Public.");
-            return;
-        }
-
-        try {
-            const res = await createGroupRequest({
-                worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/groups',
-                data: groupData,
-            });
-            if (res.status === 200) {
-                const createdGroup = await res.json();
-                alert("Group created successfully! You are now the Owner.");
-                e.target.reset();
-                displayGroup(createdGroup);
-                loadGroupMembers();
-            } else {
-                alert("Failed to create group.");
-            }
-        } catch (err) {
-            alert("An error occurred while creating the group.");
-        }
-    }}>
+    <form id="createGroupForm">
         <label for="groupName">Group Name:</label>
         <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
 
@@ -133,6 +101,12 @@ import Layout from '../layouts/Layout.astro';
         <ul id="groupMembersList" class="group-members-list">
             <!-- Users will be dynamically populated here -->
         </ul>
+    </div>
+
+    <!-- All Groups Section -->
+    <div id="allGroupsSection">
+        <h2><u>All Groups</u></h2>
+        <ul id="allGroupsList"></ul>
     </div>
 
     <script>
@@ -271,6 +245,87 @@ import Layout from '../layouts/Layout.astro';
             }
         };
 
+        // Helper: Get local groups from localStorage
+        function getLocalGroups() {
+            return JSON.parse(localStorage.getItem('localGroups') || '[]');
+        }
+
+        // Helper: Save local groups to localStorage
+        function saveLocalGroups(groups) {
+            localStorage.setItem('localGroups', JSON.stringify(groups));
+        }
+
+        // Render all groups (local only)
+        function renderAllGroups() {
+            const allGroupsList = document.getElementById('allGroupsList');
+            allGroupsList.innerHTML = '';
+            const groups = getLocalGroups();
+            groups.forEach(group => {
+                const li = document.createElement('li');
+                li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'})`;
+                allGroupsList.appendChild(li);
+            });
+        }
+
+        // On page load, render local groups
+        renderAllGroups();
+
+        // When creating a group, save it locally and re-render
+        document.getElementById('createGroupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const groupData = {
+                gname: formData.get("groupName"),
+                isPrivate: formData.get("isPrivate") === "on",
+                isPublic: formData.get("isPublic") === "on",
+                id: Date.now(), // simple unique id for local use
+            };
+
+            if (!groupData.isPrivate && !groupData.isPublic) {
+                alert("You must select either Private or Public.");
+                return;
+            }
+
+            // Save locally
+            const groups = getLocalGroups();
+            groups.push(groupData);
+            saveLocalGroups(groups);
+
+            // Optionally, also call your backend here if you want
+            // (remove/comment out if you want local only)
+            /*
+            fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/groups', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(groupData),
+            });
+            */
+
+            e.target.reset();
+            renderAllGroups();
+            alert("Group created locally!");
+        });
+
+        async function loadAllGroups() {
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/groups');
+                if (res.status === 200) {
+                    const groups = await res.json();
+                    const allGroupsList = document.getElementById('allGroupsList');
+                    allGroupsList.innerHTML = '';
+                    groups.forEach(group => {
+                        const li = document.createElement('li');
+                        li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'})`;
+                        allGroupsList.appendChild(li);
+                    });
+                } else {
+                    alert("Failed to load groups.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading groups.");
+            }
+        }
+
         loadGroupMembers();
 
         const isPublicCheckbox = document.getElementById('isPublic');
@@ -286,6 +341,43 @@ import Layout from '../layouts/Layout.astro';
         isPrivateCheckbox.addEventListener('change', () => {
             if (isPrivateCheckbox.checked) {
                 isPublicCheckbox.checked = false;
+            }
+        });
+
+        // Attach event listener to the form
+        document.getElementById('createGroupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const groupData = {
+                gname: formData.get("groupName"),
+                isPrivate: formData.get("isPrivate") === "on",
+                isPublic: formData.get("isPublic") === "on",
+                role: "owner",
+            };
+
+            if (!groupData.isPrivate && !groupData.isPublic) {
+                alert("You must select either Private or Public.");
+                return;
+            }
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/groups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(groupData),
+                });
+                if (res.status === 200) {
+                    const createdGroup = await res.json();
+                    alert("Group created successfully! You are now the Owner.");
+                    e.target.reset();
+                    displayGroup(createdGroup);
+                    loadGroupMembers();
+                    loadAllGroups(); // <-- Add this line
+                } else {
+                    alert("Failed to create group.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the group.");
             }
         });
     </script>
