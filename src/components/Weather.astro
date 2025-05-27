@@ -1,5 +1,7 @@
 ---
+
 ---
+
 <!-- Weather Display -->
 <section id="plant" class="backdrop-blur-md bg-white/50">
   <p>Temp: <span class="temp">Temp</span>°<span class="unit">F</span></p>
@@ -9,26 +11,37 @@
 </section>
 
 <script>
-  const weatherApiKey = import.meta.env.API_KEY;
   // Start with Fahrenheit
-  let units = 'imperial'; // Use 'imperial' for Fahrenheit, 'metric' for Celsius
+  let units = "imperial"; // Use 'imperial' for Fahrenheit, 'metric' for Celsius
 
   // DOM elements
-  const nameOfCity = document.querySelector('.city') as HTMLElement | null;
-  const tempOfCity = document.querySelector('.temp') as HTMLElement | null;
-  const countryOfCity = document.querySelector('.country') as HTMLElement | null;
-  const unitOfTemp = document.querySelector('.unit') as HTMLElement | null;
-  const toggleUnitButton = document.getElementById('toggleUnit') as HTMLButtonElement | null;
+  const nameOfCity = document.querySelector(".city") as HTMLElement | null;
+  const tempOfCity = document.querySelector(".temp") as HTMLElement | null;
+  const countryOfCity = document.querySelector(
+    ".country"
+  ) as HTMLElement | null;
+  const unitOfTemp = document.querySelector(".unit") as HTMLElement | null;
+  const toggleUnitButton = document.getElementById(
+    "toggleUnit"
+  ) as HTMLButtonElement | null;
 
   // Function to fetch weather data
   async function fetchWeather(cityName: string) {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&appid=${weatherApiKey}`);
+    const queryData = { cityName, units };
+    const response = await fetch(
+      "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/weather",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(queryData),
+        credentials: "include",
+      }
+    );
     const data = await response.json();
-    
     if (data.cod === 200) {
       updateWeatherDisplay(data);
     } else {
-      alert('City not found');
+      alert("City not found");
     }
   }
 
@@ -37,21 +50,22 @@
     if (nameOfCity) nameOfCity.textContent = data.name;
     if (tempOfCity) tempOfCity.textContent = data.main.temp.toFixed(1); // Round the temperature
     if (countryOfCity) countryOfCity.textContent = data.sys.country;
-    if (unitOfTemp) unitOfTemp.textContent = units === 'imperial' ? 'F' : 'C'; // Update the unit display
+    if (unitOfTemp) unitOfTemp.textContent = units === "imperial" ? "F" : "C"; // Update the unit display
   }
 
   // Listen for the custom event to trigger a weather fetch
-  window.addEventListener('citySearch', (event) => {
+  window.addEventListener("citySearch", (event) => {
     const cityName = (event as CustomEvent).detail.cityName;
     fetchWeather(cityName);
   });
 
   // Toggle the unit (Fahrenheit/Celsius)
   if (toggleUnitButton) {
-    toggleUnitButton.addEventListener('click', () => {
+    toggleUnitButton.addEventListener("click", () => {
       // Toggle between Fahrenheit (imperial) and Celsius (metric)
-      units = units === 'imperial' ? 'metric' : 'imperial';
-      toggleUnitButton.textContent = units === 'imperial' ? 'Celsius' : 'Fahrenheit'; // Update the button text
+      units = units === "imperial" ? "metric" : "imperial";
+      toggleUnitButton.textContent =
+        units === "imperial" ? "Celsius" : "Fahrenheit"; // Update the button text
       const cityName = nameOfCity?.textContent;
       if (cityName) fetchWeather(cityName);
     });
@@ -71,4 +85,3 @@
     text-align: center; /* Center the content inside the section */
   } */
 </style> -->
-
