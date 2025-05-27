@@ -95,18 +95,18 @@ import Layout from '../layouts/Layout.astro';
         </form>
     </div>
 
+    <!-- All Groups Section -->
+    <div id="allGroupsSection">
+        <h2><u>All Groups</u></h2>
+        <ul id="allGroupsList"></ul>
+    </div>
+
     <!-- Group Management Section -->
     <div id="groupManagementSection" class="group-management-section">
         <h2><u>Users List</u></h2>
         <ul id="groupMembersList" class="group-members-list">
             <!-- Users will be dynamically populated here -->
         </ul>
-    </div>
-
-    <!-- All Groups Section -->
-    <div id="allGroupsSection">
-        <h2><u>All Groups</u></h2>
-        <ul id="allGroupsList"></ul>
     </div>
 
     <script>
@@ -272,15 +272,18 @@ import Layout from '../layouts/Layout.astro';
             const groups = getLocalGroups();
             const joinedGroups = getJoinedGroups();
 
-            // Style to match the "Create Group" box (input/button area)
-            const boxStyle = `
-                display: inline-flex;
-                align-items: center;
+            // Button style to match "Create Group" and "Join Group" buttons
+            const buttonStyle = `
+                background: #fff;
+                color: #222;
                 border: 1.5px solid #bdbdbd;
                 border-radius: 8px;
-                background: #f5f5f5;
                 padding: 0.4em 1.2em;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
                 margin-left: 1em;
+                transition: background 0.2s;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.07);
             `;
 
@@ -289,27 +292,20 @@ import Layout from '../layouts/Layout.astro';
                 li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
 
                 if (joinedGroups.includes(group.id)) {
-                    // Joined + Leave box
-                    const joinedBox = document.createElement('span');
-                    joinedBox.setAttribute('style', boxStyle);
+                    // Joined + Leave box styled as button
+                    const joinedBtn = document.createElement('span');
+                    joinedBtn.setAttribute('style', buttonStyle + 'display: inline-flex; align-items: center; background: #eaffea; border-color: #6fcf97; color: #219150;');
 
                     const joinedSpan = document.createElement('span');
                     joinedSpan.textContent = 'Joined';
-                    joinedSpan.style.color = 'green';
-                    joinedSpan.style.marginRight = '0.7em';
+                    joinedSpan.style.color = '#219150';
                     joinedSpan.style.fontWeight = 'bold';
+                    joinedSpan.style.marginRight = '0.7em';
 
                     const leaveBtn = document.createElement('button');
                     leaveBtn.textContent = 'Leave';
-                    leaveBtn.style.marginLeft = '0.2em';
-                    leaveBtn.style.background = '#fff';
-                    leaveBtn.style.border = '1px solid #bdbdbd';
-                    leaveBtn.style.borderRadius = '4px';
-                    leaveBtn.style.padding = '0.2em 0.7em';
-                    leaveBtn.style.cursor = 'pointer';
-                    leaveBtn.style.fontWeight = 'bold';
-
-                    leaveBtn.onmouseover = () => leaveBtn.style.background = '#ececec';
+                    leaveBtn.setAttribute('style', buttonStyle + 'background: #fff; color: #d32f2f; border-color: #d32f2f; margin-left: 0;');
+                    leaveBtn.onmouseover = () => leaveBtn.style.background = '#ffeaea';
                     leaveBtn.onmouseout = () => leaveBtn.style.background = '#fff';
 
                     leaveBtn.onclick = () => {
@@ -322,24 +318,15 @@ import Layout from '../layouts/Layout.astro';
                         }
                     };
 
-                    joinedBox.appendChild(joinedSpan);
-                    joinedBox.appendChild(leaveBtn);
-                    li.appendChild(joinedBox);
+                    joinedBtn.appendChild(joinedSpan);
+                    joinedBtn.appendChild(leaveBtn);
+                    li.appendChild(joinedBtn);
                 } else {
-                    // Join box
-                    const joinBox = document.createElement('span');
-                    joinBox.setAttribute('style', boxStyle);
-
+                    // Join button styled as main buttons
                     const joinBtn = document.createElement('button');
                     joinBtn.textContent = 'Join';
-                    joinBtn.style.background = '#fff';
-                    joinBtn.style.border = '1px solid #bdbdbd';
-                    joinBtn.style.borderRadius = '4px';
-                    joinBtn.style.padding = '0.2em 0.7em';
-                    joinBtn.style.cursor = 'pointer';
-                    joinBtn.style.fontWeight = 'bold';
-
-                    joinBtn.onmouseover = () => joinBtn.style.background = '#ececec';
+                    joinBtn.setAttribute('style', buttonStyle);
+                    joinBtn.onmouseover = () => joinBtn.style.background = '#f0f0f0';
                     joinBtn.onmouseout = () => joinBtn.style.background = '#fff';
 
                     joinBtn.onclick = () => {
@@ -349,8 +336,7 @@ import Layout from '../layouts/Layout.astro';
                         alert(`You joined "${group.gname}"!`);
                     };
 
-                    joinBox.appendChild(joinBtn);
-                    li.appendChild(joinBox);
+                    li.appendChild(joinBtn);
                 }
 
                 allGroupsList.appendChild(li);
