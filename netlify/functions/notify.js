@@ -31,6 +31,10 @@ export async function handler(event, context) {
         };
     }
 
+    const body = JSON.parse(event.body);
+    const subject = body.subject;
+    const emailBody = body.emailBody;
+    
     const EMAIL = process.env.EMAIL;
 
     console.log(EMAIL);
@@ -40,7 +44,7 @@ export async function handler(event, context) {
     resend.emails.send({
         from: 'bloombuddy-notifications@resend.dev',
         to: 'ethan.crawford5532@gmail.com',
-        subject: 'Test Notification',
-        html: '<h1>Test Notification</h1>'
+        subject: subject,
+        html: `<p>${emailBody}<p>`
     });
 }
