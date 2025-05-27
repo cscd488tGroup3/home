@@ -1,8 +1,15 @@
-import { getSavedPosts, savePosts } from './storage.js';
 import { generateUUID } from './storage.js';
+import {
+    editPost,
+    deletePost,
+    createComment,
+    editComment,
+    deleteComment,
+    getAllCommentsFromPost
+} from './api.js';
 
-export function renderPost(postData) {
-    const { pid, caption, url, uid, comments, reaction } = postData;
+export async function renderPost(postData, uid) {
+    const { pid, caption, url, comments, reaction } = postData;
     const container = document.getElementById('postContainer');
 
     const post = document.createElement('div');
@@ -37,53 +44,30 @@ export function renderPost(postData) {
         menuOptions.classList.toggle('hidden');
     });
 
-    // Delete post
-    post.querySelector('.confirm-delete').addEventListener('click', () => {
+    post.querySelector('.confirm-delete').addEventListener('click', async () => {
         if (confirm('Are you sure?')) {
-            const posts = getSavedPosts().filter(p => p.pid !== pid);
-            savePosts(posts);
+            await deletePost(pid, uid);
             post.remove();
         }
     });
 
-    // Edit caption
-    post.querySelector('.edit-caption').addEventListener('click', () => {
+    post.querySelector('.edit-caption').addEventListener('click', async () => {
         const newCaption = prompt('Edit caption:', caption);
         if (newCaption && newCaption.length <= 200) {
             post.querySelector('.post-caption').textContent = newCaption;
-            const posts = getSavedPosts();
-            const target = posts.find(p => p.pid === pid);
-            if (target) {
-                target.caption = newCaption;
-                savePosts(posts);
-            }
+            await editPost(pid, newCaption, uid);
         } else if (newCaption.length > 200) {
             alert('Caption too long.');
         }
         menuOptions.classList.add('hidden');
     });
 
-    // Like/unlike
     const likeBtn = post.querySelector('.like-button');
     const likeCount = post.querySelector('.like-count');
     likeBtn.addEventListener('click', () => {
-        const posts = getSavedPosts();
-        const target = posts.find(p => p.pid === pid);
-        if (target) {
-            if (target.reaction) {
-                target.reaction = null;
-                likeBtn.textContent = '👍 Like';
-                likeCount.textContent = '0';
-            } else {
-                target.reaction = { rid: generateUUID(), uid: "YourUID", pid };
-                likeBtn.textContent = '👎 Unlike';
-                likeCount.textContent = '1';
-            }
-            savePosts(posts);
-        }
+        alert('Like/unlike not implemented in API yet.');
     });
 
-    // Commenting
     const commentInput = post.querySelector('.comment-input');
     const commentCounter = post.querySelector('.commentCounter');
     const commentButton = post.querySelector('.comment-button');
@@ -95,32 +79,26 @@ export function renderPost(postData) {
         commentCounter.style.color = len > 200 ? 'red' : 'black';
     });
 
-    commentButton.addEventListener('click', () => {
+    commentButton.addEventListener('click', async () => {
         const text = commentInput.value.trim();
         if (text.length === 0) return alert('Please enter a comment.');
         if (text.length > 200) return alert('Comment too long.');
 
-        const comment = { cid: generateUUID(), content: text, uid: "YourUID", pid };
-        renderComment(comment, commentsList, pid);
+        const comment = { cid: generateUUID(), content: text, uid, pid };
+        await createComment(comment.cid, comment.content, uid, pid);
+        renderComment(comment, commentsList, pid, uid);
         commentInput.value = '';
         commentCounter.textContent = '0/200';
-
-        const posts = getSavedPosts();
-        const post = posts.find(p => p.pid === pid);
-        if (post) {
-            post.comments.push(comment);
-            savePosts(posts);
-        }
     });
 
-    // Render existing comments
-    if (Array.isArray(comments)) {
-        comments.forEach(comment => renderComment(comment, commentsList, pid));
+    const postComments = comments || await getAllCommentsFromPost(pid);
+    if (Array.isArray(postComments)) {
+        postComments.forEach(comment => renderComment(comment, commentsList, pid, uid));
     }
 }
 
-function renderComment(comment, container, pid) {
-    const { cid, content, uid } = comment;
+function renderComment(comment, container, pid, uid) {
+    const { cid, content } = comment;
 
     const div = document.createElement('div');
     div.classList.add('comment');
@@ -141,34 +119,21 @@ function renderComment(comment, container, pid) {
         options.classList.toggle('hidden');
     });
 
-    div.querySelector('.edit-comment-button').addEventListener('click', () => {
+    div.querySelector('.edit-comment-button').addEventListener('click', async () => {
         const newText = prompt('Edit comment:', content);
         if (newText && newText.length <= 200) {
             div.querySelector('.comment-text').textContent = `${uid}: ${newText}`;
-            const posts = getSavedPosts();
-            const post = posts.find(p => p.pid === pid);
-            if (post) {
-                const targetComment = post.comments.find(c => c.cid === cid);
-                if (targetComment) {
-                    targetComment.content = newText;
-                    savePosts(posts);
-                }
-            }
+            await editComment(cid, uid, newText);
         } else if (newText.length > 200) {
             alert('Comment too long.');
         }
         options.classList.add('hidden');
     });
 
-    div.querySelector('.delete-comment-button').addEventListener('click', () => {
+    div.querySelector('.delete-comment-button').addEventListener('click', async () => {
         if (confirm('Delete this comment?')) {
             div.remove();
-            const posts = getSavedPosts();
-            const post = posts.find(p => p.pid === pid);
-            if (post) {
-                post.comments = post.comments.filter(c => c.cid !== cid);
-                savePosts(posts);
-            }
+            await deleteComment(cid, uid);
         }
     });
 }
