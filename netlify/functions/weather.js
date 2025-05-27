@@ -1,4 +1,6 @@
 export async function handler(event) {
+    console.log("Received event:", event);
+
     const API_KEY = process.env.API_KEY;
 
     const body = JSON.parse(event.body);

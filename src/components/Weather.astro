@@ -1,5 +1,4 @@
 ---
-
 ---
 
 <!-- Weather Display -->
@@ -7,7 +6,7 @@
   <p>Temp: <span class="temp">Temp</span>°<span class="unit">F</span></p>
   <p>City: <span class="city">City</span></p>
   <p>Country: <span class="country">Country</span></p>
-  <button id="toggleUnit">Choose: Celsius/Fahrenheit</button>
+  <button id="toggleUnit">Switch to Celsius</button>
 </section>
 
 <script>
@@ -27,24 +26,28 @@
 
   // Function to fetch weather data
   async function fetchWeather(cityName: string) {
-    const queryData = { cityName, units };
-    console.log(queryData);
-    const response = await fetch(
-      "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/weather",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(queryData),
-        credentials: "include",
-      }
-    );
+  const queryData = { cityName, units };
+  try {
+    const response = await fetch("/.netlify/functions/weather", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(queryData),
+      credentials: "include",
+    });
+
     const data = await response.json();
-    if (data.cod === 200) {
+
+    if (response.ok && data.cod === 200) {
       updateWeatherDisplay(data);
     } else {
-      alert("City not found");
+      alert(data?.message || "City not found or API error.");
     }
+  } catch (error) {
+    console.error("Weather fetch error:", error);
+    alert("Failed to fetch weather. Please try again.");
   }
+}
+
 
   // Update the weather display with the fetched data
   function updateWeatherDisplay(data: any) {
@@ -66,23 +69,11 @@
       // Toggle between Fahrenheit (imperial) and Celsius (metric)
       units = units === "imperial" ? "metric" : "imperial";
       toggleUnitButton.textContent =
-        units === "imperial" ? "Celsius" : "Fahrenheit"; // Update the button text
+  units === "imperial" ? "Switch to Celsius" : "Switch to Fahrenheit";
       const cityName = nameOfCity?.textContent;
       if (cityName) fetchWeather(cityName);
     });
   }
-</script>
 
-<!-- Styling -->
-<!-- <style>
-  /* section {
-    position: absolute;
-    left: 78%; /* Align with the city search bar on the right */
-    top: 49.5%; /* Position it below the city search bar */
-    transform: translate(-50%, -50%);
-    padding: 1.25em; /* 20px */
-    border-radius: 0.625em; /* 10px */
-    box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* 4px 8px */
-    text-align: center; /* Center the content inside the section */
-  } */
-</style> -->
+  fetchWeather("New York");
+</script>
