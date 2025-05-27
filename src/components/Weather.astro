@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <!-- Weather Display -->
@@ -26,28 +27,28 @@
 
   // Function to fetch weather data
   async function fetchWeather(cityName: string) {
-  const queryData = { cityName, units };
-  try {
-    const response = await fetch("/.netlify/functions/weather", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(queryData),
-      credentials: "include",
-    });
+    const queryData = { cityName, units };
+    try {
+      const response = await fetch("/.netlify/functions/weather", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(queryData),
+        credentials: "include",
+      });
 
-    const data = await response.json();
+      const data = await response.json();
+      console.log(data);
 
-    if (response.ok && data.cod === 200) {
-      updateWeatherDisplay(data);
-    } else {
-      alert(data?.message || "City not found or API error.");
+      if (response.ok && data.cod === 200) {
+        updateWeatherDisplay(data);
+      } else {
+        alert(data?.message || "City not found or API error.");
+      }
+    } catch (error) {
+      console.error("Weather fetch error:", error);
+      alert("Failed to fetch weather. Please try again.");
     }
-  } catch (error) {
-    console.error("Weather fetch error:", error);
-    alert("Failed to fetch weather. Please try again.");
   }
-}
-
 
   // Update the weather display with the fetched data
   function updateWeatherDisplay(data: any) {
@@ -69,7 +70,7 @@
       // Toggle between Fahrenheit (imperial) and Celsius (metric)
       units = units === "imperial" ? "metric" : "imperial";
       toggleUnitButton.textContent =
-  units === "imperial" ? "Switch to Celsius" : "Switch to Fahrenheit";
+        units === "imperial" ? "Switch to Celsius" : "Switch to Fahrenheit";
       const cityName = nameOfCity?.textContent;
       if (cityName) fetchWeather(cityName);
     });
