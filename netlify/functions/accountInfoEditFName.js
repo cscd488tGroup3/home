@@ -31,7 +31,7 @@ export async function handler(event,context) {
         };
     }
 
-    const body = JSON.parse(event.body);
+    const { username, fname } = JSON.parse(event.body);
 
     console.log(body);
 
@@ -39,7 +39,7 @@ export async function handler(event,context) {
     const USR_DB = process.env.USR_DB;
 
     try {
-        const fNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?fname=${body}&auth=${USR_DB}`);
+        const fNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&fname=${fname}&auth=${USR_DB}`);
         if(fNameResponse.ok) {
             return {
                 statusCode: 200,
