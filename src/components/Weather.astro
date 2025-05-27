@@ -5,7 +5,7 @@
 <!-- Weather Display -->
 <section id="plant" class="backdrop-blur-md bg-white/50">
   <p>Temp: <span class="temp">Temp</span>°<span class="unit">F</span></p>
-  <p>City: <span class="city">City</span></p>
+  <p>City: <span class="city-display">City</span></p>
   <p>Country: <span class="country">Country</span></p>
   <button id="toggleUnit">Switch to Celsius</button>
 </section>
@@ -15,7 +15,7 @@
   let units = "imperial"; // Use 'imperial' for Fahrenheit, 'metric' for Celsius
 
   // DOM elements
-  const nameOfCity = document.querySelector(".city") as HTMLElement | null;
+  const nameOfCity = document.querySelector(".city-display") as HTMLElement | null;
   const tempOfCity = document.querySelector(".temp") as HTMLElement | null;
   const countryOfCity = document.querySelector(
     ".country"
