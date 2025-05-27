@@ -39,11 +39,11 @@ export async function handler(event,context) {
     const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
 
     try {
-        const lNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/update?uid=${username}&priv=${priv}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
-        if (lNameResponse.ok) {
+        const privResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/update?uid=${username}&priv=${priv}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
+        if (privResponse.ok) {
             return {
                 statusCode: 200,
-                body: JSON.stringify(lNameResponse),
+                body: JSON.stringify(privResponse),
             }
         }
     } catch (error) {
