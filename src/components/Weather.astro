@@ -28,6 +28,7 @@
   // Function to fetch weather data
   async function fetchWeather(cityName: string) {
     const queryData = { cityName, units };
+    console.log(queryData);
     const response = await fetch(
       "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/weather",
       {
