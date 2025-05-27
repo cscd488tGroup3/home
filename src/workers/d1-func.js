@@ -1,7 +1,8 @@
-/* 
-    This file contains the functions that interact with the database.
-    The functions are used in the worker (./d1-api.js) to perform database operations.
-*/
+/**
+ * This file contains the functions used in `d1-api.js` to interact with the database in perscribed ways
+ */
+
+/* INFO, ADMIN DATABASE FUNCTIONS */
 
 /**
  * getUserByUid - query all admin table info by uid
@@ -64,7 +65,6 @@ export async function getPasswordByEmail(email, env) {
 /**
  * writeNewUser - insert a new user into the info table
  * @param {String} uid 
- * @param {String} email 
  * @param {String} fname 
  * @param {String} lname 
  * @param {Date} dob 
@@ -72,9 +72,9 @@ export async function getPasswordByEmail(email, env) {
  * @param {*} env 
  * @returns status message of the database
  */
-export async function writeNewUser(uid, email, fname, lname, dob, doj, env) {
+export async function writeNewUser(uid, fname, lname, dob, doj, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO info (uid, email, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?, ?);").bind(uid, email, fname, lname, dob, doj).run();
+        const {results} = await env.DB.prepare("INSERT INTO info (uid, fname, lname, dob, doj) VALUES (?, ?, ?, ?, ?);").bind(uid, fname, lname, dob, doj).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -100,19 +100,19 @@ export async function writeNewPassword(uid, email, hashpass, env) {
     }
 }
 
-/// untested implementation ///
+/* SESSION DATABASE FUNCTIONS */
 
 /**
  * addSession - insert a new session into the user_session table
- * @param {*} id the session id
+ * @param {*} usid the session id
  * @param {String} uid the user id
  * @param {Date} expires_at the date and time of expiration in ISO format
  * @param {*} env  
  * @returns 
  */
-export async function addSession(id, uid, expires_at, env) {
+export async function addSession(usid, uid, expires_at, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO user_session (id, uid, expires_at) VALUES (?, ?, ?);").bind(id, uid, expires_at).run();
+        const {results} = await env.DB.prepare("INSERT INTO user_session (usid, uid, expires_at) VALUES (?, ?, ?);").bind(usid, uid, expires_at).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -121,13 +121,13 @@ export async function addSession(id, uid, expires_at, env) {
 
 /**
  * getSession - query the user_session table for the session id and the expiration date
- * @param {*} id 
+ * @param {*} usid 
  * @param {*} env 
  * @returns 
  */
-export async function getSession(id, env) {
+export async function getSession(usid, env) {
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM user_session WHERE id = ?").bind(id).all();
+        const {results} = await env.DB.prepare("SELECT * FROM user_session WHERE usid = ?").bind(usid).all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -151,13 +151,13 @@ export async function getAllSessions(uid, env) {
 
 /**
  * deleteSession - delete a session from the user_session table
- * @param {*} id 
+ * @param {*} usid 
  * @param {*} env 
  * @returns 
  */
-export async function deleteSession(id, env) {
+export async function deleteSession(usid, env) {
     try {
-        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE id = ?").bind(id).run();
+        const {results} = await env.DB.prepare("DELETE FROM user_session WHERE usid = ?").bind(usid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -181,14 +181,14 @@ export async function deleteAllSessions(uid, env) {
 
 /**
  * renewSession - update the expiration date of a session in the user_session table
- * @param {*} id 
+ * @param {*} usid 
  * @param {Date} expires_at 
  * @param {*} env 
  * @returns 
  */
-export async function renewSession(id, expires_at, env) {
+export async function renewSession(usid, expires_at, env) {
     try {
-        const {results} = await env.DB.prepare("UPDATE user_session SET expires_at = ? WHERE id = ?").bind(expires_at, id).run();
+        const {results} = await env.DB.prepare("UPDATE user_session SET expires_at = ? WHERE usid = ?").bind(expires_at, usid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -209,3 +209,397 @@ export async function deleteExpiredSessions(env) {
         throw new Error(`Database query failed: ${err.message}`);
     }
 }
+
+/* POST, COMMENTS, REACTON DATABASE FUNCTIONS */
+
+/**
+ * addPost - insert a new post into the posts table
+ * @param {String} id represents the post id
+ * @param {String} caption represents the post caption
+ * @param {String} url represents the url to the image 
+ * @param {String} uid represents the user id
+ * @param {*} env 
+ * @returns 
+ */
+export async function addPost(pid, caption, url, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO post (pid, caption, url, uid) VALUES (?, ?, ?, ?);").bind(pid, caption, url, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getPostByID - query the posts table for the post id
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getPostByID(pid, env) { 
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE id = ?").bind(pid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllPostsFromUser - query the posts table for all posts by a particular user
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllPostsFromUser(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * editPost - update the caption of a post in the posts table
+ * @param {*} pid 
+ * @param {*} uid 
+ * @param {*} newCaption 
+ * @param {*} env 
+ * @returns 
+ */
+export async function editPost(pid, uid, newCaption, env) { 
+    try {
+        const {results} = await env.DB.prepare("UPDATE post SET caption = ? WHERE pid = ? AND uid = ?").bind(newCaption, pid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * deletePost - delete a post from the posts table
+ * @param {*} pid 
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deletePost(pid, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM post WHERE pid = ? AND uid = ?").bind(pid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * addComment - insert a new comment into the comments table
+ * @param {*} cid 
+ * @param {*} content 
+ * @param {*} uid 
+ * @param {*} pid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function addComment(cid, content, uid, pid, env) { 
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO comment (cid, content, uid, pid) VALUES (?, ?, ?, ?);").bind(cid, content, uid, pid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getComment - query the comments table for the comment id
+ * @param {*} cid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getComment(cid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE cid = ?").bind(cid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getParentPostByCommentID - query the posts table for the post id of a comment
+ * @param {*} cid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getParentPostByCommentID(cid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post WHERE pid = (SELECT pid FROM comment WHERE cid = ?)").bind(cid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllCommentsFromPost - query the comments table for all comments to a particular post
+ * @param {*} id 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllCommentsFromPost(pid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE pid = ?").bind(pid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllCommentsFromUser - query the comments table for all comments by a particular user
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllCommentsFromUser(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM comment WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * editComment - update the content of a comment in the comments table
+ * @param {*} cid 
+ * @param {*} uid 
+ * @param {*} newContent 
+ * @param {*} env 
+ * @returns 
+ */
+export async function editComment(cid, uid, newContent, env) { 
+    try {
+        const {results} = await env.DB.prepare("UPDATE comment SET content = ? WHERE cid = ? AND uid = ?").bind(newContent, cid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * deleteComment - delete a comment from the comments table
+ * @param {*} cid 
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deleteComment(cid, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM comment WHERE cid = ? AND uid = ?").bind(cid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * addReaction - insert a new reaction into the reaction table
+ * @param {*} rid 
+ * @param {*} uid 
+ * @param {*} pid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function addReaction(rid, uid, pid, env) {
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO reaction (rid, uid, pid) VALUES (?, ?, ?);").bind(rid, uid, pid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getReactionByPostID - query the reaction table for the reaction ids of the reactions to a post
+ * @param {*} pid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getReactionsByPostID(pid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM reaction WHERE id = ?").bind(pid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * countReactionsByPostID - query the reaction table for the number of reactions to a post
+ * @param {*} pid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function countReactionsByPostID(pid, env) {
+    try {
+        const { results } = await env.DB.prepare("SELECT COUNT(*) AS count FROM reaction WHERE pid = ?")
+            .bind(id)
+            .all();
+        return results[0]?.count ?? 0; // Return the count or 0 if no rows
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * getAllReactionsFromUser - query the reaction table for all reactions by a particular user
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllReactionsFromUser(uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM reaction WHERE uid = ?").bind(uid).all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+/**
+ * deleteReaction - delete a reaction from the reaction table
+ * @param {String} rid 
+ * @param {String} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function deleteReaction(rid, uid, env) { 
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM reaction WHERE rid = ? AND uid = ?").bind(rid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+// USER PRIV DATABASE FUNCTIONS //
+
+/**
+ * getUserPriv returns the user's privacy setting by the uid
+ * @param {*} env the environment variables
+ * @param {*} uid representing the user id
+ * @returns results a json object containing int priv representing the user's privacy setting
+ */
+export async function getUserPriv(env, uid) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM user_priv WHERE uid = ?").bind(uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * setUserPriv inserts a new user privacy setting into the database
+ * @param {*} env the environment variables
+ * @param {string} uid representing the user id
+ * @param {int} priv representing the user's privacy setting
+ */
+export async function setUserPriv(env, uid, priv) {
+    // if (priv !== 0 & priv !== 1) {
+    //     throw new Error(`Bad Params`)
+    // }
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO user_priv (uid, priv) VALUES (?, ?)").bind(uid, priv).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateUserPriv updates the user's privacy setting
+ * @param {*} env the environment variable
+ * @param {string} uid representing the user id
+ * @param {int} priv representing the user's privacy setting
+ */
+export async function updateUserPriv(env, uid, priv){
+    try {
+        const {results} = await env.DB.prepare("UPDATE user_priv SET priv=? WHERE uid=?").bind(priv, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/* UPDATE USER INFO FUNCTIONS */
+
+/**
+ * updateFname updates fname in the info table
+ * @param {*} uid representing the user id
+ * @param {*} fname representing the user's first name
+ * @param {*} env representing the environment variables
+ * @returns 
+ */
+export async function updateFname(uid, fname, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE info SET fname = ? WHERE uid = ?").bind(fname, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateLname updates lname in the info table
+ * @param {*} uid representing the user id
+ * @param {*} lname representing the user's last name
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateLname(uid, lname, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE info SET lname = ? WHERE uid = ?").bind(lname, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateDOB updates dob in the info table
+ * @param {*} uid representing the user id
+ * @param {*} dob representing the user's date of birth
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateDOB(uid, dob, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE info SET dob = ? WHERE uid = ?").bind(dob, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateEmail updates email in the admin table
+ * @param {*} uid representing the user id
+ * @param {*} email representing the user's email
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateEmail(uid, email, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE admin SET email = ? WHERE uid = ?").bind(email, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * updateHashpass updates hashpass in the admin table
+ * @param {*} uid representing the user id
+ * @param {*} hashpass representing the user's hashed password
+ * @param {*} env representing the environment variable
+ * @returns 
+ */
+export async function updateHashpass(uid, hashpass, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE admin SET hashpass = ? WHERE uid = ?").bind(hashpass, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/* GROUP DATABASE FUNCTIONS */
+
+/*  */

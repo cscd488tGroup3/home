@@ -5,21 +5,23 @@ import "../styles/global.css";
 ---
 <Layout>
     <!-- Page Buttons -->
-    <h1>Account Login:</h1>
+    <h1>Login:</h1><br>
+    <p>Don't have an account? <a class="nav-link" href="/createAccount">Create one!</a></p>
     <form id="loginForm">
+        <br>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
-        <br>
+        
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-        <br>
+        
         <label>
             <input type="checkbox" name="rememberMe" /> Remember me
         </label>
         <br>          
         <button type="submit">Login</button>
     </form>
-
+    <br>
     <script>
         /**
          * hashPassword hashes the password
@@ -62,7 +64,7 @@ import "../styles/global.css";
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
-                credentials: "include" // receive the cookie
+                credentials: "include" // send the current domain so that we can recieve the cookie
             });
 
             const result = await response.json(); // set the cookie
@@ -70,7 +72,12 @@ import "../styles/global.css";
             if (response.ok) {
                 window.location.href = "/"; // redirect to home page
             } else {
-                alert(`Error: ${result.error}`);
+                try {
+                    const result = await response.json();
+                    alert(`Error: ${result.error || "Unknown error"}`);
+                } catch (e) {
+                    alert(`Unexpected error: ${e.message}`);
+                }
             }
         }
         

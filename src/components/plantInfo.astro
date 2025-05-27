@@ -1,93 +1,109 @@
 ---
-import { queryTrefle, queryPerenual, queryRapid } from '../lib/queryAPIs.js'; // Ensure queryPerenual is exported and imported
+
 ---
 
 <!-- Plant Display -->
-<section class="backdrop-blur-md bg-white/50">
-    <h1>Plant name: <span class="plant-name">Plant</span></h1>
-    <h2>Reproduction: <span class="plant-reproduction">Fruit/Vegetable</span></h2>
-    <h3>Lighting Time: <span class="plant-lighting">Lighting</span></h3>
-    <h4>Climate: <span class="plant-climate">Climate</span></h4>
-    <h5>Water Amount: <span class="plant-water">Water</span></h5>
-    <h6>Soil Type: <span class="plant-soil">Soil</span></h6>
+<section id="plant" class="backdrop-blur-md bg-white/50">
+    <p>Plant Name: <span class="plant-name">Plant</span></p>
+    <p>Scientific Name: <span class="plant-scientific-name">Scientific Name</span></p>
+    <p>Type: <span class="plant-type">Type</span></p>
+    <p>Cycle: <span class="plant-cycle">Cycle</span></p>
+    <p>Watering: <span class="plant-watering">Watering</span></p>
+    <p>Sunlight: <span class="plant-sunlight">Sunlight</span></p>
+    <p>Pruning: <span class="plant-pruning">Pruning</span></p>
+    <p>Description: <span class="plant-description">Description</span></p>
+    <img id="plant-image" src="" alt="Plant Image" style="max-width:200px;display:block;margin-top:10px;" />
+    <button id="add-to-plan">Add to Gardening Plan</button>
 </section>
 
-<div>
-    <label for="apiSelect">Select API:</label>
-    <select id="apiSelect">
-        <option value="trefle">Trefle</option>
-        <option value="perenual">Perenual</option>
-        <option value="rapid">Rapid</option>
-    </select>
-</div>
+<section id="gardening-plan" class="backdrop-blur-md bg-white/50">
+    <h3>Your Gardening Plan</h3>
+    <ul id="gardening-plan-list"></ul>
+</section>
 
-<script>
-    // DOM elements
-    const plantNameElement = document.querySelector('.plant-name') as HTMLElement | null;
-    const plantClimateElement = document.querySelector('.plant-climate') as HTMLElement | null;
-    const apiSelect = document.getElementById('apiSelect') as HTMLSelectElement | null;
+<script type="module">
 
-    // Function to fetch plant data from the server-side API
-    async function fetchPlantInfo(plantName: string, api: string) {
+    let currentPlant = null;
+    let gardeningPlan = JSON.parse(localStorage.getItem('gardeningPlan') || '[]');
+
+    const plantNameElement = document.querySelector('.plant-name');
+    const plantScientificNameElement = document.querySelector('.plant-scientific-name');
+    const plantTypeElement = document.querySelector('.plant-type');
+    const plantCycleElement = document.querySelector('.plant-cycle');
+    const plantWateringElement = document.querySelector('.plant-watering');
+    const plantSunlightElement = document.querySelector('.plant-sunlight');
+    const plantPruningElement = document.querySelector('.plant-pruning');
+    const plantDescriptionElement = document.querySelector('.plant-description');
+    const plantImageElement = document.getElementById('plant-image');
+
+    function updateGardeningPlanUI() {
+        const planList = document.getElementById('gardening-plan-list');
+        planList.innerHTML = '';
+        gardeningPlan.forEach((plant, idx) => {
+            const li = document.createElement('li');
+            li.textContent = `${plant.commonName}: Watering - ${plant.watering}, Sunlight - ${plant.sunlight}, Pruning - ${plant.pruning}`;
+            planList.appendChild(li);
+        });
+    }
+
+    async function fetchPlantInfo(plantName) {
+        if (!plantName) {
+            alert('Please enter a plant name.');
+            return;
+        }
         try {
-            const response = await fetch('/api/handlePlantRequests', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: plantName, api }),
-            });
+            const res = await fetch(`/.netlify/functions/plant?name=${encodeURIComponent(plantName)}`);
+            if (!res.ok) throw new Error('Failed to fetch plant info');
+            const plantDetails = await res.json();
 
-            const data = await response.json();
-
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-
-            if (data) {
-                updatePlantDisplay(data);
-            } else {
-                alert('Plant not found');
-            }
+            if (plantNameElement) plantNameElement.textContent = plantDetails.commonName || 'Unknown';
+            if (plantScientificNameElement) plantScientificNameElement.textContent = plantDetails.scientificName || 'Unknown';
+            if (plantTypeElement) plantTypeElement.textContent = plantDetails.type || 'Unknown';
+            if (plantCycleElement) plantCycleElement.textContent = plantDetails.cycle || 'Unknown';
+            if (plantWateringElement) plantWateringElement.textContent = plantDetails.watering || 'No watering info.';
+            if (plantSunlightElement) plantSunlightElement.textContent = plantDetails.sunlight || 'No sunlight info.';
+            if (plantPruningElement) plantPruningElement.textContent = plantDetails.pruning || 'No pruning info.';
+            if (plantDescriptionElement) plantDescriptionElement.textContent = plantDetails.description || 'No description available.';
+            if (plantImageElement) plantImageElement.src = plantDetails.default_image?.regular_url || '';
+            currentPlant = plantDetails;
         } catch (error) {
             console.error('Error fetching plant info:', error);
-            alert('Failed to fetch plant information');
+            alert('Failed to fetch plant information.');
         }
     }
 
-    // Update the plant display with the fetched data
-    function updatePlantDisplay(data: any) {
-        if (plantNameElement) plantNameElement.textContent = data.name || 'Unknown';
-        if (plantClimateElement) plantClimateElement.textContent = data.climate || 'Unknown';
-    }
+    document.getElementById('add-to-plan').onclick = () => {
+        if (currentPlant) {
+            gardeningPlan.push(currentPlant);
+            localStorage.setItem('gardeningPlan', JSON.stringify(gardeningPlan));
+            updateGardeningPlanUI();
+        }
+    };
 
-    // Listen for the custom "plantSearch" event
+    // On load, show any saved plan
+    updateGardeningPlanUI();
+
+    // Listen for custom event to trigger plant info fetch
     window.addEventListener('plantSearch', (event) => {
-        const plantName = (event as CustomEvent).detail.plantName;
-        const api = apiSelect?.value; // Get the selected API from the dropdown
-        if (plantName && api) {
-            fetchPlantInfo(plantName, api.toLowerCase());
-        } else {
-            alert('Please select an API.');
-        }
+        const customEvent = event;
+        fetchPlantInfo(customEvent.detail.plantName);
     });
 </script>
 
-<!-- Styling -->
-<style>
+
+<!-- <style>
     section {
-        position: absolute;
-        left: 22%;
-        top: 52%; /* Increased from 45% to 50% to move it down by 35px */
-        transform: translate(-50%, -50%);
+        margin: 20px auto;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        background: white;
     }
 
     div {
-        margin-top: -20px; /* Keeps the dropdown positioned correctly */
-        margin-left: 100px; /* Moves the dropdown 25px to the left */
-        text-align: center; /* Center the content horizontally */
+        margin-top: 20px;
+        text-align: center;
     }
 
     select {
@@ -95,4 +111,22 @@ import { queryTrefle, queryPerenual, queryRapid } from '../lib/queryAPIs.js'; //
         padding: 10px;
         font-size: 16px;
     }
+
+    input {
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    img {
+        max-width: 300px;
+        margin-top: 10px;
+    } -->
 </style>

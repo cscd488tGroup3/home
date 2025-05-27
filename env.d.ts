@@ -5,8 +5,12 @@ interface ImportMetaEnv {
   readonly USR_DB: string;
   readonly USR_DB_W: string;
   readonly USR_DB_W_ADMIN: string;
+  readonly USR_SESSION: string;
+  readonly USR_POST: string;
+  readonly TREFLE_API_KEY: string;
   readonly RAPIDAPI_KEY: string;
   readonly PERENUAL_KEY: string;
+  readonly EMAIL: string;
 }
 
 interface ImportMeta {

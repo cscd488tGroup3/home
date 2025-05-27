@@ -3,15 +3,16 @@ const { pageTitle } = Astro.props;
 import "../styles/global.css";
 import Date from "../components/Date.astro";
 import Time from "../components/Time.astro";
+import { getSession } from "../utils/getSession";
 
-// NO need to invalidate sessions manually here
-// await invalidateStaleSessions(); <-- REMOVE THIS
+const { user, session } = await getSession(Astro);
 
-const user = Astro.locals.user;
-const session = Astro.locals.session;
-const username = user ? `User ${user.id}` : "Guest";
+// Log the session and user information to the Netlify logs for debugging purposes
+console.log("(Layout.astro) User:", user);
+console.log("(Layout.astro) Session:", session);
+
+const username = user ? `${user.id}` : "Guest";
 ---
-
 
 <!-- This file containes the base layout for pages on the Bloom Buddy website. It includes the header, footer, and a slot for page content. The header contains the logo, date, time, and a navigation bar. The footer contains copyright information. -->
 <!doctype html>
@@ -21,6 +22,8 @@ const username = user ? `User ${user.id}` : "Guest";
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+		<meta name="user-id" content={user ? String(user.id) : ""} />
+
 		<!-- dynamically populated title -->
 		<title>{pageTitle}</title>
 	</head>
@@ -40,7 +43,7 @@ const username = user ? `User ${user.id}` : "Guest";
 							height: auto;
 							margin: 0;
 							padding: 0;" />
-				<h1 class="logo">Bloom Buddy</h1>
+				<h1 class="logo" style="color: #cbecca;">Bloom Buddy</h1>
 			</div>
 
 			<!-- Date and Time horizontally aligned and centered -->
@@ -48,17 +51,33 @@ const username = user ? `User ${user.id}` : "Guest";
 						align-items: center; 
 						justify-content: center; 
 						gap: 0.625em;
-						margin: 0;
-						padding: 0;
+						margin: .3em;
+						margin-top: auto;
+						margin-bottom: auto;
+						padding: .4em;
+						border: 1px solid #cbecca;
+						border-radius: .3em;
 						font-size: .8em;
-    					font-weight: normal;">
+    					font-weight: bold;">
 				<!-- Date -->
 				<Date/>
 				<!-- Time -->
 				<Time/>
 			</div>
 
-			<div>Logged in as: {username}</div>
+			<div style="display: flex; 
+						align-items: center; 
+						justify-content: center; 
+						gap: 0.625em;
+						margin: .3em;
+						margin-top: auto;
+						margin-bottom: auto;
+						padding: .4em;
+						border: 1px solid #cbecca;
+						border-radius: .3em;
+						font-size: .8em;
+    					font-weight: bold;">
+				Logged in as: {username}</div>
 			
 			<!-- the right side of the header contains the navbar -->
 			<nav class="nav">
@@ -91,13 +110,3 @@ const username = user ? `User ${user.id}` : "Guest";
 		</footer>
 	</body>
 </html>
-
-<!-- overwrite style -->
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

@@ -34,6 +34,22 @@ header .nav {
     margin-bottom: auto
 }
 
+h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #024b00;
+}
+
+/* h1 .logo {
+    color: #cbecca;
+} */
+
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #166b13;
+}
+
 /* style the body */
 body {
     display: flex;
@@ -66,12 +82,48 @@ p {
     text-align: center;
 }
 
+p#error-badge {
+    border: 0.0625em solid #480101;
+    border-radius: 1em;
+    padding: .5em;
+    padding-left: .75em;
+    padding-right: .75em;
+    background-color: #ecddca;
+    text-align: left;
+    font-weight: 500;
+    font-style: oblique;
+    color: #480101;
+    margin-top: 3em;
+    font-size: 1.05em;
+}
+
 div {
     padding: 1em;
-    border: #014829;
-    border-radius: 0.01em;
-    margin-top: 1.25em;
+    /* border: #014829;
+    border-radius: 0.01em; */
+    /* margin-top: 1.25em; */
     text-align: center;
+}
+
+div#info-block {
+    border: 0.0625em solid #014829;
+    border-radius: 1em;
+    background: #56b90671;
+    padding: 1em;
+    /* width: fit-content; */
+}
+
+div.info-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /* min-width: 250px; Optional: adjust width as needed */
+}
+
+span.right {
+    text-align: right;
 }
 
 #city {
@@ -85,20 +137,69 @@ div {
     margin: 0.625em auto;
 }
 
+button#search-button,
+button#plant-search-button,
+button#city-search-button,
+button#edit-fname,
+button#edit-lname,
+button#edit-email,
+button#edit-dob,
+button#edit-password,
+button#edit-priv
+ {
+    margin-top: 0.625em; 
+    padding-left: 0.625em;
+    padding-right: 0.625em;
+    padding-top: 0.125em;
+    padding-bottom: 0.125em;
+    border: 0.0625em solid black; 
+    border-radius: 0.3125em;
+    background-color: #cbecca;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    filter: brightness(90%);
+}
+
+button:active {
+    filter: brightness(80%);
+}
+
+section#plant,
+section#city,
+section#gardening-plan {
+    background-color: ;
+      padding: 1.25em; /* 20px */
+      border-radius: 0.625em; /* 10px */
+      box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* 4px 8px */
+  }
+
 form {
+    background-color: #56b90671;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.625em;
     margin-top: 1.25em;
+    padding-left: 2em; 
+    padding-right: 2em;
+    padding-bottom: 2em;
+    border:1px solid #005bb5;
+    border-radius: 1em;
 }
 
 label {
     font-weight: bold;
     margin-bottom: 0.3125em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 input[type="text"],
+input[type="email"],
 input[type="password"] {
     padding: 0.625em;
     background-color: #cbecca;
@@ -142,15 +243,21 @@ button[type="submit"]:hover {
 
 .nav-link {
     text-decoration: none;
-    color: inherit;
+    color: #cbecca;
     padding: 0.125em 0.25em; /* Reduced padding */
     border: 0.0625em solid black;
+    background-color: #066606;
     border-radius: 0.3125em;
     transition: background-color 0.3s;
+    font-weight: 500;
 }
 
 .nav-link:hover {
-    background-color: #cbecca;
+    color: brightness(120%);
+}
+
+.nav-link:active {
+    filter: brightness(90%);
 }
 
 

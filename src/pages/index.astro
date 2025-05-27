@@ -7,6 +7,7 @@ import Weather from "../components/Weather.astro";
 import City from "../components/CityInput.astro";
 import Plant from "../components/Plant.astro";
 import PlantInfo from "../components/plantInfo.astro";
+import Feed from "../components/Feed.astro"
 ---
 
 <Layout>
@@ -19,22 +20,7 @@ import PlantInfo from "../components/plantInfo.astro";
 
         <!-- Center Column: Post Feed -->
         <div class="center-column">
-            <h1 style="text-decoration: underline; font-size: 36px;">Feed</h1>
-            <!-- Button to toggle the form -->
-            <button id="toggleFormButton" class="form-button">Create Post</button>
-
-            <!-- Form for creating a new post (hidden by default) -->
-            <form id="postForm" style="display: none;">    
-                <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label>
-                <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/webp" required style="display: none;">
-                <label for="caption">Caption the Post:</label>
-                <input type="text" id="caption" name="caption" required>
-                <span id="captionCounter">0/200</span>
-                <button type="submit">Create Post</button>
-            </form>
-
-            <!-- Container where posts will be dynamically added -->
-            <div id="postContainer"></div>
+            <Feed />
         </div>
 
         <!-- Right Column: City Info -->
@@ -44,370 +30,21 @@ import PlantInfo from "../components/plantInfo.astro";
         </div>
     </div>
 
-    <script>
-        // Get references to the form, toggle button, post container, and file input
-        const postForm = document.getElementById('postForm');
-        const toggleFormButton = document.getElementById('toggleFormButton');
-        const postContainer = document.getElementById('postContainer');
-        const imageInput = document.getElementById('images');
-        const fileLabel = document.getElementById('fileLabel');
-        const captionInput = document.getElementById('caption');
-        const captionCounter = document.getElementById('captionCounter');
-
-        // Change "Choose File" to the selected file name when a file is chosen
-        imageInput.addEventListener('change', () => {
-            if (imageInput.files.length > 0) {
-                fileLabel.textContent = `Chosen File: ${imageInput.files[0].name}`;
-            } else {
-                fileLabel.textContent = "Choose File";
-            }
-        });
-
-        // Update caption character counter
-        captionInput.addEventListener('input', () => {
-            const typedCharacters = captionInput.value.length;
-            captionCounter.textContent = `${typedCharacters}/200`;
-
-            if (typedCharacters > 200) {
-                captionCounter.style.color = 'red';
-            } else {
-                captionCounter.style.color = 'black';
-            }
-        });
-
-        // Toggle the visibility of the form when the button is clicked
-        toggleFormButton.addEventListener('click', () => {
-            if (postForm.style.display === 'none') {
-                postForm.style.display = 'block';
-                toggleFormButton.textContent = 'Hide Form';
-            } else {
-                postForm.style.display = 'none';
-                toggleFormButton.textContent = 'Create Post';
-            }
-        });
-
-        // Helper to get posts from localStorage
-        function getSavedPosts() {
-            return JSON.parse(localStorage.getItem('posts') || '[]');
-        }
-
-        // Helper to save posts to localStorage
-        function savePosts(posts) {
-            localStorage.setItem('posts', JSON.stringify(posts));
-        }
-
-        // Helper to add a comment to the DOM
-        function addCommentToDOM(username, commentText, commentsList, onDelete, onEdit) {
-            const comment = document.createElement('div');
-            comment.classList.add('comment');
-            comment.innerHTML = `
-                <span class="comment-text">${username}: ${commentText}</span>
-                <div class="comment-menu-container">
-                    <button class="comment-menu-button">⋮</button>
-                    <div class="comment-menu-options hidden">
-                        <button class="edit-comment-button">Edit</button>
-                        <button class="delete-comment-button">Delete</button>
-                    </div>
-                </div>
-            `;
-            commentsList.appendChild(comment);
-
-            const menuButton = comment.querySelector('.comment-menu-button');
-            const menuOptions = comment.querySelector('.comment-menu-options');
-
-            menuButton.addEventListener('click', () => {
-                menuOptions.classList.toggle('hidden');
-            });
-
-            const editButton = comment.querySelector('.edit-comment-button');
-            editButton.addEventListener('click', () => {
-                const commentTextElement = comment.querySelector('.comment-text');
-                const currentText = commentTextElement.textContent.replace(`${username}: `, '').trim();
-                const newText = prompt('Edit your comment:', currentText);
-                if (newText !== null && newText.trim() !== '') {
-                    commentTextElement.textContent = `${username}: ${newText.trim()}`;
-                    if (onEdit) onEdit(currentText, newText.trim());
-                }
-                menuOptions.classList.add('hidden');
-            });
-
-            const deleteButton = comment.querySelector('.delete-comment-button');
-            deleteButton.addEventListener('click', () => {
-                const confirmDelete = window.confirm('Are you sure you want to delete this comment?');
-                if (confirmDelete) {
-                    comment.remove();
-                    if (onDelete) onDelete(commentText);
-                }
-            });
-        }
-
-        // Render posts from localStorage on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedPosts = getSavedPosts();
-            savedPosts.forEach(postData => {
-                renderPost(postData);
-            });
-        });
-
-        // Event listener for form submission
-        postForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            if (!imageInput || imageInput.files.length === 0) {
-                alert('Please select an image to post.');
-                return;
-            }
-
-            if (captionInput.value.length > 200) {
-                alert('Caption cannot exceed 200 characters.');
-                return;
-            }
-
-            const file = imageInput.files[0];
-            const caption = captionInput.value.trim();
-
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const posts = getSavedPosts();
-                posts.push({
-                    image: event.target.result,
-                    caption: caption,
-                    liked: false,
-                    comments: [] // <-- Add comments array
-                });
-                savePosts(posts);
-                renderPost({ image: event.target.result, caption: caption, liked: false, comments: [] });
-            };
-
-            reader.readAsDataURL(file);
-
-            postForm.reset();
-            captionCounter.textContent = '0/200';
-            imageInput.value = "";
-            fileLabel.textContent = "Choose File";
-            postForm.style.display = 'none';
-            toggleFormButton.textContent = 'Create Post';
-        });
-
-        // Function to render a post (refactor your post creation code into this)
-        function renderPost({ image, caption, liked = false, comments = [] }) {
-            const post = document.createElement('div');
-            post.classList.add('post');
-            post.innerHTML = `
-                <div class="menu-container">
-                    <button class="menu-button">⋮</button>
-                    <div class="menu-options hidden">
-                        <button class="edit-caption">Edit</button>
-                        <button class="confirm-delete">Delete</button>
-                    </div>
-                </div>
-                <div class="image-container">
-                    <img src="${image}" alt="Post Image" class="post-image">
-                </div>
-                <p class="post-caption">${caption}</p>
-                <div class="reaction-container">
-                    <button class="like-button">${liked ? '👎 Unlike' : '👍 Like'}</button>
-                    <span class="like-count">${liked ? 1 : 0}</span>
-                </div>
-                <div class="comment-section">
-                    <input type="text" class="comment-input" placeholder="Add a comment..." />
-                    <span class="commentCounter">0/200</span>
-                    <button class="comment-button">Comment</button>
-                    <div class="comments-list"></div>
-                </div>
-            `;
-            postContainer.appendChild(post);
-
-            const menuButton = post.querySelector('.menu-button');
-            const menuOptions = post.querySelector('.menu-options');
-            const confirmDelete = post.querySelector('.confirm-delete');
-            const likeButton = post.querySelector('.like-button');
-            const likeCount = post.querySelector('.like-count');
-            const commentInput = post.querySelector('.comment-input');
-            const commentCounter = post.querySelector('.commentCounter');
-            const commentButton = post.querySelector('.comment-button');
-            const commentsList = post.querySelector('.comments-list');
-
-            commentInput.addEventListener('input', () => {
-                const typedCharacters = commentInput.value.length;
-                commentCounter.textContent = `${typedCharacters}/200`;
-
-                if (typedCharacters > 200) {
-                    commentCounter.style.color = 'red';
-                } else {
-                    commentCounter.style.color = 'black';
-                }
-            });
-
-            menuButton.addEventListener('click', () => {
-                menuOptions.classList.toggle('hidden');
-            });
-
-            confirmDelete.addEventListener('click', () => {
-                const confirm = window.confirm('Are you sure you want to delete this post?');
-                if (confirm) {
-                    // Remove from DOM
-                    post.remove();
-
-                    // Remove from localStorage
-                    const posts = getSavedPosts();
-                    // Find the index of the post to delete (match by image and caption)
-                    const index = posts.findIndex(p => p.image === image && p.caption === caption);
-                    if (index !== -1) {
-                        posts.splice(index, 1);
-                        savePosts(posts);
-                    }
-                }
-            });
-
-            // Set initial liked state
-            let likedState = liked;
-
-            likeButton.addEventListener('click', () => {
-                let posts = getSavedPosts();
-                // Find the post in localStorage
-                const index = posts.findIndex(p => p.image === image && p.caption === caption);
-                if (index !== -1) {
-                    if (likedState) {
-                        likeCount.textContent = '0';
-                        likeButton.textContent = '👍 Like';
-                        posts[index].liked = false;
-                    } else {
-                        likeCount.textContent = '1';
-                        likeButton.textContent = '👎 Unlike';
-                        posts[index].liked = true;
-                    }
-                    likedState = !likedState;
-                    savePosts(posts);
-                }
-            });
-
-            const editCaptionButton = post.querySelector('.edit-caption');
-            editCaptionButton.addEventListener('click', () => {
-                const captionElement = post.querySelector('.post-caption');
-                const currentCaption = captionElement.textContent.trim();
-                const newCaption = prompt('Edit your caption:', currentCaption);
-
-                if (newCaption !== null && newCaption.trim() !== '') {
-                    if (newCaption.length > 200) {
-                        alert('Caption cannot exceed 200 characters.');
-                    } else {
-                        captionElement.textContent = newCaption.trim();
-                    }
-                }
-                menuOptions.classList.add('hidden');
-            });
-
-            // Render saved comments for this post
-            if (Array.isArray(comments)) {
-                comments.forEach(commentObj => {
-                    addCommentToDOM(
-                        commentObj.username,
-                        commentObj.text,
-                        commentsList,
-                        // onDelete
-                        (commentText) => {
-                            let posts = getSavedPosts();
-                            const postIndex = posts.findIndex(p => p.image === image && p.caption === caption);
-                            if (postIndex !== -1) {
-                                posts[postIndex].comments = posts[postIndex].comments.filter(
-                                    c => !(c.username === commentObj.username && c.text === commentObj.text)
-                                );
-                                savePosts(posts);
-                            }
-                        },
-                        // onEdit
-                        (oldText, newText) => {
-                            let posts = getSavedPosts();
-                            const postIndex = posts.findIndex(p => p.image === image && p.caption === caption);
-                            if (postIndex !== -1) {
-                                const commentIndex = posts[postIndex].comments.findIndex(
-                                    c => c.username === commentObj.username && c.text === oldText
-                                );
-                                if (commentIndex !== -1) {
-                                    posts[postIndex].comments[commentIndex].text = newText;
-                                    savePosts(posts);
-                                }
-                            }
-                        }
-                    );
-                });
-            }
-
-            commentButton.addEventListener('click', () => {
-                const username = "YourUsername";
-                const commentText = commentInput.value.trim();
-
-                if (commentText.length > 200) {
-                    alert('Comment cannot exceed 200 characters.');
-                    return;
-                }
-
-                if (commentText) {
-                    addCommentToDOM(
-                        username,
-                        commentText,
-                        commentsList,
-                        // onDelete
-                        (deletedText) => {
-                            let posts = getSavedPosts();
-                            const postIndex = posts.findIndex(p => p.image === image && p.caption === caption);
-                            if (postIndex !== -1) {
-                                posts[postIndex].comments = posts[postIndex].comments.filter(
-                                    c => !(c.username === username && c.text === deletedText)
-                                );
-                                savePosts(posts);
-                            }
-                        },
-                        // onEdit
-                        (oldText, newText) => {
-                            let posts = getSavedPosts();
-                            const postIndex = posts.findIndex(p => p.image === image && p.caption === caption);
-                            if (postIndex !== -1) {
-                                const commentIndex = posts[postIndex].comments.findIndex(
-                                    c => c.username === username && c.text === oldText
-                                );
-                                if (commentIndex !== -1) {
-                                    posts[postIndex].comments[commentIndex].text = newText;
-                                    savePosts(posts);
-                                }
-                            }
-                        }
-                    );
-
-                    // Save comment to localStorage
-                    let posts = getSavedPosts();
-                    const index = posts.findIndex(p => p.image === image && p.caption === caption);
-                    if (index !== -1) {
-                        if (!Array.isArray(posts[index].comments)) posts[index].comments = [];
-                        posts[index].comments.push({ username, text: commentText });
-                        savePosts(posts);
-                    }
-
-                    commentInput.value = '';
-                    commentCounter.textContent = '0/200';
-                } else {
-                    alert('Please enter a comment.');
-                }
-            });
-        }
-    </script>
-
     <style>
-        /* Grid container for the layout */
+     /* Grid container for the layout */
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr; /* Left, Center, Right */
-            gap: 40px; /* Add spacing between columns */
-            padding: 20px;
-            align-items: start; /* Align items at the top */
+            gap: 2.5em;
+            padding: 1.25em;
+            align-items: start;
         }
 
         /* Left column styling */
         .left-column {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 1.25em;
         }
 
         /* Center column styling */
@@ -415,24 +52,24 @@ import PlantInfo from "../components/plantInfo.astro";
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            padding: 0 20px; /* Add padding to center the content */
+            gap: 1.25em;
+            padding: 0 1.25em;
         }
 
         /* Right column styling */
         .right-column {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 1.25em;
         }
 
         /* Styling for the form button */
         .form-button {
-            border: 1px solid black;
-            border-radius: 8px;
-            padding: 10px;
+            border: 0.0625em solid black;
+            border-radius: 0.5em;
+            padding: 0.625em;
             background-color: transparent;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.1);
             cursor: pointer;
         }
 
@@ -440,23 +77,23 @@ import PlantInfo from "../components/plantInfo.astro";
         #postContainer {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 20px;
-            max-width: 600px;
+            gap: 1.25em;
+            padding: 1.25em;
+            max-width: 37.5em;
             margin: 0 auto;
         }
 
         /* Individual post styling */
         .post {
-            border: 1px solid #ccc;
+            border: 0.0625em solid #ccc;
             display: flex;
             flex-direction: column;
             align-items: center;
             background-color: #f9f9f9;
-            border-radius: 8px;
+            border-radius: 0.5em;
             overflow: hidden;
             width: 100%;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.1);
             position: relative;
         }
 
@@ -466,50 +103,50 @@ import PlantInfo from "../components/plantInfo.astro";
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px; /* Add spacing between form elements */
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 600px; /* Limit the width of the form */
-            width: 100%; /* Take full width of the column */
-            box-sizing: border-box; /* Include padding and border in width */
-            margin: 0 auto; /* Center the form horizontally */
+            gap: 0.9375em;
+            padding: 1.25em;
+            border: 0.0625em solid #ccc;
+            border-radius: 0.5em;
+            box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.1);
+            max-width: 37.5em;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0 auto;
         }
 
         /* Ensure the file label and caption input are centered and stacked */
         #fileLabel {
-            max-width: 100%; /* Prevent overflow */
-            width: 100%; /* Take full width of the form */
-            text-align: center; /* Center the text */
-            overflow: hidden; /* Hide overflowing text */
-            text-overflow: ellipsis; /* Add ellipsis for long text */
-            white-space: nowrap; /* Prevent text wrapping */
-            margin-bottom: 10px; /* Add spacing below the file label */
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-bottom: 0.625em;
         }
 
         label[for="caption"] {
-            display: block; /* Ensure it is on its own line */
-            text-align: center; /* Center the text */
-            margin-top: 10px; /* Add spacing above the label */
-            margin-bottom: 5px; /* Add spacing below the label */
-            font-weight: bold; /* Optional: make the label bold */
+            display: block;
+            text-align: center;
+            margin-top: 0.625em;
+            margin-bottom: 0.3125em;
+            font-weight: bold;
         }
 
         #caption {
-            width: 100%; /* Take full width of the form */
-            max-width: 500px; /* Limit the width of the input box */
-            padding: 8px; /* Add padding inside the input box */
-            border: 1px solid #ccc; /* Add a border */
-            border-radius: 4px; /* Round the corners */
-            box-sizing: border-box; /* Include padding and border in width */
+            width: 100%;
+            max-width: 31.25em;
+            padding: 0.5em;
+            border: 0.0625em solid #ccc;
+            border-radius: 0.25em;
+            box-sizing: border-box;
         }
 
         /* Style the caption counter */
         #captionCounter {
-            font-size: 14px;
+            font-size: 0.875em;
             color: #555;
-            text-align: center; /* Center the counter text */
+            text-align: center;
         }
     </style>
 </Layout>
