@@ -32,13 +32,13 @@ export async function handler(event, context) {
     }
 
     const EMAIL = process.env.EMAIL;
-    
+
     console.log(EMAIL);
 
     const resend = new Resend(EMAIL);
 
     resend.emails.send({
-        from: 'noreply@cscd488group3-bloombuddy.netlify.app',
+        from: 'bloombuddy-notifications@resend.dev',
         to: 'ethan.crawford5532@gmail.com',
         subject: 'Test Notification',
         html: '<h1>Test Notification</h1>'
