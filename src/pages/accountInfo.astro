@@ -131,27 +131,11 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
         <form>
           <label>
             First Name:
-            <input type="text" id="fname"/>
+            <input type="text" id="fname" />
             <button
               id="edit-fname"
               type="button"
-              onClick={async () => {
-                const value = document.getElementById("fname").value;
-                const res = await fetch(
-                  "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditFName", 
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
-                    credentials: "include",
-                  }
-                );
-                alert(
-                  res.status === 200
-                    ? "First name updated!"
-                    : "Failed to update first name."
-                );
-              }}
+              onclick="updateFName(username)"
             >
               Save
             </button>
@@ -159,27 +143,11 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
 
           <label>
             Last Name:
-            <input type="text" id="lname"/>
+            <input type="text" id="lname" />
             <button
               id="edit-lname"
               type="button"
-              onClick={async () => {
-                const value = document.getElementById("lname").value;
-                const res = await fetch(
-                  "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditLName",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
-                    credentials: "include",
-                  }
-                );
-                alert(
-                  res.status === 200
-                    ? "Last name updated!"
-                    : "Failed to update last name."
-                );
-              }}
+              onclick="updateLName(username)"
             >
               Save
             </button>
@@ -187,27 +155,11 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
 
           <label>
             Email:
-            <input type="email" id="email"/>
+            <input type="email" id="email" />
             <button
               id="edit-email"
               type="button"
-              onclick={async () => {
-                const value = document.getElementById("email").value;
-                const res = await fetch(
-                  "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditEmail",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
-                    credentials: "include",
-                  }
-                );
-                alert(
-                  res.status === 200
-                    ? "Email updated!"
-                    : "Failed to update email."
-                );
-              }}
+              onclick="updateEmail(username)"
             >
               Save
             </button>
@@ -215,26 +167,8 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
 
           <label>
             Date of Birth:
-            <input type="date" id="dob"/>
-            <button
-              id="edit-dob"
-              type="button"
-              onclick={async () => {
-                const value = document.getElementById("dob").value;
-                const res = await fetch(
-                  "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditDOB",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
-                    credentials: "include",
-                  }
-                );
-                alert(
-                  res.status === 200 ? "DOB updated!" : "Failed to update DOB."
-                );
-              }}
-            >
+            <input type="date" id="dob" />
+            <button id="edit-dob" type="button" onclick="updateDOB(username)">
               Save
             </button>
           </label>
@@ -245,27 +179,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
             <button
               id="edit-password"
               type="button"
-              onclick={async () => {
-                const value = document.getElementById("password").value;
-                if (!value) {
-                  alert("Password cannot be empty.");
-                  return;
-                }
-                const res = await fetch(
-                  "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPassword",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
-                    credentials: "include",
-                  }
-                );
-                alert(
-                  res.status === 200
-                    ? "Password updated!"
-                    : "Failed to update password."
-                );
-              }}
+              onclick="updatePassword(username)"
             >
               Save
             </button>
@@ -277,27 +191,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
               <option value="0">Public</option>
               <option value="1">Private</option>
             </select>
-            <button
-              id="edit-priv"
-              type="button"
-              onclick={async () => {
-                const value = document.getElementById("priv").value;
-                const res = await fetch(
-                  "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPriv",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
-                    credentials: "include",
-                  }
-                );
-                alert(
-                  res.status === 200
-                    ? "Privacy updated!"
-                    : "Failed to update privacy."
-                );
-              }}
-            >
+            <button id="edit-priv" type="button" onclick="updatePriv(username)">
               Save
             </button>
           </label>
@@ -310,3 +204,106 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
     )
   }
 </Layout>
+
+<script>
+  declare global {
+    interface Window {
+      updateFName: (username: string) => Promise<void>;
+      updateLName: (username: string) => Promise<void>;
+      updateEmail: (username: string) => Promise<void>;
+      updateDOB: (username: string) => Promise<void>;
+      updatePassword: (username: string) => Promise<void>;
+      updatePriv: (username: string) => Promise<void>;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    window.updateFName = async function (username) {
+      const value = document.getElementById("fname").value;
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditFName",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, fname: value }),
+          credentials: "include",
+        }
+      );
+      alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
+    };
+
+    window.updateLName = async function (username) {
+      const value = document.getElementById("lname").value;
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditLName",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, lname: value }),
+          credentials: "include",
+        }
+      );
+      alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
+    };
+
+    window.updateEmail = async function (username) {
+      const value = document.getElementById("email").value;
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditEmail",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email: value }),
+          credentials: "include",
+        }
+      );
+      alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
+    };
+
+    window.updateDOB = async function (username) {
+      const value = document.getElementById("dob").value;
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditDOB",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, dob: value }),
+          credentials: "include",
+        }
+      );
+      alert(res.status === 200 ? "DOB updated!" : "Failed to update DOB.");
+    };
+
+    window.updatePassword = async function (username) {
+      const value = document.getElementById("password").value;
+      if (!value) {
+        alert("Password cannot be empty.");
+        return;
+      }
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPassword",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password: value }),
+          credentials: "include",
+        }
+      );
+      alert(res.status === 200 ? "Password updated!" : "Failed to update password.");
+    };
+
+    window.updatePriv = async function (username) {
+      const value = document.getElementById("priv").value;
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPriv",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, priv: value }),
+          credentials: "include",
+        }
+      );
+      alert(res.status === 200 ? "Privacy updated!" : "Failed to update privacy.");
+    };
+  });
+</script>

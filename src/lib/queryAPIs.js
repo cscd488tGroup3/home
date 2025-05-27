@@ -27,7 +27,7 @@ export async function queryTrefle(plantQuery) {
 
 // Keeping Perenual API functionality
 export async function queryPerenual(plantQuery) {
-    const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
+    const PERENUAL_KEY = process.env.PERENUAL_KEY;
 
     try {
         const response = await fetch(`https://perenual.com/api/species-care-guide-list?key=${PERENUAL_KEY}&q=${plantQuery}`);
