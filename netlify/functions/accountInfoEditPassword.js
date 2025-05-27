@@ -45,13 +45,13 @@ export async function handler(event, context) {
     const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
 
     const hashpass = await hashPassword(password);
-    
+
     try {
-        const lNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&hashpass=${hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
-        if (lNameResponse.ok) {
+        const hashpassResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&hashpass=${hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
+        if (hashpassResponse.ok) {
             return {
                 statusCode: 200,
-                body: JSON.stringify(lNameResponse),
+                body: JSON.stringify(hashpassResponse),
             }
         }
     } catch (error) {
