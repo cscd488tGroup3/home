@@ -33,7 +33,7 @@ export async function handler(event,context) {
 
     const { username, email } = JSON.parse(event.body);
 
-    console.log(body);
+    console.log({ username, email });
 
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
