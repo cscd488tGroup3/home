@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout>
+  <h1>Sending Email Nofitication...</h1>
+</Layout>
+
+<script>
+  fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/notify', { method: 'POST' })
+    .then(() => {
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    });
+</script>
