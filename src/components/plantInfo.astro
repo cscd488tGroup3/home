@@ -12,22 +12,19 @@
     <h6>Sunlight: <span class="plant-sunlight">Sunlight</span></h6>
     <h6>Pruning: <span class="plant-pruning">Pruning</span></h6>
     <p>Description: <span class="plant-description">Description</span></p>
+    <img id="plant-image" src="" alt="Plant Image" style="max-width:200px;display:block;margin-top:10px;" />
+    <button id="add-to-plan">Add to Gardening Plan</button>
 </section>
 
-<script>
-    interface PlantDetails {
-        commonName: string;
-        scientificName: string;
-        type: string;
-        cycle: string;
-        watering: string;
-        sunlight: string;
-        pruning?: string;
-        description: string;
-        default_image?: {
-            regular_url: string;
-        };
-    }
+<section>
+    <h3>Your Gardening Plan</h3>
+    <ul id="gardening-plan-list"></ul>
+</section>
+
+<script type="module">
+
+    let currentPlant = null;
+    let gardeningPlan = JSON.parse(localStorage.getItem('gardeningPlan') || '[]');
 
     const plantNameElement = document.querySelector('.plant-name');
     const plantScientificNameElement = document.querySelector('.plant-scientific-name');
@@ -37,9 +34,19 @@
     const plantSunlightElement = document.querySelector('.plant-sunlight');
     const plantPruningElement = document.querySelector('.plant-pruning');
     const plantDescriptionElement = document.querySelector('.plant-description');
-    const plantImageElement = document.getElementById('plant-image') as HTMLImageElement | null;
+    const plantImageElement = document.getElementById('plant-image');
 
-    async function fetchPlantInfo(plantName: string) {
+    function updateGardeningPlanUI() {
+        const planList = document.getElementById('gardening-plan-list');
+        planList.innerHTML = '';
+        gardeningPlan.forEach((plant, idx) => {
+            const li = document.createElement('li');
+            li.textContent = `${plant.commonName}: Watering - ${plant.watering}, Sunlight - ${plant.sunlight}, Pruning - ${plant.pruning}`;
+            planList.appendChild(li);
+        });
+    }
+
+    async function fetchPlantInfo(plantName) {
         if (!plantName) {
             alert('Please enter a plant name.');
             return;
@@ -47,7 +54,7 @@
         try {
             const res = await fetch(`/.netlify/functions/plant?name=${encodeURIComponent(plantName)}`);
             if (!res.ok) throw new Error('Failed to fetch plant info');
-            const plantDetails: PlantDetails = await res.json();
+            const plantDetails = await res.json();
 
             if (plantNameElement) plantNameElement.textContent = plantDetails.commonName || 'Unknown';
             if (plantScientificNameElement) plantScientificNameElement.textContent = plantDetails.scientificName || 'Unknown';
@@ -58,27 +65,39 @@
             if (plantPruningElement) plantPruningElement.textContent = plantDetails.pruning || 'No pruning info.';
             if (plantDescriptionElement) plantDescriptionElement.textContent = plantDetails.description || 'No description available.';
             if (plantImageElement) plantImageElement.src = plantDetails.default_image?.regular_url || '';
+            currentPlant = plantDetails;
         } catch (error) {
             console.error('Error fetching plant info:', error);
             alert('Failed to fetch plant information.');
         }
     }
 
+    document.getElementById('add-to-plan').onclick = () => {
+        if (currentPlant) {
+            gardeningPlan.push(currentPlant);
+            localStorage.setItem('gardeningPlan', JSON.stringify(gardeningPlan));
+            updateGardeningPlanUI();
+        }
+    };
+
+    // On load, show any saved plan
+    updateGardeningPlanUI();
+
+    // Listen for custom event to trigger plant info fetch
     window.addEventListener('plantSearch', (event) => {
-        const customEvent = event as CustomEvent<{ plantName: string }>;
+        const customEvent = event;
         fetchPlantInfo(customEvent.detail.plantName);
     });
 </script>
 
 <style>
     section {
-        position: absolute;
-        left: 25%;
-        top: 55%;
-        transform: translate(-50%, -50%);
+        margin: 20px auto;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        background: white;
     }
 
     div {
