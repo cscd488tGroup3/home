@@ -291,6 +291,9 @@ import Layout from '../layouts/Layout.astro';
                 const li = document.createElement('li');
                 li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
 
+                // Track requested groups in localStorage
+                let requestedGroups = JSON.parse(localStorage.getItem('requestedGroups') || '[]');
+
                 if (joinedGroups.includes(group.id)) {
                     // Joined + Leave box styled as button
                     const joinedBtn = document.createElement('span');
@@ -322,19 +325,47 @@ import Layout from '../layouts/Layout.astro';
                     joinedBtn.appendChild(leaveBtn);
                     li.appendChild(joinedBtn);
                 } else {
-                    // If group is private, show "Request to Join" button
                     if (group.isPrivate) {
-                        const requestBtn = document.createElement('button');
-                        requestBtn.textContent = 'Request to Join';
-                        requestBtn.setAttribute('style', buttonStyle);
-                        requestBtn.onclick = () => {
-                            // Here you would send a request to the backend for approval
-                            alert(`Request to join "${group.gname}" sent! Please wait for approval.`);
-                            // Optionally, disable the button after requesting
-                            requestBtn.disabled = true;
-                            requestBtn.textContent = 'Requested';
-                        };
-                        li.appendChild(requestBtn);
+                        // If already requested, show "Requested" with Cancel option
+                        if (requestedGroups.includes(group.id)) {
+                            const requestedBox = document.createElement('span');
+                            requestedBox.setAttribute('style', buttonStyle + 'display: inline-flex; align-items: center; background: #fffbe6; border-color: #ffe082; color: #bfa100;');
+
+                            const requestedSpan = document.createElement('span');
+                            requestedSpan.textContent = 'Requested';
+                            requestedSpan.style.color = '#bfa100';
+                            requestedSpan.style.fontWeight = 'bold';
+                            requestedSpan.style.marginRight = '0.7em';
+
+                            const cancelBtn = document.createElement('button');
+                            cancelBtn.textContent = 'Cancel';
+                            cancelBtn.setAttribute('style', buttonStyle + 'background: #fff; color: #d32f2f; border-color: #d32f2f; margin-left: 0;');
+                            cancelBtn.onmouseover = () => cancelBtn.style.background = '#ffeaea';
+                            cancelBtn.onmouseout = () => cancelBtn.style.background = '#fff';
+
+                            cancelBtn.onclick = () => {
+                                requestedGroups = requestedGroups.filter(id => id !== group.id);
+                                localStorage.setItem('requestedGroups', JSON.stringify(requestedGroups));
+                                renderAllGroups();
+                                alert(`Request to join "${group.gname}" cancelled.`);
+                            };
+
+                            requestedBox.appendChild(requestedSpan);
+                            requestedBox.appendChild(cancelBtn);
+                            li.appendChild(requestedBox);
+                        } else {
+                            // Not yet requested: show "Request to Join"
+                            const requestBtn = document.createElement('button');
+                            requestBtn.textContent = 'Request to Join';
+                            requestBtn.setAttribute('style', buttonStyle);
+                            requestBtn.onclick = () => {
+                                requestedGroups.push(group.id);
+                                localStorage.setItem('requestedGroups', JSON.stringify(requestedGroups));
+                                renderAllGroups();
+                                alert(`Request to join "${group.gname}" sent! Please wait for approval.`);
+                            };
+                            li.appendChild(requestBtn);
+                        }
                     } else {
                         // Public group: show Join button
                         const joinBtn = document.createElement('button');
