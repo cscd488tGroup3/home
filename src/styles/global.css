@@ -168,7 +168,8 @@ button:active {
 }
 
 section#plant,
-section#city {
+section#city,
+section#gardening-plan {
     background-color: ;
       padding: 1.25em; /* 20px */
       border-radius: 0.625em; /* 10px */
