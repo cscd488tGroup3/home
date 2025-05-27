@@ -33,13 +33,19 @@ export async function handler(event,context) {
 
     const body = JSON.parse(event.body);
 
+    console.log(body);
+
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
-    const USR_DB_W = process.env.USR_DB_W;
-    const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
 
     try {
-        const fNameResponse = await fetch();
+        const fNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?fname=${body.fname}&auth=${USR_DB}`);
+        if(fNameResponse.ok) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify(fNameResponse),
+            }
+        }
     } catch (error) {
         return {
             statusCode: 500,
