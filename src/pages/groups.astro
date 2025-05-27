@@ -322,21 +322,36 @@ import Layout from '../layouts/Layout.astro';
                     joinedBtn.appendChild(leaveBtn);
                     li.appendChild(joinedBtn);
                 } else {
-                    // Join button styled as main buttons
-                    const joinBtn = document.createElement('button');
-                    joinBtn.textContent = 'Join';
-                    joinBtn.setAttribute('style', buttonStyle);
-                    joinBtn.onmouseover = () => joinBtn.style.background = '#f0f0f0';
-                    joinBtn.onmouseout = () => joinBtn.style.background = '#fff';
+                    // If group is private, show "Request to Join" button
+                    if (group.isPrivate) {
+                        const requestBtn = document.createElement('button');
+                        requestBtn.textContent = 'Request to Join';
+                        requestBtn.setAttribute('style', buttonStyle);
+                        requestBtn.onclick = () => {
+                            // Here you would send a request to the backend for approval
+                            alert(`Request to join "${group.gname}" sent! Please wait for approval.`);
+                            // Optionally, disable the button after requesting
+                            requestBtn.disabled = true;
+                            requestBtn.textContent = 'Requested';
+                        };
+                        li.appendChild(requestBtn);
+                    } else {
+                        // Public group: show Join button
+                        const joinBtn = document.createElement('button');
+                        joinBtn.textContent = 'Join';
+                        joinBtn.setAttribute('style', buttonStyle);
+                        joinBtn.onmouseover = () => joinBtn.style.background = '#f0f0f0';
+                        joinBtn.onmouseout = () => joinBtn.style.background = '#fff';
 
-                    joinBtn.onclick = () => {
-                        joinedGroups.push(group.id);
-                        saveJoinedGroups(joinedGroups);
-                        renderAllGroups();
-                        alert(`You joined "${group.gname}"!`);
-                    };
+                        joinBtn.onclick = () => {
+                            joinedGroups.push(group.id);
+                            saveJoinedGroups(joinedGroups);
+                            renderAllGroups();
+                            alert(`You joined "${group.gname}"!`);
+                        };
 
-                    li.appendChild(joinBtn);
+                        li.appendChild(joinBtn);
+                    }
                 }
 
                 allGroupsList.appendChild(li);
