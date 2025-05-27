@@ -255,14 +255,46 @@ import Layout from '../layouts/Layout.astro';
             localStorage.setItem('localGroups', JSON.stringify(groups));
         }
 
+        // Helper: Get joined group IDs from localStorage
+        function getJoinedGroups() {
+            return JSON.parse(localStorage.getItem('joinedGroups') || '[]');
+        }
+
+        // Helper: Save joined group IDs to localStorage
+        function saveJoinedGroups(joined) {
+            localStorage.setItem('joinedGroups', JSON.stringify(joined));
+        }
+
         // Render all groups (local only)
         function renderAllGroups() {
             const allGroupsList = document.getElementById('allGroupsList');
             allGroupsList.innerHTML = '';
             const groups = getLocalGroups();
+            const joinedGroups = getJoinedGroups();
             groups.forEach(group => {
                 const li = document.createElement('li');
-                li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'})`;
+                li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
+
+                // Join button or "Joined"
+                if (joinedGroups.includes(group.id)) {
+                    const joinedSpan = document.createElement('span');
+                    joinedSpan.textContent = 'Joined';
+                    joinedSpan.style.marginLeft = '1em';
+                    joinedSpan.style.color = 'green';
+                    li.appendChild(joinedSpan);
+                } else {
+                    const joinBtn = document.createElement('button');
+                    joinBtn.textContent = 'Join';
+                    joinBtn.style.marginLeft = '1em';
+                    joinBtn.onclick = () => {
+                        joinedGroups.push(group.id);
+                        saveJoinedGroups(joinedGroups);
+                        renderAllGroups();
+                        alert(`You joined "${group.gname}"!`);
+                    };
+                    li.appendChild(joinBtn);
+                }
+
                 allGroupsList.appendChild(li);
             });
         }
