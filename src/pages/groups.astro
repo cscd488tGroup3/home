@@ -271,28 +271,86 @@ import Layout from '../layouts/Layout.astro';
             allGroupsList.innerHTML = '';
             const groups = getLocalGroups();
             const joinedGroups = getJoinedGroups();
+
+            // Style to match the "Create Group" box (input/button area)
+            const boxStyle = `
+                display: inline-flex;
+                align-items: center;
+                border: 1.5px solid #bdbdbd;
+                border-radius: 8px;
+                background: #f5f5f5;
+                padding: 0.4em 1.2em;
+                margin-left: 1em;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+            `;
+
             groups.forEach(group => {
                 const li = document.createElement('li');
                 li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
 
-                // Join button or "Joined"
                 if (joinedGroups.includes(group.id)) {
+                    // Joined + Leave box
+                    const joinedBox = document.createElement('span');
+                    joinedBox.setAttribute('style', boxStyle);
+
                     const joinedSpan = document.createElement('span');
                     joinedSpan.textContent = 'Joined';
-                    joinedSpan.style.marginLeft = '1em';
                     joinedSpan.style.color = 'green';
-                    li.appendChild(joinedSpan);
+                    joinedSpan.style.marginRight = '0.7em';
+                    joinedSpan.style.fontWeight = 'bold';
+
+                    const leaveBtn = document.createElement('button');
+                    leaveBtn.textContent = 'Leave';
+                    leaveBtn.style.marginLeft = '0.2em';
+                    leaveBtn.style.background = '#fff';
+                    leaveBtn.style.border = '1px solid #bdbdbd';
+                    leaveBtn.style.borderRadius = '4px';
+                    leaveBtn.style.padding = '0.2em 0.7em';
+                    leaveBtn.style.cursor = 'pointer';
+                    leaveBtn.style.fontWeight = 'bold';
+
+                    leaveBtn.onmouseover = () => leaveBtn.style.background = '#ececec';
+                    leaveBtn.onmouseout = () => leaveBtn.style.background = '#fff';
+
+                    leaveBtn.onclick = () => {
+                        const idx = joinedGroups.indexOf(group.id);
+                        if (idx !== -1) {
+                            joinedGroups.splice(idx, 1);
+                            saveJoinedGroups(joinedGroups);
+                            renderAllGroups();
+                            alert(`You left "${group.gname}".`);
+                        }
+                    };
+
+                    joinedBox.appendChild(joinedSpan);
+                    joinedBox.appendChild(leaveBtn);
+                    li.appendChild(joinedBox);
                 } else {
+                    // Join box
+                    const joinBox = document.createElement('span');
+                    joinBox.setAttribute('style', boxStyle);
+
                     const joinBtn = document.createElement('button');
                     joinBtn.textContent = 'Join';
-                    joinBtn.style.marginLeft = '1em';
+                    joinBtn.style.background = '#fff';
+                    joinBtn.style.border = '1px solid #bdbdbd';
+                    joinBtn.style.borderRadius = '4px';
+                    joinBtn.style.padding = '0.2em 0.7em';
+                    joinBtn.style.cursor = 'pointer';
+                    joinBtn.style.fontWeight = 'bold';
+
+                    joinBtn.onmouseover = () => joinBtn.style.background = '#ececec';
+                    joinBtn.onmouseout = () => joinBtn.style.background = '#fff';
+
                     joinBtn.onclick = () => {
                         joinedGroups.push(group.id);
                         saveJoinedGroups(joinedGroups);
                         renderAllGroups();
                         alert(`You joined "${group.gname}"!`);
                     };
-                    li.appendChild(joinBtn);
+
+                    joinBox.appendChild(joinBtn);
+                    li.appendChild(joinBox);
                 }
 
                 allGroupsList.appendChild(li);
