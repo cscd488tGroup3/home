@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly TREFLE_API_KEY: string;
   readonly RAPIDAPI_KEY: string;
   readonly PERENUAL_KEY: string;
+  readonly EMAIL: string;
 }
 
 interface ImportMeta {
