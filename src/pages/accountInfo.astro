@@ -142,7 +142,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
                   {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(value),
+                    body: JSON.stringify({ username, fname: value }),
                     credentials: "include",
                   }
                 );
