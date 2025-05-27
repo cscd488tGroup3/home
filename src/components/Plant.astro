@@ -1,12 +1,12 @@
 <!-- Plant Input Form -->
-<section id="plant" class="city bg-white/50">
+<section id="plant" class="bg-white/50">
     <input type="text" id="plant-input" placeholder="Enter plant name" />
-    <button id="search-button" >Search</button>
+    <button id="plant-search-button" >Search</button>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const searchButton = document.getElementById('search-button');
+        const plantSearchButton = document.getElementById('plant-search-button');
         const plantInput = document.getElementById('plant-input');
 
         const searchPlant = () => {
@@ -18,7 +18,7 @@
             }
         };
 
-        searchButton?.addEventListener('click', searchPlant);
+        plantSearchButton?.addEventListener('click', searchPlant);
 
         plantInput?.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
@@ -27,16 +27,3 @@
         });
     });
 </script>
-
-<!-- Styling -->
-<!-- <style>
-    section {
-        position: absolute;
-        left: 7%;
-        top: 35%; /* This remains as a percentage */
-        transform: translate(50%, -50%);
-        padding: 1.25em; /* 20px */
-        border-radius: 0.625em; /* 10px */
-        box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* 4px 8px */
-    }
-</style> -->
