@@ -40,7 +40,7 @@ export async function handler(event,context) {
     const USR_DB = process.env.USR_DB;
 
         try {
-        const lNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?fname=${body.lname}&auth=${USR_DB}`);
+        const lNameResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?fname=${body}&auth=${USR_DB}`);
         if(lNameResponse.ok) {
             return {
                 statusCode: 200,
