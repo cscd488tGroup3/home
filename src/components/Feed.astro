@@ -1,0 +1,33 @@
+<h1>Feed</h1>
+<!-- Button to toggle the form -->
+<button id="toggleFormButton" class="form-button">Create Post</button>
+
+<!-- Form for creating a new post (hidden by default) -->
+<form id="postForm" style="display: none;">
+  <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label
+  >
+  <input
+    type="file"
+    id="images"
+    name="images"
+    accept="image/jpeg, image/png, image/webp"
+    required
+    style="display: none;"
+  />
+  <label for="caption">Caption the Post:</label>
+  <input type="text" id="caption" name="caption" required />
+  <span id="captionCounter">0/200</span>
+  <button type="submit">Create Post</button>
+</form>
+
+<!-- Container where posts will be dynamically added -->
+<div id="postContainer"></div>
+
+<script>
+    import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
+
+    window.addEventListener('DOMContentLoaded', () => {
+        setupFormHandlers();
+        renderSavedPosts();
+    });
+</script>
