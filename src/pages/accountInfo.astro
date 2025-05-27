@@ -180,6 +180,7 @@ try {
         credentials: "include",
       });
       alert(res.status === 200 ? successMsg : failMsg);
+      window.location.href = '/accountInfo'; // reload the page after the user dismisses the alert
     }
 
     document.getElementById("edit-fname")?.addEventListener("click", () => {
