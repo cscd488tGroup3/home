@@ -137,6 +137,8 @@ import Layout from '../layouts/Layout.astro';
             document.getElementById('allGroupsSection').style.display = "none";
             groupManagementSection.style.display = "none";
             groupPostsList.innerHTML = '';
+            // Hide the Create Group header
+            document.querySelector('h1 u').parentElement.style.display = "none";
             // Only show post form if user is a member
             const joinedGroups = getJoinedGroups();
             document.getElementById('createPostForm').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
