@@ -4,7 +4,7 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
 ---
 
 <Layout>
-    <h1><u>Create a Group</u></h1>
+    <h1 id="createGroupHeader"><u>Create a Group</u></h1>
     <form id="createGroupForm">
         <label for="groupName">Group Name:</label>
         <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
@@ -126,7 +126,7 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
             groupManagementSection.style.display = "none";
             groupPostsList.innerHTML = '';
             // Hide the Create Group header
-            document.querySelector('h1 u').parentElement.style.display = "none";
+            document.getElementById('createGroupHeader').style.display = "none";
             // Only show post form if user is a member
             const joinedGroups = getJoinedGroups();
             document.getElementById('toggleFormButton').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
@@ -567,6 +567,8 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
             groupManagementSection.style.display = "block";
             createdGroupSection.style.display = "none";
             groupPostsSection.style.display = "none";
+            // Show the Create Group header again
+            document.getElementById('createGroupHeader').style.display = "block";
         }
 
         document.getElementById('createPostForm').onsubmit = async function(e) {
