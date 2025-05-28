@@ -131,8 +131,13 @@ import Layout from '../layouts/Layout.astro';
             createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
             createdGroupSection.style.display = "block";
             groupPostsSection.style.display = "block";
+            // Hide other sections
+            document.getElementById('createGroupForm').style.display = "none";
+            document.getElementById('joinGroupSection').style.display = "none";
+            document.getElementById('allGroupsSection').style.display = "none";
+            groupManagementSection.style.display = "none";
             groupPostsList.innerHTML = '';
-            // Check if user is a member
+            // Only show post form if user is a member
             const joinedGroups = getJoinedGroups();
             document.getElementById('createPostForm').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
             loadGroupPosts();
@@ -148,6 +153,7 @@ import Layout from '../layouts/Layout.astro';
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `
                             <div class="post">
+                                <div class="post-caption">${post.caption || ""}</div>
                                 <div class="post-content">${post.content}</div>
                                 <button class="like-btn" data-postid="${post.id}">Like (${post.likes || 0})</button>
                                 <div class="comments">
@@ -164,7 +170,7 @@ import Layout from '../layouts/Layout.astro';
                         groupPostsList.appendChild(listItem);
                     });
 
-                    // Attach like and comment handlers
+                    // Attach like and comment handlers (same as index.astro)
                     document.querySelectorAll('.like-btn').forEach(btn => {
                         btn.onclick = async (e) => {
                             const postId = btn.getAttribute('data-postid');
@@ -556,5 +562,14 @@ import Layout from '../layouts/Layout.astro';
                 alert("An error occurred while creating the group.");
             }
         });
+
+        function showMainSections() {
+            document.getElementById('createGroupForm').style.display = "block";
+            document.getElementById('joinGroupSection').style.display = "block";
+            document.getElementById('allGroupsSection').style.display = "block";
+            groupManagementSection.style.display = "block";
+            createdGroupSection.style.display = "none";
+            groupPostsSection.style.display = "none";
+        }
     </script>
 </Layout>
