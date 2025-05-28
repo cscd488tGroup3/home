@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
 ---
 
 <Layout>
@@ -31,37 +32,24 @@ import Layout from '../layouts/Layout.astro';
     </div>
     <div id="groupPostsSection" style="display: none;">
         <h2>Group Posts</h2>
-        <form id="createPostForm" onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const postData = {
-                gid: currentGroupId, // Group ID to associate the post
-                content: formData.get("postContent"),
-            };
-
-            try {
-                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(postData),
-                });
-                if (res.status === 200) {
-                    alert("Post created successfully!");
-                    e.target.reset();
-                    loadGroupPosts(); // Reload posts after creating a new one
-                } else {
-                    alert("Failed to create post.");
-                }
-            } catch (err) {
-                alert("An error occurred while creating the post.");
-            }
-        }}>
-            <textarea id="postContent" name="postContent" placeholder="Write your post here..." required></textarea>
-            <button type="submit">Post</button>
+        <!-- Group Dashboard Post Form (matches feed) -->
+        <button id="toggleFormButton" class="form-button">Create Post</button>
+        <form id="postForm" style="display: none;">
+            <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label>
+            <input
+                type="file"
+                id="images"
+                name="images"
+                accept="image/jpeg, image/png, image/webp"
+                required
+                style="display: none;"
+            />
+            <label for="caption">Caption the Post:</label>
+            <input type="text" id="caption" name="caption" required />
+            <span id="captionCounter">0/200</span>
+            <button type="submit">Create Post</button>
         </form>
-        <ul id="groupPostsList" class="group-posts-list">
-            <!-- Each post will be rendered here with comments and like buttons -->
-        </ul>
+        <div id="postContainer"></div>
     </div>
 
     <!-- Join Group Section -->
@@ -141,7 +129,8 @@ import Layout from '../layouts/Layout.astro';
             document.querySelector('h1 u').parentElement.style.display = "none";
             // Only show post form if user is a member
             const joinedGroups = getJoinedGroups();
-            document.getElementById('createPostForm').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
+            document.getElementById('toggleFormButton').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
+            document.getElementById('postForm').style.display = 'none'; // Hide by default
             loadGroupPosts();
         }
 
@@ -155,16 +144,20 @@ import Layout from '../layouts/Layout.astro';
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `
                             <div class="post">
-                                <div class="post-caption">${post.caption || ""}</div>
+                                ${post.caption ? `<div class="post-caption">${post.caption}</div>` : ''}
                                 <div class="post-content">${post.content}</div>
                                 <button class="like-btn" data-postid="${post.id}">Like (${post.likes || 0})</button>
                                 <div class="comments">
                                     <ul>
-                                        ${(post.comments || []).map(comment => `<li>${comment.content}</li>`).join('')}
+                                        ${(post.comments || []).map(comment => `
+                                            <li>
+                                                <span class="comment-content">${comment.content}</span>
+                                            </li>
+                                        `).join('')}
                                     </ul>
                                     <form class="comment-form" data-postid="${post.id}">
-                                        <input type="text" name="comment" placeholder="Add a comment..." required />
-                                        <button type="submit">Comment</button>
+                                        <input type="text" name="comment" placeholder="Add a comment..." required class="comment-input"/>
+                                        <button type="submit" class="comment-submit-btn">Comment</button>
                                     </form>
                                 </div>
                             </div>
@@ -172,7 +165,7 @@ import Layout from '../layouts/Layout.astro';
                         groupPostsList.appendChild(listItem);
                     });
 
-                    // Attach like and comment handlers (same as index.astro)
+                    // Like button logic
                     document.querySelectorAll('.like-btn').forEach(btn => {
                         btn.onclick = async (e) => {
                             const postId = btn.getAttribute('data-postid');
@@ -180,6 +173,8 @@ import Layout from '../layouts/Layout.astro';
                             loadGroupPosts();
                         };
                     });
+
+                    // Comment form logic
                     document.querySelectorAll('.comment-form').forEach(form => {
                         form.onsubmit = async (e) => {
                             e.preventDefault();
@@ -573,5 +568,56 @@ import Layout from '../layouts/Layout.astro';
             createdGroupSection.style.display = "none";
             groupPostsSection.style.display = "none";
         }
+
+        document.getElementById('createPostForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const postData = {
+                gid: currentGroupId,
+                caption: formData.get("postCaption"),
+                content: formData.get("postContent"),
+            };
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData),
+                });
+                if (res.status === 200) {
+                    alert("Post created successfully!");
+                    e.target.reset();
+                    loadGroupPosts();
+                } else {
+                    alert("Failed to create post.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the post.");
+            }
+        };
+
+        // Toggle post form visibility
+        document.getElementById('toggleFormButton').onclick = () => {
+            const postForm = document.getElementById('postForm');
+            const isVisible = postForm.style.display === 'block';
+            postForm.style.display = isVisible ? 'none' : 'block';
+            document.getElementById('caption').focus();
+        };
+
+        // Character counter for caption
+        document.getElementById('caption').addEventListener('input', function() {
+            const maxLength = 200;
+            const currentLength = this.value.length;
+            const counter = document.getElementById('captionCounter');
+            counter.textContent = `${currentLength}/${maxLength}`;
+            if (currentLength > maxLength) {
+                this.value = this.value.substring(0, maxLength);
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setupFormHandlers(currentGroupId); // Pass group ID to filter posts
+            renderSavedPosts(currentGroupId);  // Only show posts for this group
+        });
     </script>
 </Layout>
