@@ -33,6 +33,7 @@ export async function handler(event, context) {
 
     // extract data from the querystring
     const body = JSON.parse(event.body);
+    const email = body.email;
     const subject = body.subject;
     const emailBody = body.emailBody;
 
@@ -41,6 +42,7 @@ export async function handler(event, context) {
     
     // verify data
     console.log("(notify.js) body: ", body);
+    console.log("(notify.js) email: ", email);
     console.log("(notify.js) subject: ", subject);
     console.log("(notify.js) emailBody: ", emailBody);
     console.log("(notify.js) EMAIL:", EMAIL);
@@ -52,7 +54,7 @@ export async function handler(event, context) {
     try {
         const result = await resend.emails.send({
             from: 'bloombuddy-notifications@resend.dev',
-            to: 'ethan.crawford5532@gmail.com',
+            to: `${email}`,
             subject: `${subject}`,
             html: `<p>${emailBody}</p>`
         });
