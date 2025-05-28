@@ -71,7 +71,7 @@ export async function handler(event, context) {
         return {
             statusCode: 200,
             headers,
-            body: emailResponse,
+            body: JSON.stringify(data),
         };
     } catch (e) {
         console.error('Database error:', e);
