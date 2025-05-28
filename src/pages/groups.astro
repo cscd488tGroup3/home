@@ -29,8 +29,6 @@ import Layout from '../layouts/Layout.astro';
         <p><strong>Group Type:</strong> <span id="createdGroupType"></span></p>
         <button id="deleteGroupButton" class="delete-group-button">Delete Group</button>
     </div>
-
-    <!-- Group Posts Section -->
     <div id="groupPostsSection" style="display: none;">
         <h2>Group Posts</h2>
         <form id="createPostForm" onSubmit={async (e) => {
@@ -62,7 +60,7 @@ import Layout from '../layouts/Layout.astro';
             <button type="submit">Post</button>
         </form>
         <ul id="groupPostsList" class="group-posts-list">
-            <!-- Posts will be dynamically populated here -->
+            <!-- Each post will be rendered here with comments and like buttons -->
         </ul>
     </div>
 
@@ -133,7 +131,11 @@ import Layout from '../layouts/Layout.astro';
             createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
             createdGroupSection.style.display = "block";
             groupPostsSection.style.display = "block";
-            loadGroupPosts(); // Load posts for the group
+            groupPostsList.innerHTML = '';
+            // Check if user is a member
+            const joinedGroups = getJoinedGroups();
+            document.getElementById('createPostForm').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
+            loadGroupPosts();
         }
 
         async function loadGroupPosts() {
@@ -141,17 +143,53 @@ import Layout from '../layouts/Layout.astro';
                 const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts?gid=${currentGroupId}`);
                 if (res.status === 200) {
                     const posts = await res.json();
-                    groupPostsList.innerHTML = ''; // Clear the list
+                    groupPostsList.innerHTML = '';
                     posts.forEach((post) => {
                         const listItem = document.createElement('li');
-                        listItem.textContent = post.content;
+                        listItem.innerHTML = `
+                            <div class="post">
+                                <div class="post-content">${post.content}</div>
+                                <button class="like-btn" data-postid="${post.id}">Like (${post.likes || 0})</button>
+                                <div class="comments">
+                                    <ul>
+                                        ${(post.comments || []).map(comment => `<li>${comment.content}</li>`).join('')}
+                                    </ul>
+                                    <form class="comment-form" data-postid="${post.id}">
+                                        <input type="text" name="comment" placeholder="Add a comment..." required />
+                                        <button type="submit">Comment</button>
+                                    </form>
+                                </div>
+                            </div>
+                        `;
                         groupPostsList.appendChild(listItem);
                     });
+
+                    // Attach like and comment handlers
+                    document.querySelectorAll('.like-btn').forEach(btn => {
+                        btn.onclick = async (e) => {
+                            const postId = btn.getAttribute('data-postid');
+                            await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts/${postId}/like`, { method: 'POST' });
+                            loadGroupPosts();
+                        };
+                    });
+                    document.querySelectorAll('.comment-form').forEach(form => {
+                        form.onsubmit = async (e) => {
+                            e.preventDefault();
+                            const postId = form.getAttribute('data-postid');
+                            const comment = form.comment.value;
+                            await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts/${postId}/comments`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ content: comment }),
+                            });
+                            loadGroupPosts();
+                        };
+                    });
                 } else {
-                    alert("Failed to load posts.");
+                    groupPostsList.innerHTML = '<li>No posts yet.</li>';
                 }
             } catch (err) {
-                alert("An error occurred while loading posts.");
+                groupPostsList.innerHTML = '<li>Error loading posts.</li>';
             }
         }
 
@@ -289,7 +327,23 @@ import Layout from '../layouts/Layout.astro';
 
             groups.forEach(group => {
                 const li = document.createElement('li');
-                li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
+                // Create clickable group name if joined
+                let groupNameElem;
+                if (joinedGroups.includes(group.id)) {
+                    groupNameElem = document.createElement('a');
+                    groupNameElem.href = "#";
+                    groupNameElem.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
+                    groupNameElem.style.fontWeight = "bold";
+                    groupNameElem.style.textDecoration = "underline";
+                    groupNameElem.onclick = (e) => {
+                        e.preventDefault();
+                        displayGroup(group);
+                    };
+                } else {
+                    groupNameElem = document.createElement('span');
+                    groupNameElem.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
+                }
+                li.appendChild(groupNameElem);
 
                 // Track requested groups in localStorage
                 let requestedGroups = JSON.parse(localStorage.getItem('requestedGroups') || '[]');
