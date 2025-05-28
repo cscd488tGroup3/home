@@ -6,23 +6,21 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script type="module" is:inline>
-  // Step 1: Get the user ID from the meta tag
   const userId = document.querySelector('meta[name="user-id"]')?.content;
 
   if (!userId) {
     console.error("User ID not found in meta tag");
   } else {
-    // Step 2: Fetch the email from the Netlify function
     fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getEmailByUID", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ uid: userId }),
     })
     .then(res => res.json())
-    .then(async ({ email }) => {
-      if (!email) throw new Error("Email not returned");
+    .then(async (response) => {
+      const email = response[0]?.email;
+      if (!email) throw new Error("Email not returned from database");
 
-      // Step 3: Use the returned email to send the notification
       const data = {
         email,
         subject: 'Your Gardening Plan',
@@ -36,7 +34,6 @@ import Layout from "../layouts/Layout.astro";
         credentials: "include",
       });
 
-      // Step 4: Redirect to home
       window.location.href = "/";
     })
     .catch(err => {
