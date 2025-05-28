@@ -54,7 +54,7 @@ export async function handler(event, context) {
     // send the email
     try {
         const result = await resend.emails.send({
-            from: 'bloombuddy-notifications@resend.dev',
+            from: 'bloombuddy-notifications@ecrawford.me',
             to: `${email}`,
             subject: `${subject}`,
             html: `<p>${emailBody}</p>`
