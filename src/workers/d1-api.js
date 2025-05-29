@@ -105,7 +105,7 @@ export default {
             const pid = url.searchParams.get("pid");
 
             try {
-                const response = await getPostByID(pid);
+                const response = await getPostByID(pid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
@@ -120,7 +120,7 @@ export default {
             const uid = url.searchParams.get("uid");
 
             try {
-                const response = await getAllPostsFromUser(uid);
+                const response = await getAllPostsFromUser(uid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
@@ -133,7 +133,7 @@ export default {
         // get all posts
         if (url.pathname === "/posts/get/a") {
             try {
-                const response = await getAllPosts();
+                const response = await getAllPosts(env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
