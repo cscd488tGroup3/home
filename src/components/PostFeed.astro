@@ -1,0 +1,31 @@
+---
+import CommentList from "./CommentList.astro";
+const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPosts'); // Adjust to your Netlify Function URL
+const posts = await res.json();
+---
+
+<div class="space-y-6">
+  {posts.map(post => (
+    <div class="card bg-base-100 shadow-xl">
+      <figure>
+        <img src={post.url} alt="Post Image" class="w-full object-cover max-h-64" />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title">{post.caption}</h2>
+        <p class="text-sm text-gray-400">By User {post.uid}</p>
+
+        <!-- Reactions Placeholder -->
+        <div class="mt-2">
+          <button class="btn btn-sm btn-outline btn-primary">👍 Like</button>
+          <span class="ml-2 text-sm text-gray-500">0 likes</span>
+        </div>
+
+        <!-- Comments -->
+        <details class="mt-4">
+          <summary class="cursor-pointer text-primary">View Comments</summary>
+          <CommentList pid={post.pid} />
+        </details>
+      </div>
+    </div>
+  ))}
+</div>
