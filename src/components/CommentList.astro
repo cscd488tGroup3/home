@@ -1,7 +1,10 @@
 ---
 const { pid } = Astro.props;
 const res = await fetch(`https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getComments?pid=${pid}`);
-const comments = await res.json();
+const result = await res.json();
+
+// Defensive fallback if the API returns something unexpected
+const comments = Array.isArray(result) ? result : result?.data ?? [];
 ---
 
 <div class="mt-2 space-y-2">
