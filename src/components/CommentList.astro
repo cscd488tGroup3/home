@@ -1,0 +1,14 @@
+---
+const { pid } = Astro.props;
+const res = await fetch(`https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getComments?pid=${pid}`);
+const comments = await res.json();
+---
+
+<div class="mt-2 space-y-2">
+  {comments.map(comment => (
+    <div class="bg-base-200 p-2 rounded text-sm">
+      <p>{comment.content}</p>
+      <p class="text-xs text-gray-400">— User {comment.uid}</p>
+    </div>
+  ))}
+</div>
