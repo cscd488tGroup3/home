@@ -258,6 +258,20 @@ export async function getAllPostsFromUser(uid, env) {
     }
 }
 /**
+ * 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllPosts(env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post").all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
  * editPost - update the caption of a post in the posts table
  * @param {*} pid 
  * @param {*} uid 
