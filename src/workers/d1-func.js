@@ -264,7 +264,7 @@ export async function getAllPostsFromUser(uid, env) {
  */
 export async function getAllPosts(env) {
     try {
-        const {results} = await env.DB.prepare("SELECT * FROM post").bind(uid).all();
+        const {results} = await env.DB.prepare("SELECT * FROM post").all();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);

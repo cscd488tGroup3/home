@@ -259,6 +259,9 @@ export default {
 
         // remove a reaction from a post
         if (url.pathname === "/reaction/remove") {}
+
+        // aggregate reactions from a post
+        if (url.pathname === "/reaction/aggregate") {}
         
         /* GROUP API */ 
 
