@@ -1,7 +1,10 @@
 ---
 import CommentList from "./CommentList.astro";
 const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPosts'); // Adjust to your Netlify Function URL
-const posts = await res.json();
+const result = await res.json();
+
+// Ensure it's an array
+const posts = Array.isArray(result) ? result : result?.data ?? [];
 ---
 
 <div class="space-y-6">

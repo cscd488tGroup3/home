@@ -5,6 +5,7 @@ export async function handler(event, context) {
 
     try {
         const response = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/posts/get/a?auth=${USR_DB}`);
+        const data = await response.json();
 
         return {
             statusCode: 200,
@@ -12,7 +13,7 @@ export async function handler(event, context) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*', // Optional for dev
             },
-            body: JSON.stringify(response),
+            body: JSON.stringify(data),
         };
     } catch (err) {
         return {
