@@ -150,7 +150,7 @@
 
     document.getElementById('add-to-plan').onclick = () => {
         if (currentPlant) {
-            gardeningPlan.push(currentPlant);
+            gardeningPlan.push(JSON.parse(JSON.stringify(currentPlant))); // deep copy
             localStorage.setItem('gardeningPlan', JSON.stringify(gardeningPlan));
             updateGardeningPlanUI();
         }
