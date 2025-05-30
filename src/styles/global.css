@@ -428,3 +428,46 @@ img .logo {
 .dropdown-menu button:hover {
     background-color: #f0f0f0; /* Add hover effect */
 }
+
+/* Gardening Plan Button Styles */
+.gardening-plan-btn {
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  margin-right: 18px;
+  margin-top: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s;
+}
+
+.gardening-plan-btn.edit-plant {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.gardening-plan-btn.delete-plant {
+  background-color: #e53935;
+  color: #fff;
+  margin-right: 0; /* No extra margin after last button */
+}
+
+.gardening-plan-btn:hover {
+  filter: brightness(0.9);
+}
+
+#delete-all-plan {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  margin-top: 18px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s;
+  display: block;
+}
+#delete-all-plan:hover {
+  filter: brightness(0.9);
+}
