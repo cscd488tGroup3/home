@@ -42,6 +42,7 @@ export default {
         const wauth = url.searchParams.get("wauth");
         const aauth = url.searchParams.get("aauth");
         const sauth = url.searchParams.get("sauth");
+        const pauth = url.searchParams.get("pauth");
 
         if (!auth && !wauth && !aauth && !sauth) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
