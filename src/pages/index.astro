@@ -8,6 +8,7 @@ import City from "../components/CityInput.astro";
 import Plant from "../components/Plant.astro";
 import PlantInfo from "../components/plantInfo.astro";
 import PostFeed from "../components/PostFeed.astro"
+import NewPost from '../components/NewPost.astro';
 ---
 
 <Layout>
@@ -20,6 +21,7 @@ import PostFeed from "../components/PostFeed.astro"
         
         <!-- Center Column: Post Feed -->
         <div class="center-column">
+            <NewPost />
             <PostFeed />
         </div>
 
