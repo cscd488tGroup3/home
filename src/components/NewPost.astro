@@ -1,32 +1,41 @@
 ---
-// NewPost.astro
+export const prerender = false;
+
+const cloud_name = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
+const upload_preset = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+console.log("(NewPost.astro frontmatter) cloud_name:", cloud_name);
+console.log("(NewPost.astro frontmatter) upload_preset:", upload_preset);
 ---
+
+<meta id="new-post-meta" data-cloud-name={`${cloud_name}`} data-upload-preset={`${upload_preset}`} />
 
 <section class="p-4">
   <button id="newPostBtn" class="btn btn-primary">New Post</button>
-
+  
   <form id="postForm" class="hidden mt-4 space-y-4" method="POST">
     <input type="hidden" id="pid" name="pid">
     <input type="hidden" id="uid" name="uid">
-
+    
     <label class="form-control">
       <span class="label-text">Caption</span>
       <input type="text" id="caption" name="caption" class="input input-bordered" required>
     </label>
-
+    
     <label class="form-control">
       <span class="label-text">Upload Image</span>
       <input type="file" id="imageInput" accept="image/*" class="file-input file-input-bordered" required>
     </label>
-
+    
     <button type="submit" class="btn btn-success">Post</button>
   </form>
 
-  <script type="module">    
-    const cloud_name = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
-    console.log("(NewPost.astro) cloud_name: ",cloud_name);
-    const upload_preset = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    console.log("(NewPost.astro) upload_preset: ",upload_preset);
+  <script type="module">
+    const meta = document.getElementById('new-post-meta');
+    const cloud_name = meta.dataset.cloudName;
+    const upload_preset = meta.dataset.uploadPreset;
+    console.log("(NewPost.astro) cloud_name:", cloud_name);
+    console.log("(NewPost.astro) upload_preset:", upload_preset);
 
     const newPostBtn = document.getElementById('newPostBtn');
     const postForm = document.getElementById('postForm');
@@ -36,7 +45,7 @@
     const captionInput = document.getElementById('caption');
 
     const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
-    console.log("(NewPost.astro) uid: ", uid);
+    console.log("(NewPost.astro) uid:", uid);
 
     newPostBtn.addEventListener('click', () => {
       postForm.classList.toggle('hidden');
@@ -47,22 +56,21 @@
     postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const file = await imageInput.files[0];
+      const file = imageInput.files[0];
       if (!file) return alert("Please select an image.");
 
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", upload_preset);
 
-      const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, { 
+      const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
         method: "POST",
         body: formData
       });
 
       const cloudData = await cloudRes.json();
-      console.log("(NewPost.astro) cloudData: ", cloudData);
       const imageUrl = cloudData.secure_url;
-      console.log("(NewPost.astro) imageUrl: ", imageUrl);
+      console.log("(NewPost.astro) imageUrl:", imageUrl);
 
       const payload = {
         pid: pidInput.value,
@@ -70,9 +78,7 @@
         caption: captionInput.value,
         url: imageUrl
       };
-      console.log("(NewPost.astro) payload: ", payload)
 
-      console.log("(NewPost.astro) Sending the new post to the netlify function...")
       const postRes = await fetch('/.netlify/functions/createPost', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,7 +91,7 @@
         postForm.classList.add('hidden');
       } else {
         const err = await postRes.json();
-        alert("Failed to create post: " + err?.error || "Unknown error");
+        alert("Failed to create post: " + (err?.error || "Unknown error"));
       }
     });
   </script>
