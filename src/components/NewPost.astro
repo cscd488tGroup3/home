@@ -24,8 +24,9 @@
 
   <script type="module">    
     const cloud_name = import.meta.env.CLOUDINARY_CLOUD_NAME;
-    console.log(your_cloud_name);
+    console.log("(NewPost.astro) cloud_name: ",cloud_name);
     const upload_preset = import.meta.env.CLOUDINARY_UPLOAD_PRESET;
+    console.log("(NewPost.astro) upload_preset: ",upload_preset);
 
     const newPostBtn = document.getElementById('newPostBtn');
     const postForm = document.getElementById('postForm');
@@ -35,6 +36,7 @@
     const captionInput = document.getElementById('caption');
 
     const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
+    console.log("(NewPost.astro) uid: ", uid);
 
     newPostBtn.addEventListener('click', () => {
       postForm.classList.toggle('hidden');
@@ -45,7 +47,7 @@
     postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const file = imageInput.files[0];
+      const file = await imageInput.files[0];
       if (!file) return alert("Please select an image.");
 
       const formData = new FormData();
@@ -58,7 +60,9 @@
       });
 
       const cloudData = await cloudRes.json();
+      console.log("(NewPost.astro) cloudData: ", cloudData);
       const imageUrl = cloudData.secure_url;
+      console.log("(NewPost.astro) imageUrl: ", imageUrl);
 
       const payload = {
         pid: pidInput.value,
@@ -66,7 +70,9 @@
         caption: captionInput.value,
         url: imageUrl
       };
+      console.log("(NewPost.astro) payload: ", payload)
 
+      console.log("(NewPost.astro) Sending the new post to the netlify function...")
       const postRes = await fetch('/.netlify/functions/createPost', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
