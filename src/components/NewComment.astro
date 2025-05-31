@@ -2,7 +2,7 @@
 const { pid } = Astro.props;
 ---
 
-<form id=`commentForm-${pid}` class="space-y-4 mt-4" method="POST">
+<form id={"commentForm-" + pid} class="space-y-4 mt-4" method="POST">
   <input type="hidden" name="pid" value={pid} />
   <input type="hidden" name="uid" />
   <input type="hidden" name="cid" />
@@ -34,7 +34,7 @@ const { pid } = Astro.props;
       const data = Object.fromEntries(formData.entries());
 
       console.log("(NewComment.astro) new comment data: ", data);
-
+      
       try {
         const res = await fetch("/.netlify/functions/createComment", {
           method: "POST",
@@ -48,7 +48,7 @@ const { pid } = Astro.props;
           alert("Failed to post comment.");
         } else {
           console.log("(NewComment.astro) Comment posted:", result);
-          form.reset();
+          //form.reset();
         }
       } catch (err) {
         console.error("(NewComment.astro) Network error:", err);
