@@ -1,0 +1,60 @@
+---
+const { pid } = Astro.props;
+---
+
+<form id="commentForm-{pid}" class="space-y-4 mt-4" method="POST">
+  <input type="hidden" name="pid" value={pid} />
+  <input type="hidden" name="uid" />
+  <input type="hidden" name="cid" />
+
+  <label class="form-control">
+    <span class="label-text">Comment</span>
+    <textarea
+      name="caption"
+      class="textarea textarea-bordered w-full"
+      placeholder="Write a comment..."
+      required></textarea>
+  </label>
+
+  <button type="submit" class="btn btn-primary">Post Comment</button>
+
+  <script type="module">
+    const form = document.getElementById("commentForm-{pid}");
+    const uid =
+      document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
+    const uidInput = form.querySelector('input[name="uid"]');
+    const cidInput = form.querySelector('input[name="cid"]');
+
+    uidInput.value = uid;
+    cidInput.value = crypto.randomUUID();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      console.log("(NewComment.astro) new comment data: ", data);
+
+      try {
+        const res = await fetch("/.netlify/functions/createComment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+        if (!res.ok) {
+          console.error("(NewComment.astro) Error creating comment:", result);
+          alert("Failed to post comment.");
+        } else {
+          console.log("(NewComment.astro) Comment posted:", result);
+          form.reset();
+          // Optionally reload or update comment list
+        }
+      } catch (err) {
+        console.error("(NewComment.astro) Network error:", err);
+        alert("Something went wrong.");
+      }
+    });
+  </script>
+</form>

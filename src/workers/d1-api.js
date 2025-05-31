@@ -54,11 +54,14 @@ export default {
         if (url.pathname === "/post/create") {
             const pid = url.searchParams.get("pid");
             const caption = url.searchParams.get("caption");
-            const url = url.searchParams.get("url");
+            const imageUrl = url.searchParams.get("url");
             const uid = url.searchParams.get("uid");
 
+            console.log("Creating post with:", { pid, caption, imageUrl, uid });
+
+
             try {
-                const response = await addPost(pid, caption, url, uid, env);
+                const response = await addPost(pid, caption, imageUrl, uid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },

@@ -1,5 +1,6 @@
 ---
 import CommentList from "./CommentList.astro";
+import NewComment from "./NewComment.astro";
 const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPosts'); // Adjust to your Netlify Function URL
 const result = await res.json();
 
@@ -25,6 +26,7 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
 
         <!-- Comments -->
         <details class="mt-4">
+          <NewComment pid={post.pid}/>
           <summary class="cursor-pointer text-primary">View Comments</summary>
           <CommentList pid={post.pid} />
         </details>
