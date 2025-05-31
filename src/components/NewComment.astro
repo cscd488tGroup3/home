@@ -13,8 +13,7 @@ const { pid } = Astro.props;
       name="caption"
       class="textarea textarea-bordered w-full"
       placeholder="Write a comment..."
-      required
-    ></textarea>
+      required></textarea>
   </label>
 
   <button type="submit" class="btn btn-primary">Post Comment</button>
@@ -25,7 +24,9 @@ const { pid } = Astro.props;
       console.error("Form not found for pid:", pid);
     } else {
       console.log(pid);
-      const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
+      const uid =
+        document.querySelector('meta[name="user-id"]')?.content ||
+        "unknown-user";
       const uidInput = form.querySelector('input[name="uid"]');
       const cidInput = form.querySelector('input[name="cid"]');
 
