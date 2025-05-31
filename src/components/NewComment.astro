@@ -3,65 +3,66 @@ const { pid } = Astro.props;
 ---
 
 <form id={"commentForm-" + pid} class="space-y-4 mt-4" method="POST">
-  <input type="hidden" name="pid" value={pid} />
-  <input type="hidden" name="uid" />
-  <input type="hidden" name="cid" />
+    <input type="hidden" name="pid" value={pid} />
+    <input type="hidden" name="uid" />
+    <input type="hidden" name="cid" />
 
-  <label class="form-control">
-    <span class="label-text">Comment</span>
-    <textarea
-      name="caption"
-      class="textarea textarea-bordered w-full"
-      placeholder="Write a comment..."
-      required></textarea>
-  </label>
+    <label class="form-control">
+        <span class="label-text">Comment</span>
+        <textarea
+        name="caption"
+        class="textarea textarea-bordered w-full"
+        placeholder="Write a comment..."
+        required></textarea>
+    </label>
 
-  <button type="submit" class="btn btn-primary">Post Comment</button>
+    <button type="submit" class="btn btn-primary">Post Comment</button>
 
-  <script type="module">
-    const form = document.getElementById(`commentForm-${pid}`);
-    if (!form) {
-      console.error("Form not found for pid:", pid);
-    } else {
-      console.log(pid);
-      const uid =
-        document.querySelector('meta[name="user-id"]')?.content ||
-        "unknown-user";
-      const uidInput = form.querySelector('input[name="uid"]');
-      const cidInput = form.querySelector('input[name="cid"]');
+    <script type="module" is:inline>
+        const pid = {JSON.stringify(pid)}; 
+        const form = document.getElementById(`commentForm-${pid}`);
+        if (!form) {
+            console.error("Form not found for pid:", pid);
+        } else {
+            console.log(pid);
+            const uid =
+                document.querySelector('meta[name="user-id"]')?.content ||
+                "unknown-user";
+            const uidInput = form.querySelector('input[name="uid"]');
+            const cidInput = form.querySelector('input[name="cid"]');
 
-      uidInput.value = uid;
-      cidInput.value = crypto.randomUUID();
+            uidInput.value = uid;
+            cidInput.value = crypto.randomUUID();
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
 
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
 
-        console.log("NewComment.astro submitting:", data);
+                console.log("NewComment.astro submitting:", data);
 
-        try {
-          const res = await fetch("/.netlify/functions/createComment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
+                try {
+                const res = await fetch("/.netlify/functions/createComment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
 
-          const result = await res.json();
+                const result = await res.json();
 
-          if (!res.ok) {
-            console.error("Error from Netlify function:", result);
-            alert("Failed to post comment.");
-          } else {
-            console.log("Comment created:", result);
-            // form.reset();
-          }
-        } catch (err) {
-          console.error("Network error:", err);
-          alert("Something went wrong.");
+                if (!res.ok) {
+                    console.error("Error from Netlify function:", result);
+                    alert("Failed to post comment.");
+                } else {
+                    console.log("Comment created:", result);
+                    // form.reset();
+                }
+                } catch (err) {
+                console.error("Network error:", err);
+                alert("Something went wrong.");
+                }
+            });
         }
-      });
-    }
-  </script>
+    </script>
 </form>
