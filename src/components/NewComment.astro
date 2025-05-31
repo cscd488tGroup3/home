@@ -2,7 +2,7 @@
 const { pid } = Astro.props;
 ---
 
-<form id="commentForm-{pid}" class="space-y-4 mt-4" method="POST">
+<form id=`commentForm-${pid}` class="space-y-4 mt-4" method="POST">
   <input type="hidden" name="pid" value={pid} />
   <input type="hidden" name="uid" />
   <input type="hidden" name="cid" />
@@ -19,7 +19,7 @@ const { pid } = Astro.props;
   <button type="submit" class="btn btn-primary">Post Comment</button>
 
   <script type="module">
-    const form = document.getElementById("commentForm-{pid}");
+    const form = document.getElementById(`commentForm-${pid}`);
     const uid =
       document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
     const uidInput = form.querySelector('input[name="uid"]');
@@ -49,7 +49,6 @@ const { pid } = Astro.props;
         } else {
           console.log("(NewComment.astro) Comment posted:", result);
           form.reset();
-          // Optionally reload or update comment list
         }
       } catch (err) {
         console.error("(NewComment.astro) Network error:", err);
