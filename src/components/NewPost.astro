@@ -23,9 +23,9 @@
   </form>
 
   <script type="module">    
-    const cloud_name = import.meta.env.CLOUDINARY_CLOUD_NAME;
+    const cloud_name = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
     console.log("(NewPost.astro) cloud_name: ",cloud_name);
-    const upload_preset = import.meta.env.CLOUDINARY_UPLOAD_PRESET;
+    const upload_preset = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET;
     console.log("(NewPost.astro) upload_preset: ",upload_preset);
 
     const newPostBtn = document.getElementById('newPostBtn');
