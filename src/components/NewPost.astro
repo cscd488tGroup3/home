@@ -5,8 +5,6 @@
   <button id="newPostBtn" class="btn btn-primary">New Post</button>
   
   <form id="postForm" class="hidden mt-4 space-y-4" method="POST">
-    <input type="hidden" id="pid" name="pid">
-    <input type="hidden" id="uid" name="uid">
     
     <label class="form-control">
       <span class="label-text">Caption</span>
@@ -29,8 +27,6 @@
 
     const newPostBtn = document.getElementById('newPostBtn');
     const postForm = document.getElementById('postForm');
-    const pidInput = document.getElementById('pid');
-    const uidInput = document.getElementById('uid');
     const imageInput = document.getElementById('imageInput');
     const captionInput = document.getElementById('caption');
 
@@ -38,13 +34,14 @@
     console.log("(NewPost.astro) uid:", uid);
 
     newPostBtn.addEventListener('click', () => {
-      postForm.classList.toggle('hidden');
       pidInput.value = crypto.randomUUID();
-      uidInput.value = uid;
+      postForm.classList.toggle('hidden');
     });
-
+    
     postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const randomPid = crypto.randomUUID();
 
       const file = imageInput.files[0];
       if (!file) return alert("Please select an image.");
@@ -57,14 +54,16 @@
         method: "POST",
         body: formData
       });
+      console.log("(NewPost.astro) cloudRes:", cloudRes);
 
       const cloudData = await cloudRes.json();
+      console.log("(NewPost.astro) cloudData:", cloudData);
       const imageUrl = cloudData.secure_url;
       console.log("(NewPost.astro) imageUrl:", imageUrl);
 
       const payload = {
-        pid: pidInput.value,
-        uid: uidInput.value,
+        pid: randomPid,
+        uid: uid,
         caption: captionInput.value,
         url: imageUrl
       };
