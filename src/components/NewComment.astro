@@ -19,7 +19,7 @@ const { pid } = Astro.props;
     <button type="submit" class="btn btn-primary">Post Comment</button>
 
     <script type="module" is:inline>
-        const pid = {JSON.stringify(pid)}; 
+        const pid = JSON.stringify({pid}); 
         const form = document.getElementById(`commentForm-${pid}`);
         if (!form) {
             console.error("Form not found for pid:", pid);
