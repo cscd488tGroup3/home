@@ -192,7 +192,7 @@ export default {
         }
 
         // get all comments on a post
-        if(url.pathname === "comment/get/p/all") {
+        if(url.pathname === "/comment/get/p/all") {
             const pid = url.searchParams.get("pid");
 
             try {
@@ -207,7 +207,7 @@ export default {
         }
         
         // get all comments from a user
-        if(url.pathname === "comment/get/u/all") {
+        if(url.pathname === "/comment/get/u/all") {
             const uid = url.searchParams.get("uid");
 
             try {
@@ -255,13 +255,53 @@ export default {
         }
         
         // add a reaction to a post
-        if (url.pathname === "/reaction/add") {}
+        if (url.pathname === "/reaction/add") {
+            const rid = url.searchParams.get("rid");
+            const uid = url.searchParams.get("uid");
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await addReaction(rid, uid, pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
 
         // remove a reaction from a post
-        if (url.pathname === "/reaction/remove") {}
+        if (url.pathname === "/reaction/remove") {
+            const rid = url.searchParams.get("rid");
+            const uid = url.searchParams.get("uid");
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await deleteReaction(rid, uid, pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
 
         // aggregate reactions from a post
-        if (url.pathname === "/reaction/aggregate") {}
+        if (url.pathname === "/reaction/aggregate") {
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await countReactionsByPostID(pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
         /* GROUP API */ 
 
