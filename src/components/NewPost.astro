@@ -1,14 +1,5 @@
 ---
-export const prerender = false;
-
-const cloud_name = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
-const upload_preset = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-console.log("(NewPost.astro frontmatter) cloud_name:", cloud_name);
-console.log("(NewPost.astro frontmatter) upload_preset:", upload_preset);
 ---
-
-<meta id="new-post-meta" data-cloud-name={`${cloud_name}`} data-upload-preset={`${upload_preset}`} />
 
 <section class="p-4">
   <button id="newPostBtn" class="btn btn-primary">New Post</button>
@@ -31,11 +22,8 @@ console.log("(NewPost.astro frontmatter) upload_preset:", upload_preset);
   </form>
 
   <script type="module">
-    const meta = document.getElementById('new-post-meta');
-    const cloud_name = meta.dataset.cloudName;
-    const upload_preset = meta.dataset.uploadPreset;
-    console.log("(NewPost.astro) cloud_name:", cloud_name);
-    console.log("(NewPost.astro) upload_preset:", upload_preset);
+    console.log("(NewPost.astro) cloud_name:", "dlokiaff2");
+    console.log("(NewPost.astro) upload_preset:", "bloom_buddy_");
 
     const newPostBtn = document.getElementById('newPostBtn');
     const postForm = document.getElementById('postForm');
