@@ -23,6 +23,17 @@ const { pid } = Astro.props;
   class CommentForm extends HTMLElement {
     connectedCallback() {
       const pid = this.dataset.pid;
+      this.innerHTML = `
+        <form>
+          <input type="hidden" name="uid" />
+          <input type="hidden" name="cid" />
+          <label>Comment
+            <textarea name="caption" required></textarea>
+          </label>
+          <button type="submit">Post Comment</button>
+        </form>
+      `;
+
       const form = this.querySelector("form");
       const uidInput = form.querySelector('input[name="uid"]');
       const cidInput = form.querySelector('input[name="cid"]');
@@ -49,5 +60,8 @@ const { pid } = Astro.props;
     }
   }
 
-  customElements.define("comment-form", CommentForm);
+  if (!customElements.get('comment-form')) {
+    customElements.define('comment-form', CommentForm);
+  }
 </script>
+
