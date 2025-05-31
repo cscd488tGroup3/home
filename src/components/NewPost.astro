@@ -68,6 +68,8 @@
         url: imageUrl
       };
 
+      console.log("(NewPost.astro) payload:", payload);
+
       const postRes = await fetch('/.netlify/functions/createPost', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
