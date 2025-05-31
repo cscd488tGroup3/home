@@ -38,13 +38,15 @@
     console.log("(NewPost.astro) uid:", uid);
 
     newPostBtn.addEventListener('click', () => {
-      postForm.classList.toggle('hidden');
       pidInput.value = crypto.randomUUID();
-      uidInput.value = uid;
+      postForm.classList.toggle('hidden');
     });
-
+    
     postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      pidInput.value = crypto.randomUUID();
+      uidInput.value = uid;
 
       const file = imageInput.files[0];
       if (!file) return alert("Please select an image.");
