@@ -214,7 +214,7 @@ export async function deleteExpiredSessions(env) {
 
 /**
  * addPost - insert a new post into the posts table
- * @param {String} id represents the post id
+ * @param {String} pid represents the post id
  * @param {String} caption represents the post caption
  * @param {String} url represents the url to the image 
  * @param {String} uid represents the user id
