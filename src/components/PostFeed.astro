@@ -1,6 +1,8 @@
 ---
+import EditPost from "./EditPost.astro";
 import CommentList from "./CommentList.astro";
 import NewComment from "./NewComment.astro";
+import DeletePost from "./DeletePost.astro";
 const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPosts'); // Adjust to your Netlify Function URL
 const result = await res.json();
 
@@ -17,6 +19,8 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
       <div class="card-body">
         <h2 class="card-title">{post.caption}</h2>
         <p class="text-sm text-gray-400">By User {post.uid}</p>
+        <EditPost pid={post.pid}/>
+        <DeletePost pid={post.pid}/>
 
         <!-- Reactions Placeholder -->
         <div class="mt-2">
