@@ -13,20 +13,20 @@ const { pid } = Astro.props;
       name="caption"
       class="textarea textarea-bordered w-full"
       placeholder="Write a comment..."
-      required
-    ></textarea>
+      required></textarea>
   </label>
 
   <button type="submit" class="btn btn-primary">Post Comment</button>
 
   <script type="module">
-    const pid = {{ JSON.stringify(pid) }}; // ✅ serialize server value
-
     const form = document.getElementById(`commentForm-${pid}`);
     if (!form) {
       console.error("Form not found for pid:", pid);
     } else {
-      const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
+      console.log(pid);
+      const uid =
+        document.querySelector('meta[name="user-id"]')?.content ||
+        "unknown-user";
       const uidInput = form.querySelector('input[name="uid"]');
       const cidInput = form.querySelector('input[name="cid"]');
 
@@ -34,7 +34,7 @@ const { pid } = Astro.props;
       cidInput.value = crypto.randomUUID();
 
       form.addEventListener("submit", async (e) => {
-        e.preventDefault(); // ✅ stop default POST+reload
+        e.preventDefault();
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
@@ -55,8 +55,7 @@ const { pid } = Astro.props;
             alert("Failed to post comment.");
           } else {
             console.log("Comment created:", result);
-            form.reset(); // optional
-            // optionally trigger re-fetch of comments
+            // form.reset();
           }
         } catch (err) {
           console.error("Network error:", err);
