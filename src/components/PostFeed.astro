@@ -3,6 +3,7 @@ import EditPost from "./EditPost.astro";
 import CommentList from "./CommentList.astro";
 import NewComment from "./NewComment.astro";
 import DeletePost from "./DeletePost.astro";
+import Reaction from "./Reaction.astro";
 const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPosts'); // Adjust to your Netlify Function URL
 const result = await res.json();
 
@@ -24,8 +25,7 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
 
         <!-- Reactions Placeholder -->
         <div class="mt-2">
-          <button class="btn btn-sm btn-outline btn-primary">👍 Like</button>
-          <span class="ml-2 text-sm text-gray-500">0 likes</span>
+          <Reaction pid={post.pid}/>
         </div>
 
         <!-- Comments -->
