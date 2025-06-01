@@ -482,6 +482,23 @@ export async function deleteReaction(rid, uid, env) {
     }
 }
 
+/**
+ * checkIfPostHasReactionFromUser - check if a post has a reaction from
+ * a user
+ * @param {*} pid 
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function checkIfPostHasReactionFromUser(pid, uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT rid FROM reaction WHERE uid = ? AND pid = ?").bind(uid, pid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
 // USER PRIV DATABASE FUNCTIONS //
 
 /**
