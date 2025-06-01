@@ -10,6 +10,10 @@ html {
     background-color: rgb(189, 215, 206);
 }
 
+form#postForm.hidden {
+    display: none;
+}
+
 /* style the header */
 header {
     display: flex;
@@ -145,7 +149,8 @@ button#edit-lname,
 button#edit-email,
 button#edit-dob,
 button#edit-password,
-button#edit-priv
+button#edit-priv,
+button#newPostBtn
  {
     margin-top: 0.625em; 
     padding-left: 0.625em;
@@ -157,6 +162,18 @@ button#edit-priv
     background-color: #cbecca;
     font-weight: 500;
     transition: background-color 0.3s ease;
+}
+
+input {
+    border:#014829 solid 1px;
+    border-radius: .5em;
+    padding: .5em;
+    background-color:#b4d6b4;
+    transition: background-color 0.3s ease;
+}
+
+input:hover {
+    filter: brightness(80%);
 }
 
 button:hover {

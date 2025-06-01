@@ -1,6 +1,5 @@
 ---
 ---
-
 <section class="p-4">
   <button id="newPostBtn" class="btn btn-primary">New Post</button>
   
@@ -34,7 +33,6 @@
     console.log("(NewPost.astro) uid:", uid);
 
     newPostBtn.addEventListener('click', () => {
-      pidInput.value = crypto.randomUUID();
       postForm.classList.toggle('hidden');
     });
     
