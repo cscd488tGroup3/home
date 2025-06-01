@@ -11,10 +11,10 @@ const result = await res.json();
 const posts = Array.isArray(result) ? result : result?.data ?? [];
 ---
 
-<div class="space-y-6">
+<div id="postContainer">
   {posts.map(post => (
-    <div class="card bg-base-100 shadow-xl">
-      <figure>
+    <div class="post">
+      <figure class="post">
         <img src={post.url} alt="Post Image" class="w-full object-cover max-h-64" />
       </figure>
       <div class="card-body">
