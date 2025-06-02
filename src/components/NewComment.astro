@@ -1,0 +1,67 @@
+---
+const { pid } = Astro.props;
+---
+
+<comment-form data-pid={pid}>
+  <form class="comment space-y-4 mt-4">
+    <input type="hidden" name="uid" />
+    <input type="hidden" name="cid" />
+    <label class="form-control">
+      <span class="label-text">Comment</span>
+      <textarea
+        name="caption"
+        class="textarea textarea-bordered w-full"
+        placeholder="Write a comment..."
+        required
+      ></textarea>
+    </label>
+    <button type="submit" class="btn btn-primary">Post Comment</button>
+  </form>
+</comment-form>
+
+<script type="module">
+  class CommentForm extends HTMLElement {
+    connectedCallback() {
+      const pid = this.dataset.pid;
+      this.innerHTML = `
+        <form class="comment">
+          <input type="hidden" name="uid" />
+          <input type="hidden" name="cid" />
+          <label>Comment
+            <textarea name="caption" required placeholder="Your Comment..."></textarea>
+          </label>
+          <button type="submit">Post Comment</button>
+        </form>
+      `;
+
+      const form = this.querySelector("form.comment");
+      const uidInput = form.querySelector('input[name="uid"]');
+      const cidInput = form.querySelector('input[name="cid"]');
+
+      uidInput.value = document.querySelector('meta[name="user-id"]')?.content || 'unknown-user';
+      cidInput.value = crypto.randomUUID();
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        formData.append("pid", pid);
+
+        const data = Object.fromEntries(formData.entries());
+
+        const res = await fetch("/.netlify/functions/createComment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+        console.log("Result:", result);
+      });
+    }
+  }
+
+  if (!customElements.get('comment-form')) {
+    customElements.define('comment-form', CommentForm);
+  }
+</script>
+

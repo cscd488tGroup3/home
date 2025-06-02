@@ -1,42 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
 ---
 
 <Layout>
-    <h1><u>Create a Group</u></h1>
-    <form id="createGroupForm" onSubmit={async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const groupData = {
-            gname: formData.get("groupName"),
-            isPrivate: formData.get("isPrivate") === "on",
-            isPublic: formData.get("isPublic") === "on",
-            role: "owner",
-        };
-
-        if (!groupData.isPrivate && !groupData.isPublic) {
-            alert("You must select either Private or Public.");
-            return;
-        }
-
-        try {
-            const res = await createGroupRequest({
-                worker: 'https://astro-d1-integration.ecrawford4.workers.dev/api/groups',
-                data: groupData,
-            });
-            if (res.status === 200) {
-                const createdGroup = await res.json();
-                alert("Group created successfully! You are now the Owner.");
-                e.target.reset();
-                displayGroup(createdGroup);
-                loadGroupMembers();
-            } else {
-                alert("Failed to create group.");
-            }
-        } catch (err) {
-            alert("An error occurred while creating the group.");
-        }
-    }}>
+    <h1 id="createGroupHeader"><u>Create a Group</u></h1>
+    <form id="createGroupForm">
         <label for="groupName">Group Name:</label>
         <input type="text" id="groupName" name="groupName" placeholder="Name the group" required />
 
@@ -61,41 +30,26 @@ import Layout from '../layouts/Layout.astro';
         <p><strong>Group Type:</strong> <span id="createdGroupType"></span></p>
         <button id="deleteGroupButton" class="delete-group-button">Delete Group</button>
     </div>
-
-    <!-- Group Posts Section -->
     <div id="groupPostsSection" style="display: none;">
         <h2>Group Posts</h2>
-        <form id="createPostForm" onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const postData = {
-                gid: currentGroupId, // Group ID to associate the post
-                content: formData.get("postContent"),
-            };
-
-            try {
-                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(postData),
-                });
-                if (res.status === 200) {
-                    alert("Post created successfully!");
-                    e.target.reset();
-                    loadGroupPosts(); // Reload posts after creating a new one
-                } else {
-                    alert("Failed to create post.");
-                }
-            } catch (err) {
-                alert("An error occurred while creating the post.");
-            }
-        }}>
-            <textarea id="postContent" name="postContent" placeholder="Write your post here..." required></textarea>
-            <button type="submit">Post</button>
+        <!-- Group Dashboard Post Form (matches feed/index.astro) -->
+        <button id="toggleFormButton" class="form-button">Create Post</button>
+        <form id="postForm" style="display: none;">
+          <label id="fileLabel" for="images" style="cursor: pointer;">Choose File</label>
+          <input
+            type="file"
+            id="images"
+            name="images"
+            accept="image/jpeg, image/png, image/webp"
+            required
+            style="display: none;"
+          />
+          <label for="caption">Caption the Post:</label>
+          <input type="text" id="caption" name="caption" required />
+          <span id="captionCounter">0/200</span>
+          <button type="submit">Create Post</button>
         </form>
-        <ul id="groupPostsList" class="group-posts-list">
-            <!-- Posts will be dynamically populated here -->
-        </ul>
+        <div id="postContainer"></div>
     </div>
 
     <!-- Join Group Section -->
@@ -125,6 +79,12 @@ import Layout from '../layouts/Layout.astro';
             <input type="text" id="groupId" name="groupId" placeholder="Enter group ID" required />
             <button type="submit">Join Group</button>
         </form>
+    </div>
+
+    <!-- All Groups Section -->
+    <div id="allGroupsSection">
+        <h2><u>All Groups</u></h2>
+        <ul id="allGroupsList"></ul>
     </div>
 
     <!-- Group Management Section -->
@@ -159,25 +119,126 @@ import Layout from '../layouts/Layout.astro';
             createdGroupType.textContent = group.isPrivate ? "Private" : "Public";
             createdGroupSection.style.display = "block";
             groupPostsSection.style.display = "block";
-            loadGroupPosts(); // Load posts for the group
+            // Hide other sections
+            document.getElementById('createGroupForm').style.display = "none";
+            document.getElementById('joinGroupSection').style.display = "none";
+            document.getElementById('allGroupsSection').style.display = "none";
+            groupManagementSection.style.display = "none";
+            groupPostsList.innerHTML = '';
+            // Hide the Create Group header
+            document.getElementById('createGroupHeader').style.display = "none";
+            // Only show post form if user is a member
+            const joinedGroups = getJoinedGroups();
+            document.getElementById('toggleFormButton').style.display = joinedGroups.includes(group.id) ? 'block' : 'none';
+            document.getElementById('postForm').style.display = 'none'; // Hide by default
+            loadGroupPosts();
         }
 
+        // Toggle post form visibility
+        document.getElementById('toggleFormButton').onclick = () => {
+            const postForm = document.getElementById('postForm');
+            const isVisible = postForm.style.display === 'block';
+            postForm.style.display = isVisible ? 'none' : 'block';
+            document.getElementById('caption').focus();
+        };
+
+        // Character counter for caption
+        document.getElementById('caption').addEventListener('input', function() {
+            const maxLength = 200;
+            const currentLength = this.value.length;
+            const counter = document.getElementById('captionCounter');
+            counter.textContent = `${currentLength}/${maxLength}`;
+            if (currentLength > maxLength) {
+                this.value = this.value.substring(0, maxLength);
+            }
+        });
+
+        // Handle post creation (with image upload)
+        document.getElementById('postForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            formData.append('gid', currentGroupId); // Ensure group context
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (res.status === 200) {
+                    alert("Post created successfully!");
+                    e.target.reset();
+                    document.getElementById('postForm').style.display = 'none';
+                    loadGroupPosts();
+                } else {
+                    alert("Failed to create post.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the post.");
+            }
+        };
+
+        // Render posts (with images, captions, comments, likes)
         async function loadGroupPosts() {
             try {
                 const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts?gid=${currentGroupId}`);
                 if (res.status === 200) {
                     const posts = await res.json();
-                    groupPostsList.innerHTML = ''; // Clear the list
+                    const postContainer = document.getElementById('postContainer');
+                    postContainer.innerHTML = '';
                     posts.forEach((post) => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = post.content;
-                        groupPostsList.appendChild(listItem);
+                        const postDiv = document.createElement('div');
+                        postDiv.className = 'post';
+
+                        postDiv.innerHTML = `
+                            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image" />` : ''}
+                            <div class="post-caption">${post.caption || ''}</div>
+                            <div class="post-content">${post.content || ''}</div>
+                            <button class="like-btn" data-postid="${post.id}">Like (${post.likes || 0})</button>
+                            <div class="comments">
+                                <ul>
+                                    ${(post.comments || []).map(comment => `
+                                        <li>
+                                            <span class="comment-content">${comment.content}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                                <form class="comment-form" data-postid="${post.id}">
+                                    <input type="text" name="comment" placeholder="Add a comment..." required class="comment-input"/>
+                                    <button type="submit" class="comment-submit-btn">Comment</button>
+                                </form>
+                            </div>
+                        `;
+                        postContainer.appendChild(postDiv);
+                    });
+
+                    // Like button logic
+                    document.querySelectorAll('.like-btn').forEach(btn => {
+                        btn.onclick = async (e) => {
+                            const postId = btn.getAttribute('data-postid');
+                            await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts/${postId}/like`, { method: 'POST' });
+                            loadGroupPosts();
+                        };
+                    });
+
+                    // Comment form logic
+                    document.querySelectorAll('.comment-form').forEach(form => {
+                        form.onsubmit = async (e) => {
+                            e.preventDefault();
+                            const postId = form.getAttribute('data-postid');
+                            const comment = form.comment.value;
+                            await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/posts/${postId}/comments`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ content: comment }),
+                            });
+                            loadGroupPosts();
+                        };
                     });
                 } else {
-                    alert("Failed to load posts.");
+                    document.getElementById('postContainer').innerHTML = '<div>No posts yet.</div>';
                 }
             } catch (err) {
-                alert("An error occurred while loading posts.");
+                document.getElementById('postContainer').innerHTML = '<div>Error loading posts.</div>';
             }
         }
 
@@ -271,6 +332,225 @@ import Layout from '../layouts/Layout.astro';
             }
         };
 
+        // Helper: Get local groups from localStorage
+        function getLocalGroups() {
+            return JSON.parse(localStorage.getItem('localGroups') || '[]');
+        }
+
+        // Helper: Save local groups to localStorage
+        function saveLocalGroups(groups) {
+            localStorage.setItem('localGroups', JSON.stringify(groups));
+        }
+
+        // Helper: Get joined group IDs from localStorage
+        function getJoinedGroups() {
+            return JSON.parse(localStorage.getItem('joinedGroups') || '[]');
+        }
+
+        // Helper: Save joined group IDs to localStorage
+        function saveJoinedGroups(joined) {
+            localStorage.setItem('joinedGroups', JSON.stringify(joined));
+        }
+
+        // Render all groups (local only)
+        function renderAllGroups() {
+            const allGroupsList = document.getElementById('allGroupsList');
+            allGroupsList.innerHTML = '';
+            const groups = getLocalGroups();
+            const joinedGroups = getJoinedGroups();
+
+            // Button style to match "Create Group" and "Join Group" buttons
+            const buttonStyle = `
+                background: #fff;
+                color: #222;
+                border: 1.5px solid #bdbdbd;
+                border-radius: 8px;
+                padding: 0.4em 1.2em;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
+                margin-left: 1em;
+                transition: background 0.2s;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+            `;
+
+            groups.forEach(group => {
+                const li = document.createElement('li');
+                // Create clickable group name if joined
+                let groupNameElem;
+                if (joinedGroups.includes(group.id)) {
+                    groupNameElem = document.createElement('a');
+                    groupNameElem.href = "#";
+                    groupNameElem.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
+                    groupNameElem.style.fontWeight = "bold";
+                    groupNameElem.style.textDecoration = "underline";
+                    groupNameElem.onclick = (e) => {
+                        e.preventDefault();
+                        displayGroup(group);
+                    };
+                } else {
+                    groupNameElem = document.createElement('span');
+                    groupNameElem.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'}) `;
+                }
+                li.appendChild(groupNameElem);
+
+                // Track requested groups in localStorage
+                let requestedGroups = JSON.parse(localStorage.getItem('requestedGroups') || '[]');
+
+                if (joinedGroups.includes(group.id)) {
+                    // Joined + Leave box styled as button
+                    const joinedBtn = document.createElement('span');
+                    joinedBtn.setAttribute('style', buttonStyle + 'display: inline-flex; align-items: center; background: #eaffea; border-color: #6fcf97; color: #219150;');
+
+                    const joinedSpan = document.createElement('span');
+                    joinedSpan.textContent = 'Joined';
+                    joinedSpan.style.color = '#219150';
+                    joinedSpan.style.fontWeight = 'bold';
+                    joinedSpan.style.marginRight = '0.7em';
+
+                    const leaveBtn = document.createElement('button');
+                    leaveBtn.textContent = 'Leave';
+                    leaveBtn.setAttribute('style', buttonStyle + 'background: #fff; color: #d32f2f; border-color: #d32f2f; margin-left: 0;');
+                    leaveBtn.onmouseover = () => leaveBtn.style.background = '#ffeaea';
+                    leaveBtn.onmouseout = () => leaveBtn.style.background = '#fff';
+
+                    leaveBtn.onclick = () => {
+                        const idx = joinedGroups.indexOf(group.id);
+                        if (idx !== -1) {
+                            joinedGroups.splice(idx, 1);
+                            saveJoinedGroups(joinedGroups);
+                            renderAllGroups();
+                            alert(`You left "${group.gname}".`);
+                        }
+                    };
+
+                    joinedBtn.appendChild(joinedSpan);
+                    joinedBtn.appendChild(leaveBtn);
+                    li.appendChild(joinedBtn);
+                } else {
+                    if (group.isPrivate) {
+                        // If already requested, show "Requested" with Cancel option
+                        if (requestedGroups.includes(group.id)) {
+                            const requestedBox = document.createElement('span');
+                            requestedBox.setAttribute('style', buttonStyle + 'display: inline-flex; align-items: center; background: #fffbe6; border-color: #ffe082; color: #bfa100;');
+
+                            const requestedSpan = document.createElement('span');
+                            requestedSpan.textContent = 'Requested';
+                            requestedSpan.style.color = '#bfa100';
+                            requestedSpan.style.fontWeight = 'bold';
+                            requestedSpan.style.marginRight = '0.7em';
+
+                            const cancelBtn = document.createElement('button');
+                            cancelBtn.textContent = 'Cancel';
+                            cancelBtn.setAttribute('style', buttonStyle + 'background: #fff; color: #d32f2f; border-color: #d32f2f; margin-left: 0;');
+                            cancelBtn.onmouseover = () => cancelBtn.style.background = '#ffeaea';
+                            cancelBtn.onmouseout = () => cancelBtn.style.background = '#fff';
+
+                            cancelBtn.onclick = () => {
+                                requestedGroups = requestedGroups.filter(id => id !== group.id);
+                                localStorage.setItem('requestedGroups', JSON.stringify(requestedGroups));
+                                renderAllGroups();
+                                alert(`Request to join "${group.gname}" cancelled.`);
+                            };
+
+                            requestedBox.appendChild(requestedSpan);
+                            requestedBox.appendChild(cancelBtn);
+                            li.appendChild(requestedBox);
+                        } else {
+                            // Not yet requested: show "Request to Join"
+                            const requestBtn = document.createElement('button');
+                            requestBtn.textContent = 'Request to Join';
+                            requestBtn.setAttribute('style', buttonStyle);
+                            requestBtn.onclick = () => {
+                                requestedGroups.push(group.id);
+                                localStorage.setItem('requestedGroups', JSON.stringify(requestedGroups));
+                                renderAllGroups();
+                                alert(`Request to join "${group.gname}" sent! Please wait for approval.`);
+                            };
+                            li.appendChild(requestBtn);
+                        }
+                    } else {
+                        // Public group: show Join button
+                        const joinBtn = document.createElement('button');
+                        joinBtn.textContent = 'Join';
+                        joinBtn.setAttribute('style', buttonStyle);
+                        joinBtn.onmouseover = () => joinBtn.style.background = '#f0f0f0';
+                        joinBtn.onmouseout = () => joinBtn.style.background = '#fff';
+
+                        joinBtn.onclick = () => {
+                            joinedGroups.push(group.id);
+                            saveJoinedGroups(joinedGroups);
+                            renderAllGroups();
+                            alert(`You joined "${group.gname}"!`);
+                        };
+
+                        li.appendChild(joinBtn);
+                    }
+                }
+
+                allGroupsList.appendChild(li);
+            });
+        }
+
+        // On page load, render local groups
+        renderAllGroups();
+
+        // When creating a group, save it locally and re-render
+        document.getElementById('createGroupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const groupData = {
+                gname: formData.get("groupName"),
+                isPrivate: formData.get("isPrivate") === "on",
+                isPublic: formData.get("isPublic") === "on",
+                id: Date.now(), // simple unique id for local use
+            };
+
+            if (!groupData.isPrivate && !groupData.isPublic) {
+                alert("You must select either Private or Public.");
+                return;
+            }
+
+            // Save locally
+            const groups = getLocalGroups();
+            groups.push(groupData);
+            saveLocalGroups(groups);
+
+            // Optionally, also call your backend here if you want
+            // (remove/comment out if you want local only)
+            /*
+            fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/groups', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(groupData),
+            });
+            */
+
+            e.target.reset();
+            renderAllGroups();
+            alert("Group created locally!");
+        });
+
+        async function loadAllGroups() {
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/groups');
+                if (res.status === 200) {
+                    const groups = await res.json();
+                    const allGroupsList = document.getElementById('allGroupsList');
+                    allGroupsList.innerHTML = '';
+                    groups.forEach(group => {
+                        const li = document.createElement('li');
+                        li.textContent = `${group.gname} (${group.isPrivate ? 'Private' : 'Public'})`;
+                        allGroupsList.appendChild(li);
+                    });
+                } else {
+                    alert("Failed to load groups.");
+                }
+            } catch (err) {
+                alert("An error occurred while loading groups.");
+            }
+        }
+
         loadGroupMembers();
 
         const isPublicCheckbox = document.getElementById('isPublic');
@@ -287,6 +567,87 @@ import Layout from '../layouts/Layout.astro';
             if (isPrivateCheckbox.checked) {
                 isPublicCheckbox.checked = false;
             }
+        });
+
+        // Attach event listener to the form
+        document.getElementById('createGroupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const groupData = {
+                gname: formData.get("groupName"),
+                isPrivate: formData.get("isPrivate") === "on",
+                isPublic: formData.get("isPublic") === "on",
+                role: "owner",
+            };
+
+            if (!groupData.isPrivate && !groupData.isPublic) {
+                //alert("You must select either Private or Public.");
+                return;
+            }
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/groups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(groupData),
+                });
+                if (res.status === 200) {
+                    const createdGroup = await res.json();
+                    alert("Group created successfully! You are now the Owner.");
+                    e.target.reset();
+                    displayGroup(createdGroup);
+                    loadGroupMembers();
+                    loadAllGroups(); // <-- Add this line
+                } else {
+                    alert("Failed to create group.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the group.");
+            }
+        });
+
+        function showMainSections() {
+            document.getElementById('createGroupForm').style.display = "block";
+            document.getElementById('joinGroupSection').style.display = "block";
+            document.getElementById('allGroupsSection').style.display = "block";
+            groupManagementSection.style.display = "block";
+            createdGroupSection.style.display = "none";
+            groupPostsSection.style.display = "none";
+            // Show the Create Group header again
+            document.getElementById('createGroupHeader').style.display = "block";
+        }
+
+        document.getElementById('createPostForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const postData = {
+                gid: currentGroupId,
+                caption: formData.get("postCaption"),
+                content: formData.get("postContent"),
+            };
+
+            try {
+                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData),
+                });
+                if (res.status === 200) {
+                    alert("Post created successfully!");
+                    e.target.reset();
+                    loadGroupPosts();
+                } else {
+                    alert("Failed to create post.");
+                }
+            } catch (err) {
+                alert("An error occurred while creating the post.");
+            }
+        };
+
+        // Render saved posts (if any)
+        window.addEventListener('DOMContentLoaded', () => {
+            setupFormHandlers(currentGroupId); // Pass group ID to filter posts
+            renderSavedPosts(currentGroupId);  // Only show posts for this group
         });
     </script>
 </Layout>

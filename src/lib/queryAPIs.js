@@ -27,41 +27,20 @@ export async function queryTrefle(plantQuery) {
 
 // Keeping Perenual API functionality
 export async function queryPerenual(plantQuery) {
-    const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
+    const PERENUAL_KEY = process.env.PERENUAL_KEY;
 
     try {
-        const PerenualResponse = await fetch(`https://perenual.com/api/v2/species-list?key=${PERENUAL_KEY}&q=${plantQuery}`);
-
-        if (!PerenualResponse.ok) {
+        const response = await fetch(`https://perenual.com/api/species-care-guide-list?key=${PERENUAL_KEY}&q=${plantQuery}`);
+        if (!response.ok) {
             throw new Error('Failed to fetch plant information from Perenual API');
         }
-
-        return await PerenualResponse.json();
+        const result = await response.json();
+        return result.data; // Only return the array of plants
     } catch (error) {
         throw new Error(`Perenual API Error: ${error.message}`);
     }
 }
-
-/**
- * Fetch detailed plant information from the Perenual API using the plant ID.
- * @param {number} plantId - The ID of the plant.
- * @returns {Promise<Object>} - Detailed plant information.
- */
-export async function queryPerenualDetails(plantId) {
-    const PERENUAL_KEY = import.meta.env.PERENUAL_KEY;
-
-    try {
-        const response = await fetch(`https://perenual.com/api/v2/species/details/${plantId}?key=${PERENUAL_KEY}`);
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch detailed plant information from Perenual API');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw new Error(`Perenual API Details Error: ${error.message}`);
-    }
-}
+//removed un used query with ID
 
 // Commenting out Rapid API functionality
 /*

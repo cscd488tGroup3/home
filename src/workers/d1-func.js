@@ -214,12 +214,12 @@ export async function deleteExpiredSessions(env) {
 
 /**
  * addPost - insert a new post into the posts table
- * @param {String} id represents the post id
+ * @param {String} pid represents the post id
  * @param {String} caption represents the post caption
  * @param {String} url represents the url to the image 
  * @param {String} uid represents the user id
- * @param {*} env 
- * @returns 
+ * @param {*} env represents the environment variable
+ * @returns json data response
  */
 export async function addPost(pid, caption, url, uid, env) { 
     try {
@@ -247,7 +247,7 @@ export async function getPostByID(pid, env) {
  * getAllPostsFromUser - query the posts table for all posts by a particular user
  * @param {*} uid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getAllPostsFromUser(uid, env) {
     try {
@@ -258,12 +258,26 @@ export async function getAllPostsFromUser(uid, env) {
     }
 }
 /**
+ * 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getAllPosts(env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM post").all();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
  * editPost - update the caption of a post in the posts table
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} uid 
  * @param {*} newCaption 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function editPost(pid, uid, newCaption, env) { 
     try {
@@ -275,10 +289,10 @@ export async function editPost(pid, uid, newCaption, env) {
 }
 /**
  * deletePost - delete a post from the posts table
- * @param {*} id 
+ * @param {*} pid 
  * @param {*} uid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function deletePost(pid, uid, env) { 
     try {
@@ -295,7 +309,7 @@ export async function deletePost(pid, uid, env) {
  * @param {*} uid 
  * @param {*} pid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function addComment(cid, content, uid, pid, env) { 
     try {
@@ -309,7 +323,7 @@ export async function addComment(cid, content, uid, pid, env) {
  * getComment - query the comments table for the comment id
  * @param {*} cid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getComment(cid, env) {
     try {
@@ -323,7 +337,7 @@ export async function getComment(cid, env) {
  * getParentPostByCommentID - query the posts table for the post id of a comment
  * @param {*} cid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getParentPostByCommentID(cid, env) {
     try {
@@ -337,7 +351,7 @@ export async function getParentPostByCommentID(cid, env) {
  * getAllCommentsFromPost - query the comments table for all comments to a particular post
  * @param {*} id 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getAllCommentsFromPost(pid, env) {
     try {
@@ -351,7 +365,7 @@ export async function getAllCommentsFromPost(pid, env) {
  * getAllCommentsFromUser - query the comments table for all comments by a particular user
  * @param {*} uid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getAllCommentsFromUser(uid, env) {
     try {
@@ -367,7 +381,7 @@ export async function getAllCommentsFromUser(uid, env) {
  * @param {*} uid 
  * @param {*} newContent 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function editComment(cid, uid, newContent, env) { 
     try {
@@ -382,7 +396,7 @@ export async function editComment(cid, uid, newContent, env) {
  * @param {*} cid 
  * @param {*} uid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function deleteComment(cid, uid, env) { 
     try {
@@ -398,7 +412,7 @@ export async function deleteComment(cid, uid, env) {
  * @param {*} uid 
  * @param {*} pid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function addReaction(rid, uid, pid, env) {
     try {
@@ -412,7 +426,7 @@ export async function addReaction(rid, uid, pid, env) {
  * getReactionByPostID - query the reaction table for the reaction ids of the reactions to a post
  * @param {*} pid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getReactionsByPostID(pid, env) {
     try {
@@ -426,7 +440,7 @@ export async function getReactionsByPostID(pid, env) {
  * countReactionsByPostID - query the reaction table for the number of reactions to a post
  * @param {*} pid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function countReactionsByPostID(pid, env) {
     try {
@@ -442,7 +456,7 @@ export async function countReactionsByPostID(pid, env) {
  * getAllReactionsFromUser - query the reaction table for all reactions by a particular user
  * @param {*} uid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function getAllReactionsFromUser(uid, env) {
     try {
@@ -457,11 +471,28 @@ export async function getAllReactionsFromUser(uid, env) {
  * @param {String} rid 
  * @param {String} uid 
  * @param {*} env 
- * @returns 
+ * @returns json data response
  */
 export async function deleteReaction(rid, uid, env) { 
     try {
         const {results} = await env.DB.prepare("DELETE FROM reaction WHERE rid = ? AND uid = ?").bind(rid, uid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * checkIfPostHasReactionFromUser - check if a post has a reaction from
+ * a user
+ * @param {*} pid 
+ * @param {*} uid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function checkIfPostHasReactionFromUser(pid, uid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT rid FROM reaction WHERE uid = ? AND pid = ?").bind(uid, pid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);

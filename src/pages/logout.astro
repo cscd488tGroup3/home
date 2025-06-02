@@ -1,25 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
-export async function logout() {
-    // Delete the cookie by setting it to an empty value and expiring it
-    return {
-        headers: {
-            'Set-Cookie': 'session=; Path=/; HttpOnly; Max-Age=0',
-        },
-    }
-}
 ---
 <Layout>
-    <h1>Please Wait while Logging out</h1>
+  <h1>Please Wait while Logging out</h1>
 </Layout>
 
 <script>
-    import { logout } from "./logout.astro";
-    await logout(); // run the logout function to delete the session cookie
-    // Redirect to the home page after a short delay
-    setTimeout(() => {
+  fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/logout', { method: 'POST' })
+    .then(() => {
+      setTimeout(() => {
         window.location.href = '/';
-    }, 2000); // 2000 milliseconds = 2 seconds
+      }, 2000);
+    });
 </script>
-    

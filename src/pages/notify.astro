@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout>
+  <h1>Sending Email Notification...</h1>
+</Layout>
+
+<script type="module" is:inline>
+  const userId = document.querySelector('meta[name="user-id"]')?.content;
+
+  if (!userId) {
+    console.error("User ID not found in meta tag");
+  } else {
+    fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getEmailByUID", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uid: userId }),
+    })
+    .then(res => res.json())
+    .then(async (response) => {
+      const email = response[0]?.email;
+      if (!email) throw new Error("Email not returned from database");
+
+      const data = {
+        email,
+        subject: 'Your Gardening Plan',
+        emailBody: 'Lorem ipsum dolor sit amet'
+      };
+
+      await fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+
+      window.location.href = "/";
+    })
+    .catch(err => {
+      console.error("Error sending notification:", err);
+    });
+  }
+</script>

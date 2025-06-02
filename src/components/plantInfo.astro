@@ -1,128 +1,167 @@
 ---
-import { getPlantRecommendations } from '../lib/recommendations.js'; // Ensure this path is correct
 
 ---
 
 <!-- Plant Display -->
-<section class="backdrop-blur-md bg-white/50">
-    <h1>Plant Name: <span class="plant-name">Plant</span></h1>
-    <h2>Scientific Name: <span class="plant-scientific-name">Scientific Name</span></h2>
-    <h3>Type: <span class="plant-type">Type</span></h3>
-    <h4>Cycle: <span class="plant-cycle">Cycle</span></h4>
-    <h5>Watering: <span class="plant-watering">Watering</span></h5>
-    <h6>Sunlight: <span class="plant-sunlight">Sunlight</span></h6>
+<section id="plant" class="backdrop-blur-md bg-white/50">
+    <p>Plant Name: <span class="plant-name">Plant</span></p>
+    <p>Scientific Name: <span class="plant-scientific-name">Scientific Name</span></p>
+    <p>Type: <span class="plant-type">Type</span></p>
+    <p>Cycle: <span class="plant-cycle">Cycle</span></p>
+    <p>Watering: <span class="plant-watering">Watering</span></p>
+    <p>Sunlight: <span class="plant-sunlight">Sunlight</span></p>
+    <p>Pruning: <span class="plant-pruning">Pruning</span></p>
     <p>Description: <span class="plant-description">Description</span></p>
-    <img id="plant-image" src="" alt="Plant Image" />
+    <img id="plant-image" src="" alt="Plant Image" style="max-width:200px;display:block;margin-top:10px;" />
+    <button id="add-to-plan">Add to Gardening Plan</button>
 </section>
 
-<script>
-    interface PlantDetails {
-        commonName: string;
-        scientificName: string;
-        type: string;
-        cycle: string;
-        watering: string;
-        sunlight: string;
-        description: string;
-        default_image?: {
-            regular_url: string;
-        };
-    }
+<section id="gardening-plan" class="backdrop-blur-md bg-white/50">
+    <h3>Your Gardening Plan</h3>
+    <ul id="gardening-plan-list"></ul>
+</section>
 
-    // DOM elements for updating the UI
+<script type="module">
+
+    let currentPlant = null;
+    let gardeningPlan = JSON.parse(localStorage.getItem('gardeningPlan') || '[]');
+    let editingIndex = null;
+
     const plantNameElement = document.querySelector('.plant-name');
     const plantScientificNameElement = document.querySelector('.plant-scientific-name');
     const plantTypeElement = document.querySelector('.plant-type');
     const plantCycleElement = document.querySelector('.plant-cycle');
     const plantWateringElement = document.querySelector('.plant-watering');
     const plantSunlightElement = document.querySelector('.plant-sunlight');
+    const plantPruningElement = document.querySelector('.plant-pruning');
     const plantDescriptionElement = document.querySelector('.plant-description');
-    const plantImageElement = document.getElementById('plant-image') as HTMLImageElement | null;
-    const fetchPlantButton = document.getElementById('fetchPlantButton');
-    const plantNameInput = document.getElementById('plantNameInput') as HTMLInputElement | null;
+    const plantImageElement = document.getElementById('plant-image');
 
-    // Function to fetch plant information and update the UI
-    async function fetchPlantInfo(plantName: string) {
+    function updateGardeningPlanUI() {
+        const planList = document.getElementById('gardening-plan-list');
+        planList.innerHTML = '';
+        gardeningPlan.forEach((plant, idx) => {
+            const li = document.createElement('li');
+
+            if (editingIndex === idx) {
+                // Inline edit form with textarea for longer input and extra line breaks
+                li.innerHTML = `
+                    <form id="edit-form-${idx}">
+                        <strong>${plant.commonName}</strong><br>
+                        Watering:<br>
+                        <textarea name="watering" rows="3" style="width:95%;">${plant.watering || ''}</textarea><br><br>
+                        Sunlight:<br>
+                        <textarea name="sunlight" rows="3" style="width:95%;">${plant.sunlight || ''}</textarea><br><br>
+                        Pruning:<br>
+                        <textarea name="pruning" rows="3" style="width:95%;">${plant.pruning || ''}</textarea><br><br>
+                        <button type="submit">Save</button>
+                        <button type="button" class="cancel-edit">Cancel</button>
+                    </form>
+                `;
+                planList.appendChild(li);
+
+                // Save handler
+                li.querySelector('form').onsubmit = (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    plant.watering = form.watering.value;
+                    plant.sunlight = form.sunlight.value;
+                    plant.pruning = form.pruning.value;
+                    localStorage.setItem('gardeningPlan', JSON.stringify(gardeningPlan));
+                    editingIndex = null;
+                    updateGardeningPlanUI();
+                };
+                // Cancel handler
+                li.querySelector('.cancel-edit').onclick = () => {
+                    editingIndex = null;
+                    updateGardeningPlanUI();
+                };
+            } else {
+                li.innerHTML = `
+                    <strong>${plant.commonName}</strong>:<br>
+                    <b>Watering</b> - ${plant.watering}<br><br>
+                    <b>Sunlight</b> - ${plant.sunlight}<br><br>
+                    <b>Pruning</b> - ${plant.pruning}<br><br>
+                    <button class="gardening-plan-btn edit-plant" data-idx="${idx}">Edit</button>
+                    <button class="gardening-plan-btn delete-plant" data-idx="${idx}">Delete</button>
+                `;
+                planList.appendChild(li);
+
+                // Edit button
+                li.querySelector('.edit-plant').onclick = () => {
+                    editingIndex = idx;
+                    updateGardeningPlanUI();
+                };
+                // Delete button
+                li.querySelector('.delete-plant').onclick = () => {
+                    gardeningPlan.splice(idx, 1);
+                    localStorage.setItem('gardeningPlan', JSON.stringify(gardeningPlan));
+                    editingIndex = null;
+                    updateGardeningPlanUI();
+                };
+            }
+        });
+
+        // Add "Delete All" button if plan is not empty
+        let deleteAllBtn = document.getElementById('delete-all-plan');
+        if (!deleteAllBtn) {
+            deleteAllBtn = document.createElement('button');
+            deleteAllBtn.id = 'delete-all-plan';
+            deleteAllBtn.textContent = 'Delete Entire Plan';
+            deleteAllBtn.style.marginTop = '10px';
+            planList.parentElement.appendChild(deleteAllBtn);
+        }
+        deleteAllBtn.onclick = () => {
+            if (confirm('Are you sure you want to delete your entire gardening plan?')) {
+                gardeningPlan = [];
+                localStorage.removeItem('gardeningPlan');
+                editingIndex = null;
+                updateGardeningPlanUI();
+            }
+        };
+        deleteAllBtn.style.display = gardeningPlan.length ? 'block' : 'none';
+    }
+
+    async function fetchPlantInfo(plantName) {
         if (!plantName) {
             alert('Please enter a plant name.');
             return;
         }
-
         try {
-            const plantDetails: PlantDetails = await getPlantRecommendations(plantName);
+            const res = await fetch(`/.netlify/functions/plant?name=${encodeURIComponent(plantName)}`);
+            if (!res.ok) throw new Error('Failed to fetch plant info');
+            const plantDetails = await res.json();
 
-            // Update the UI with the fetched plant details
             if (plantNameElement) plantNameElement.textContent = plantDetails.commonName || 'Unknown';
             if (plantScientificNameElement) plantScientificNameElement.textContent = plantDetails.scientificName || 'Unknown';
             if (plantTypeElement) plantTypeElement.textContent = plantDetails.type || 'Unknown';
             if (plantCycleElement) plantCycleElement.textContent = plantDetails.cycle || 'Unknown';
-            if (plantWateringElement) plantWateringElement.textContent = plantDetails.watering || 'Unknown';
-            if (plantSunlightElement) plantSunlightElement.textContent = plantDetails.sunlight || 'Unknown';
+            if (plantWateringElement) plantWateringElement.textContent = plantDetails.watering || 'No watering info.';
+            if (plantSunlightElement) plantSunlightElement.textContent = plantDetails.sunlight || 'No sunlight info.';
+            if (plantPruningElement) plantPruningElement.textContent = plantDetails.pruning || 'No pruning info.';
             if (plantDescriptionElement) plantDescriptionElement.textContent = plantDetails.description || 'No description available.';
             if (plantImageElement) plantImageElement.src = plantDetails.default_image?.regular_url || '';
+            currentPlant = plantDetails;
         } catch (error) {
             console.error('Error fetching plant info:', error);
             alert('Failed to fetch plant information.');
         }
     }
 
-    // Add event listener to the button
-    if (fetchPlantButton) {
-        fetchPlantButton.addEventListener('click', () => {
-            if (plantNameInput) {
-                fetchPlantInfo(plantNameInput.value.trim());
-            }
-        });
-    } else {
-        console.error('Fetch plant button not found.');
-    }
+    document.getElementById('add-to-plan').onclick = () => {
+        if (currentPlant) {
+            gardeningPlan.push(JSON.parse(JSON.stringify(currentPlant))); // deep copy
+            localStorage.setItem('gardeningPlan', JSON.stringify(gardeningPlan));
+            updateGardeningPlanUI();
+        }
+    };
 
-    // Listen for the custom 'plantSearch' event dispatched by Plant.astro
+    // On load, show any saved plan
+    updateGardeningPlanUI();
+
+    // Listen for custom event to trigger plant info fetch
     window.addEventListener('plantSearch', (event) => {
-        const customEvent = event as CustomEvent<{ plantName: string }>;
-        const plantName = customEvent.detail.plantName;
-        fetchPlantInfo(plantName);
+        const customEvent = event;
+        fetchPlantInfo(customEvent.detail.plantName);
     });
 </script>
-
-<!-- Styling -->
-<style>
-    section {
-        position: absolute;
-        left: 25%;
-        top: 55%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    div {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    select {
-        margin: 5px;
-        padding: 10px;
-        font-size: 16px;
-    }
-
-    input {
-        margin: 5px;
-        padding: 10px;
-        font-size: 16px;
-    }
-
-    button {
-        margin: 5px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    img {
-        max-width: 300px;
-        margin-top: 10px;
-    }
-</style>

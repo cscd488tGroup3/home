@@ -5,7 +5,9 @@ import "../styles/global.css";
 ---
 
 <Layout>
-  <h1>Create a Bloombuddy Account</h1>
+  <h1>Create a Bloombuddy Account:</h1>
+  <br>
+  <p>Already have an account? <a class="nav-link" href="/login">Log in!</a></p>
   <form id="createAccountForm" action="#">
     <br />
     <label for="firstname">First Name:</label>
@@ -81,8 +83,6 @@ import "../styles/global.css";
 
       // Send data to the Astro API route
       const response = await fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/createAccount", {
-      // USE THIS LINE FOR LOCAL TESTING
-      // const response = await fetch("/api/createAccount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

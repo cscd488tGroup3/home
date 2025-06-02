@@ -1,0 +1,90 @@
+---
+const { pid } = Astro.props;
+---
+
+<reaction-widget data-pid={pid}></reaction-widget>
+
+<script type="module" is:inline>
+  let liked = false;
+
+  class ReactionWidget extends HTMLElement {
+    async connectedCallback() {
+      const pid = this.dataset.pid;
+      console.log("(Reaction.astro) pid: ", pid);
+      const uid = document.querySelector('meta[name="user-id"]')?.content || 'unknown-user';
+      console.log("(Reaction.astro) uid: ", uid);
+      const rid = crypto.randomUUID();
+      console.log("(Reaction.astro) rid: ", rid);
+
+      this.innerHTML = `
+        <button class="btn btn-sm btn-outline btn-primary">👍 Like</button>
+        <span class="ml-2 text-sm text-gray-500">0 likes</span>
+      `;
+
+      const button = this.querySelector('button');
+      const counter = this.querySelector('span');
+
+      const updateCount = async () => {
+        const res = await fetch("/.netlify/functions/aggregateReactions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pid }),
+        });
+        const result = await res.json();
+        console.log("(Reaction.astro::updateConut): ", result);
+        const count = result[rid] ?? 0;
+        counter.textContent = `${count} likes`;
+      };
+
+      const checkIfLiked = async () => {
+        const res = await fetch("/.netlify/functions/hasReaction", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pid, uid }),
+        });
+        const result = await res.json();
+        console.log("(Reaction.astro::checkIfLiked): ", result);
+        liked = result.liked === true;
+        updateButton();
+      };
+
+      const updateButton = () => {
+        checkIfLiked();
+        if (liked) {
+          button.classList.remove("btn-outline");
+          button.classList.add("btn-secondary");
+          button.textContent = "👎 Unlike";
+        } else {
+          button.classList.add("btn-outline");
+          button.classList.remove("btn-secondary");
+          button.textContent = "👍 Like";
+        }
+      };
+      
+      button.addEventListener("click", async () => {
+        checkIfLiked();
+        try {
+          const endpoint = liked ? "/.netlify/functions/deleteReaction" : "/.netlify/functions/createReaction";
+          console.log("(Reaction.astro like/unlike button pressed): ", JSON.stringify({ pid, uid, rid }));
+          await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pid, uid, rid }),
+          });
+          liked = !liked;
+          updateButton();
+          await updateCount();
+        } catch (err) {
+          console.error("Reaction toggle failed:", err);
+        }
+      });
+      
+      await updateCount();
+      await checkIfLiked();
+    }
+  }
+
+  if (!customElements.get("reaction-widget")) {
+    customElements.define("reaction-widget", ReactionWidget);
+  }
+</script>

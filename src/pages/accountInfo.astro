@@ -5,158 +5,241 @@ import "../styles/global.css";
 import { getSession } from "../utils/getSession.ts";
 
 const { user: sessionUser } = await getSession(Astro);
-const username = sessionUser ? `User ${sessionUser.id}` : "Guest";
+const username = sessionUser ? `${sessionUser.id}` : "Guest";
 
 let locals = {
-    runtime: {
-        env: {
-            USR_DB: import.meta.env.USR_DB,
-            USR_DB_W: import.meta.env.USR_DB_W
-        }
-    }
+  runtime: {
+    env: {
+      USR_DB: import.meta.env.USR_DB,
+      USR_DB_W: import.meta.env.USR_DB_W,
+    },
+  },
 };
 
 let accountInfo = null;
 let error = null;
 
 console.log("(accountInfo.astro) Username:", username);
-console.log("(accountInfo.astro) USR_DB:", locals.runtime.env.USR_DB);
-console.log("(accountInfo.astro) USR_DB_W:", locals.runtime.env.USR_DB_W);
 
 try {
-    const infoRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/info?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
+  const infoRes = await fetch(
+    `https://astro-d1-integration.ecrawford4.workers.dev/api/info?uid=${username}&auth=${locals.runtime.env.USR_DB}`
+  );
 
-    if (infoRes.status === 200) {
-        console.log("(accountInfo.astro) infoRes:", infoRes);
-        const infoData = await infoRes.json();
-        
-        console.log("(accountInfo.astro) infoData:", infoData);
+  if (infoRes.status === 200) {
+    const infoData = await infoRes.json();
 
-        const adminRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
-        
-        if (adminRes.status === 200) {
-            console.log("(accountInfo.astro) adminRes:", adminRes);
-            const adminData = await adminRes.json();
+    const adminRes = await fetch(
+      `https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=${username}&auth=${locals.runtime.env.USR_DB}`
+    );
 
-            console.log("(accountInfo.astro) adminData:", adminData);
+    if (adminRes.status === 200) {
+      const adminData = await adminRes.json();
 
-            const privRes = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get?uid=${username}&auth=${locals.runtime.env.USR_DB}`);
+      const privRes = await fetch(
+        `https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get?uid=${username}&auth=${locals.runtime.env.USR_DB}`
+      );
 
-            if (privRes.status === 200) {
-                console.log("(accountInfo.astro) privRes:", privRes);
-                const privData = await privRes.json();
+      if (privRes.status === 200) {
+        const privData = await privRes.json();
 
-                console.log("(accountInfo.astro) privData:", privData);
-
-                accountInfo = [{
-                ...infoData,
-                email: adminData,
-                priv: privData
-            }]; 
-            } else {
-                console.error("User info fetch error:", err);
-                error = {message: "Failed to fetch privacy setting from priv API"}
-            }
-        } else {
-            console.error("User info fetch error:", err);
-            error = { message: "Failed to fetch email from admin API" };
-        }
+        accountInfo = [
+          {
+            fname: infoData[0].fname,
+            lname: infoData[0].lname,
+            dob: infoData[0].dob,
+            doj: infoData[0].doj,
+            email: adminData[0].email,
+            priv: privData[0].priv,
+          },
+        ];
+      } else {
+        error = { message: "Failed to fetch privacy setting from priv API" };
+      }
     } else {
-        console.error("User info fetch error:", err);
-        error = { message: "Failed to fetch basic user info" };
+      error = { message: "Failed to fetch email from admin API" };
     }
+  } else {
+    error = { message: "Failed to fetch basic user info" };
+  }
 } catch (err) {
-    console.error("User info fetch error:", err);
-    error = { message: "An unexpected error occurred while fetching user data" };
+  console.error("User info fetch error:", err);
+  error = {
+    message:
+      "An unexpected error occurred while fetching\nuser data. In case you are logged in as Guest,\nplease log in to view your account information.",
+  };
 }
-
-console.log("(accountInfo.astro) accountInfo:", accountInfo);
 ---
+
 <Layout>
   <h1>Account Info</h1>
-  {accountInfo ? (
-    <div>
-      <!-- 🔹 Display Current Info -->
-      <div class="info-block">
-        <p><strong>Username:</strong> {username}</p>
-        <p><strong>First Name:</strong> {accountInfo[0]?.fname}</p>
-        <p><strong>Last Name:</strong> {accountInfo[0]?.lname}</p>
-        <p><strong>Email:</strong> {accountInfo[0]?.email}</p>
-        <p><strong>Date of Birth:</strong> {accountInfo[0]?.dob}</p>
-        <p><strong>Privacy:</strong> {accountInfo[0]?.priv}</p>
+  {
+    accountInfo ? (
+      <div>
+        <div class="info-block" id="info-block">
+          <div class="info-row">
+            <strong>Name:</strong>
+            <span class="right">
+              {accountInfo[0]?.fname} {accountInfo[0]?.lname}
+            </span>
+          </div>
+          <div class="info-row">
+            <strong>Username:</strong>
+            <span class="right">{username}</span>
+          </div>
+          <div class="info-row">
+            <strong>Email:</strong>
+            <span class="right">{accountInfo[0]?.email}</span>
+          </div>
+          <div class="info-row">
+            <strong>Date of Birth:</strong>
+            <span class="right">{accountInfo[0]?.dob}</span>
+          </div>
+          <div class="info-row">
+            <strong>Member Since:</strong>
+            <span class="right">{accountInfo[0]?.doj}</span>
+          </div>
+          <div class="info-row">
+            <strong>Account Visibility:</strong>
+            <span class="right">
+              {accountInfo[0]?.priv === 0
+                ? "Public"
+                : accountInfo[0]?.priv === 1
+                ? "Private"
+                : "Invalid"}
+            </span>
+          </div>
+        </div>
+
+        <h2>Update Information</h2>
+        <form>
+          <label>
+            First Name:
+            <input type="text" id="fname" />
+            <button id="edit-fname" type="button">Save</button>
+          </label>
+
+          <label>
+            Last Name:
+            <input type="text" id="lname" />
+            <button id="edit-lname" type="button">Save</button>
+          </label>
+
+          <label>
+            Email:
+            <input type="email" id="email" />
+            <button id="edit-email" type="button">Save</button>
+          </label>
+
+          <label>
+            Date of Birth:
+            <input type="date" id="dob" />
+            <button id="edit-dob" type="button">Save</button>
+          </label>
+
+          <label>
+            Password:
+            <input type="password" id="password" />
+            <button id="edit-password" type="button">Save</button>
+          </label>
+
+          <label>
+            Privacy Setting:
+            <select id="priv">
+              <option value="0">Public</option>
+              <option value="1">Private</option>
+            </select>
+            <button id="edit-priv" type="button">Save</button>
+          </label>
+        </form>
       </div>
-
-      <h2>Update Information</h2>
-      
-      <label>
-        First Name:
-        <input type="text" id="fname" defaultValue={accountInfo[0]?.fname} />
-        <button type="button" onClick={async () => {
-          const value = document.getElementById("fname").value;
-          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&fname=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
-          alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
-        }}>Save</button>
-      </label>
-
-      <label>
-        Last Name:
-        <input type="text" id="lname" defaultValue={accountInfo[0]?.lname} />
-        <button type="button" onClick={async () => {
-          const value = document.getElementById("lname").value;
-          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&lname=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
-          alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
-        }}>Save</button>
-      </label>
-
-      <label>
-        Email:
-        <input type="email" id="email" defaultValue={accountInfo[0]?.email} />
-        <button type="button" onClick={async () => {
-          const value = document.getElementById("email").value;
-          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&email=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
-          alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
-        }}>Save</button>
-      </label>
-
-      <label>
-        Date of Birth:
-        <input type="date" id="dob" defaultValue={accountInfo[0]?.dob} />
-        <button type="button" onClick={async () => {
-          const value = document.getElementById("dob").value;
-          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&dob=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
-          alert(res.status === 200 ? "DOB updated!" : "Failed to update DOB.");
-        }}>Save</button>
-      </label>
-
-      <label>
-        Password:
-        <input type="password" id="password" />
-        <button type="button" onClick={async () => {
-          const value = document.getElementById("password").value;
-          if (!value) {
-            alert("Password cannot be empty.");
-            return;
-          }
-          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/edit/info?uid=${username}&hashpass=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
-          alert(res.status === 200 ? "Password updated!" : "Failed to update password.");
-        }}>Save</button>
-      </label>
-
-      <label>
-        Privacy Setting:
-        <select id="priv" defaultValue={accountInfo[0]?.priv}>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
-        <button type="button" onClick={async () => {
-          const value = document.getElementById("priv").value;
-          const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/priv/update?uid=${username}&priv=${value}&auth=${locals.runtime.env.USR_DB}&wauth=${locals.runtime.env.USR_DB_W}`);
-          alert(res.status === 200 ? "Privacy updated!" : "Failed to update privacy.");
-        }}>Save</button>
-      </label>
-
-    </div>
-  ) : (
-    <p>{error?.message || "User not found"}</p>
-  )}
+    ) : (
+      <p id="error-badge" style="white-space: pre-line;">
+        {error?.message || "User not found"}
+      </p>
+    )
+  }
 </Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const username = document
+      .querySelector('meta[name="user-id"]')
+      ?.getAttribute("content");
+
+    if (!username) {
+      alert("Unable to update info: username not found.");
+      return;
+    }
+
+    async function updateField(url, body, successMsg, failMsg) {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+      alert(res.status === 200 ? successMsg : failMsg);
+      window.location.href = '/accountInfo'; // reload the page after the user dismisses the alert
+    }
+
+    document.getElementById("edit-fname")?.addEventListener("click", () => {
+      updateField(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditFName",
+        { username, fname: document.getElementById("fname").value },
+        "First name updated!",
+        "Failed to update first name."
+      );
+    });
+
+    document.getElementById("edit-lname")?.addEventListener("click", () => {
+      updateField(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditLName",
+        { username, lname: document.getElementById("lname").value },
+        "Last name updated!",
+        "Failed to update last name."
+      );
+    });
+
+    document.getElementById("edit-email")?.addEventListener("click", () => {
+      updateField(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditEmail",
+        { username, email: document.getElementById("email").value },
+        "Email updated!",
+        "Failed to update email."
+      );
+    });
+
+    document.getElementById("edit-dob")?.addEventListener("click", () => {
+      updateField(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditDOB",
+        { username, dob: document.getElementById("dob").value },
+        "DOB updated!",
+        "Failed to update DOB."
+      );
+    });
+
+    document.getElementById("edit-password")?.addEventListener("click", () => {
+      const value = document.getElementById("password").value;
+      if (!value) {
+        alert("Password cannot be empty.");
+        return;
+      }
+      updateField(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPassword",
+        { username, password: value },
+        "Password updated!",
+        "Failed to update password."
+      );
+    });
+
+    document.getElementById("edit-priv")?.addEventListener("click", () => {
+      updateField(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPriv",
+        { username, priv: document.getElementById("priv").value },
+        "Privacy updated!",
+        "Failed to update privacy."
+      );
+    });
+  });
+</script>

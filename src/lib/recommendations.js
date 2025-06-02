@@ -6,29 +6,35 @@ import { queryPerenual } from './queryAPIs.js';
  */
 export async function getPlantRecommendations(plantQuery) {
     try {
-        // Step 1: Search for plants
         const apiResults = await queryPerenual(plantQuery);
 
-        if (!apiResults.data || apiResults.data.length === 0) {
+        if (!apiResults || apiResults.length === 0) {
             throw new Error('No plants found for the given query.');
         }
 
-        // Step 2: Extract the ID of the first plant
-        const plantId = apiResults.data[0].id;
+        const plant = apiResults[0];
 
-        // Step 3: Fetch detailed information
-        const plantDetails = await queryPerenualDetails(plantId);
+        // Extract care sections by type
+        const careSections = {};
+        if (plant.section && Array.isArray(plant.section)) {
+            plant.section.forEach(sec => {
+                careSections[sec.type] = sec.description;
+            });
+        }
 
-        // Step 4: Generate a care plan
+        // These fields may not exist in the API response
         const carePlan = {
-            commonName: plantDetails.common_name || 'Unknown',
-            scientificName: plantDetails.scientific_name?.join(', ') || 'Unknown',
-            watering: plantDetails.watering || 'Unknown',
-            sunlight: plantDetails.sunlight?.join(', ') || 'Unknown',
-            cycle: plantDetails.cycle || 'Unknown',
-            description: plantDetails.description || 'No description available.',
+            commonName: plant.common_name || 'Unknown',
+            scientificName: plant.scientific_name?.join(', ') || 'Unknown',
+            type: plant.type || 'Unknown', // may not exist
+            cycle: plant.cycle || 'Unknown', // may not exist
+            description: plant.description || 'No description available.', // may not exist
+            default_image: plant.default_image || undefined, // may not exist
+            watering: careSections.watering || 'No watering info.',
+            sunlight: careSections.sunlight || 'No sunlight info.',
+            pruning: careSections.pruning || 'No pruning info.',
         };
-
+        console.log('Generated care plan:', carePlan);
         return carePlan;
     } catch (error) {
         console.error('Error generating recommendations:', error.message);
