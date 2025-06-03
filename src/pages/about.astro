@@ -8,7 +8,7 @@ import Layout from "../layouts/Layout.astro";
     <div class="team-container">
         <div class="team-member">
             <h2>Ethan Crawford</h2>
-            <img src="placeholder.jpg">
+            <img src="EthansPic.webp" class="profile-pic">
             <br />
             <p>My name is Ethan, and I’m originally from Spokane, WA. I’m currently attending Eastern Washington University, where I’m working toward a Bachelor of Science in Computer Science with a minor in Music—a unique combination that reflects my love for both technology and the arts.</p>
             <p>In my free time, I develop small applications and explore open-source repositories on GitHub to grow my skills and stay inspired. Music is also a big part of my life—I compose my own pieces and perform as a semi-professional oboist with groups like the Spokane Jazz Orchestra and ensembles at Eastern Washington University. Outside of work and music, I’m a proud husband and father, and my family is my top priority.</p>
@@ -23,7 +23,7 @@ import Layout from "../layouts/Layout.astro";
         </div>
         <div class="team-member">
             <h2>Jared Diaz</h2>
-            <img src="JaredPic.jpg">
+            <img src="JaredPic.jpg" class="profile-pic">
             <br />
             <p>My name is Jared Alexis Diaz, and I am a computer science student studying at Eastern Washington University. My favorite pastime is gaming, and it's rare for a day to go by without me playing at least one video game. I consider myself to be very introverted, but I am more than happy to tackle a project with a team, whether in groups of two or more.</p>
             <p>I have a wonderful girlfriend named Leslie, who is my biggest motivation for my studies. She is amazing at staying consistent with work and assignments. Without her, I don’t think I would have had the courage to stay in school, let alone pursue computer science!</p>
@@ -38,7 +38,7 @@ import Layout from "../layouts/Layout.astro";
         </div>
         <div class="team-member">
             <h2>Daniel Montes</h2>
-            <img src="DanielPic.jpeg">
+            <img src="DanielPic.jpeg" class="profile-pic">
             <br />
             <p>My name is Daniel, and I am originally from Prosser, Washington. I’m currently a Senior at Eastern Washington University, working toward my Bachelor of Science in Computer Science with minors in Spanish, Communications, and Cybersecurity. After graduation, I plan to pursue a career in software development or web development, as that’s where I feel most confident and passionate.</p>
             <p>I’m a huge sports fan and love watching the Boston Celtics and San Francisco 49ers whenever their games are on. I also enjoy collecting sneakers, especially retro pairs of Jordans and Nikes, shoes have always been a passion of mine.</p>
@@ -54,3 +54,15 @@ import Layout from "../layouts/Layout.astro";
         </div>
     </div>
 </Layout>
+
+<style>
+.profile-pic {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px; /* Optional: for rounded corners */
+}
+</style>
