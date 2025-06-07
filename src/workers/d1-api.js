@@ -1,6 +1,5 @@
 // D1-powered Cloudflare API worker
-import { resolveTripleslashReference } from 'typescript';
-import { getUserByUid, getInfoByUid, getPasswordByEmail, getPasswordByUid, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, updateFname, updateLname, updateEmail, updateDOB, updateHashpass, updateUserPriv, setUserPriv, getUserPriv, getComment, getParentPostByCommentID } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByUid, getPasswordByEmail, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, addPost, getPostByID, getAllPostsFromUser, getAllPosts, editPost, deletePost, addComment, getComment, getParentPostByCommentID, getAllCommentsFromPost, getAllCommentsFromUser, editComment, deleteComment, addReaction, getReactionsByPostID, checkIfPostHasReactionFromUser, countReactionsByPostID, getAllReactionsFromUser, deleteReaction, getUserPriv, setUserPriv, updateUserPriv, updateFname, updateLname, updateDOB, updateEmail, updateHashpass } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -43,6 +42,7 @@ export default {
         const wauth = url.searchParams.get("wauth");
         const aauth = url.searchParams.get("aauth");
         const sauth = url.searchParams.get("sauth");
+        const pauth = url.searchParams.get("pauth");
 
         if (!auth && !wauth && !aauth && !sauth) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
@@ -54,11 +54,14 @@ export default {
         if (url.pathname === "/post/create") {
             const pid = url.searchParams.get("pid");
             const caption = url.searchParams.get("caption");
-            const url = url.searchParams.get("url");
+            const imageUrl = url.searchParams.get("url");
             const uid = url.searchParams.get("uid");
 
+            console.log("Creating post with:", { pid, caption, imageUrl, uid });
+
+
             try {
-                const response = await addPost(pid, caption, url, uid, env);
+                const response = await addPost(pid, caption, imageUrl, uid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -106,7 +109,7 @@ export default {
             const pid = url.searchParams.get("pid");
 
             try {
-                const response = await getPostByID(pid);
+                const response = await getPostByID(pid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
@@ -121,7 +124,20 @@ export default {
             const uid = url.searchParams.get("uid");
 
             try {
-                const response = await getAllPostsFromUser(uid);
+                const response = await getAllPostsFromUser(uid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: {"Content-Type": "application/json"},
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // get all posts
+        if (url.pathname === "/posts/get/a") {
+            try {
+                const response = await getAllPosts(env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: {"Content-Type": "application/json"},
@@ -243,10 +259,69 @@ export default {
         }
         
         // add a reaction to a post
-        if (url.pathname === "/reaction/add") {}
+        if (url.pathname === "/reaction/add") {
+            const rid = url.searchParams.get("rid");
+            const uid = url.searchParams.get("uid");
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await addReaction(rid, uid, pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
 
         // remove a reaction from a post
-        if (url.pathname === "/reaction/remove") {}
+        if (url.pathname === "/reaction/remove") {
+            const rid = url.searchParams.get("rid");
+            const uid = url.searchParams.get("uid");
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await deleteReaction(rid, uid, pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // aggregate reactions from a post
+        if (url.pathname === "/reaction/aggregate") {
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await countReactionsByPostID(pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // check if a reaction exists
+        if (url.pathname === "/reaction/exists") {
+            const uid = url.searchParams.get("uid");
+            const pid = url.searchParams.get("pid");
+
+            try {
+                const response = await checkIfPostHasReactionFromUser(uid, pid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
         
         /* GROUP API */ 
 

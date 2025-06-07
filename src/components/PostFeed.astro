@@ -1,0 +1,46 @@
+---
+import EditPost from "./EditPost.astro";
+import CommentList from "./CommentList.astro";
+import NewComment from "./NewComment.astro";
+import DeletePost from "./DeletePost.astro";
+import Reaction from "./Reaction.astro";
+const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPosts'); // Adjust to your Netlify Function URL
+const result = await res.json();
+
+// Ensure it's an array
+const posts = Array.isArray(result) ? result : result?.data ?? [];
+---
+
+<div id="postContainer">
+  {posts.map(post => (
+    <div class="post">
+      <figure class="post">
+        <img src={post.url} alt="Post Image" class="w-full object-cover max-h-64" />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title">{post.caption}</h2>
+        <p class="text-sm text-gray-400">By User {post.uid}</p>
+        <details>
+          <summary class="cursor-pointer text-primary">Edit or Delete your Post</summary>
+          <EditPost pid={post.pid}/>
+          <DeletePost pid={post.pid}/>
+        </details>
+
+        {/* <!-- Reactions Placeholder -->
+        <div class="mt-2">
+          <Reaction pid={post.pid}/>
+        </div> */}
+
+        <!-- Comments -->
+        <details class="mt-0">
+          <summary class="cursor-pointer text-primary">View Comments</summary>
+          <CommentList pid={post.pid} />
+          <details>
+            <summary class="cursor-pointer text-primary">Add a Comment</summary>
+            <NewComment pid={post.pid}/>
+          </details>
+        </details>
+      </div>
+    </div>
+  ))}
+</div>

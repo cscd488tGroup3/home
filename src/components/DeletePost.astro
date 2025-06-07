@@ -1,0 +1,53 @@
+---
+const { pid } = Astro.props;
+---
+
+<delete-form data-pid={pid}>
+  <form class="delete space-y-4 mt-4">
+    <input type="hidden" name="uid" />
+    <button type="submit" class="btn btn-primary">Delete Post</button>
+  </form>
+</delete-form>
+
+<script type="module">
+  class DeleteForm extends HTMLElement {
+    connectedCallback() {
+      const pid = this.dataset.pid;
+      this.innerHTML = `
+        <form class="delete">
+          <input type="hidden" name="uid" />
+
+          <button type="submit">Delete Post</button>
+        </form>
+      `;
+
+      const form = this.querySelector("form.delete");
+      const uidInput = form.querySelector('input[name="uid"]');
+
+      uidInput.value =
+        document.querySelector('meta[name="user-id"]')?.content ||
+        "unknown-user";
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        formData.append("pid", pid);
+
+        const data = Object.fromEntries(formData.entries());
+
+        const res = await fetch("/.netlify/functions/deletePost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+        console.log("Result:", result);
+      });
+    }
+  }
+
+  if (!customElements.get("delete-form")) {
+    customElements.define("delete-form", DeleteForm);
+  }
+</script>

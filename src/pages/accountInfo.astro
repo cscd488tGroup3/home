@@ -20,8 +20,6 @@ let accountInfo = null;
 let error = null;
 
 console.log("(accountInfo.astro) Username:", username);
-console.log("(accountInfo.astro) USR_DB:", locals.runtime.env.USR_DB);
-console.log("(accountInfo.astro) USR_DB_W:", locals.runtime.env.USR_DB_W);
 
 try {
   const infoRes = await fetch(
@@ -29,30 +27,21 @@ try {
   );
 
   if (infoRes.status === 200) {
-    //console.log("(accountInfo.astro) infoRes:", infoRes);
     const infoData = await infoRes.json();
-
-    console.log("(accountInfo.astro) infoData:", infoData);
 
     const adminRes = await fetch(
       `https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=${username}&auth=${locals.runtime.env.USR_DB}`
     );
 
     if (adminRes.status === 200) {
-      //console.log("(accountInfo.astro) adminRes:", adminRes);
       const adminData = await adminRes.json();
-
-      console.log("(accountInfo.astro) adminData:", adminData);
 
       const privRes = await fetch(
         `https://astro-d1-integration.ecrawford4.workers.dev/api/priv/get?uid=${username}&auth=${locals.runtime.env.USR_DB}`
       );
 
       if (privRes.status === 200) {
-        console.log("(accountInfo.astro) privRes:", privRes);
         const privData = await privRes.json();
-
-        console.log("(accountInfo.astro) privData:", privData);
 
         accountInfo = [
           {
@@ -65,15 +54,12 @@ try {
           },
         ];
       } else {
-        console.error("User info fetch error:", err);
         error = { message: "Failed to fetch privacy setting from priv API" };
       }
     } else {
-      console.error("User info fetch error:", err);
       error = { message: "Failed to fetch email from admin API" };
     }
   } else {
-    console.error("User info fetch error:", err);
     error = { message: "Failed to fetch basic user info" };
   }
 } catch (err) {
@@ -83,8 +69,6 @@ try {
       "An unexpected error occurred while fetching\nuser data. In case you are logged in as Guest,\nplease log in to view your account information.",
   };
 }
-
-console.log("(accountInfo.astro) accountInfo:", accountInfo);
 ---
 
 <Layout>
@@ -94,35 +78,35 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
       <div>
         <div class="info-block" id="info-block">
           <div class="info-row">
-            <strong>Name:</strong>{" "}
+            <strong>Name:</strong>
             <span class="right">
-              {" "}
               {accountInfo[0]?.fname} {accountInfo[0]?.lname}
             </span>
           </div>
           <div class="info-row">
-            <strong>Username:</strong> <span class="right"> {username} </span>
+            <strong>Username:</strong>
+            <span class="right">{username}</span>
           </div>
           <div class="info-row">
-            <strong>Email:</strong>{" "}
-            <span class="right"> {accountInfo[0]?.email} </span>
+            <strong>Email:</strong>
+            <span class="right">{accountInfo[0]?.email}</span>
           </div>
           <div class="info-row">
-            <strong>Date of Birth:</strong>{" "}
-            <span class="right"> {accountInfo[0]?.dob} </span>
+            <strong>Date of Birth:</strong>
+            <span class="right">{accountInfo[0]?.dob}</span>
           </div>
           <div class="info-row">
-            <strong>Member Since:</strong>{" "}
-            <span class="right"> {accountInfo[0]?.doj} </span>
+            <strong>Member Since:</strong>
+            <span class="right">{accountInfo[0]?.doj}</span>
           </div>
           <div class="info-row">
-            <strong>Account Visibility:</strong>{" "}
+            <strong>Account Visibility:</strong>
             <span class="right">
               {accountInfo[0]?.priv === 0
                 ? "Public"
                 : accountInfo[0]?.priv === 1
-                  ? "Private"
-                  : "Invalid"}
+                ? "Private"
+                : "Invalid"}
             </span>
           </div>
         </div>
@@ -132,57 +116,31 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
           <label>
             First Name:
             <input type="text" id="fname" />
-            <button
-              id="edit-fname"
-              type="button"
-              onclick="updateFName(username)"
-            >
-              Save
-            </button>
+            <button id="edit-fname" type="button">Save</button>
           </label>
 
           <label>
             Last Name:
             <input type="text" id="lname" />
-            <button
-              id="edit-lname"
-              type="button"
-              onclick="updateLName(username)"
-            >
-              Save
-            </button>
+            <button id="edit-lname" type="button">Save</button>
           </label>
 
           <label>
             Email:
             <input type="email" id="email" />
-            <button
-              id="edit-email"
-              type="button"
-              onclick="updateEmail(username)"
-            >
-              Save
-            </button>
+            <button id="edit-email" type="button">Save</button>
           </label>
 
           <label>
             Date of Birth:
             <input type="date" id="dob" />
-            <button id="edit-dob" type="button" onclick="updateDOB(username)">
-              Save
-            </button>
+            <button id="edit-dob" type="button">Save</button>
           </label>
 
           <label>
             Password:
             <input type="password" id="password" />
-            <button
-              id="edit-password"
-              type="button"
-              onclick="updatePassword(username)"
-            >
-              Save
-            </button>
+            <button id="edit-password" type="button">Save</button>
           </label>
 
           <label>
@@ -191,9 +149,7 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
               <option value="0">Public</option>
               <option value="1">Private</option>
             </select>
-            <button id="edit-priv" type="button" onclick="updatePriv(username)">
-              Save
-            </button>
+            <button id="edit-priv" type="button">Save</button>
           </label>
         </form>
       </div>
@@ -206,104 +162,84 @@ console.log("(accountInfo.astro) accountInfo:", accountInfo);
 </Layout>
 
 <script>
-  declare global {
-    interface Window {
-      updateFName: (username: string) => Promise<void>;
-      updateLName: (username: string) => Promise<void>;
-      updateEmail: (username: string) => Promise<void>;
-      updateDOB: (username: string) => Promise<void>;
-      updatePassword: (username: string) => Promise<void>;
-      updatePriv: (username: string) => Promise<void>;
-    }
-  }
-
   document.addEventListener("DOMContentLoaded", () => {
-    window.updateFName = async function (username) {
-      const value = document.getElementById("fname").value;
-      const res = await fetch(
+    const username = document
+      .querySelector('meta[name="user-id"]')
+      ?.getAttribute("content");
+
+    if (!username) {
+      alert("Unable to update info: username not found.");
+      return;
+    }
+
+    async function updateField(url, body, successMsg, failMsg) {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+      alert(res.status === 200 ? successMsg : failMsg);
+      window.location.href = '/accountInfo'; // reload the page after the user dismisses the alert
+    }
+
+    document.getElementById("edit-fname")?.addEventListener("click", () => {
+      updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditFName",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, fname: value }),
-          credentials: "include",
-        }
+        { username, fname: document.getElementById("fname").value },
+        "First name updated!",
+        "Failed to update first name."
       );
-      alert(res.status === 200 ? "First name updated!" : "Failed to update first name.");
-    };
+    });
 
-    window.updateLName = async function (username) {
-      const value = document.getElementById("lname").value;
-      const res = await fetch(
+    document.getElementById("edit-lname")?.addEventListener("click", () => {
+      updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditLName",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, lname: value }),
-          credentials: "include",
-        }
+        { username, lname: document.getElementById("lname").value },
+        "Last name updated!",
+        "Failed to update last name."
       );
-      alert(res.status === 200 ? "Last name updated!" : "Failed to update last name.");
-    };
+    });
 
-    window.updateEmail = async function (username) {
-      const value = document.getElementById("email").value;
-      const res = await fetch(
+    document.getElementById("edit-email")?.addEventListener("click", () => {
+      updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditEmail",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email: value }),
-          credentials: "include",
-        }
+        { username, email: document.getElementById("email").value },
+        "Email updated!",
+        "Failed to update email."
       );
-      alert(res.status === 200 ? "Email updated!" : "Failed to update email.");
-    };
+    });
 
-    window.updateDOB = async function (username) {
-      const value = document.getElementById("dob").value;
-      const res = await fetch(
+    document.getElementById("edit-dob")?.addEventListener("click", () => {
+      updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditDOB",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, dob: value }),
-          credentials: "include",
-        }
+        { username, dob: document.getElementById("dob").value },
+        "DOB updated!",
+        "Failed to update DOB."
       );
-      alert(res.status === 200 ? "DOB updated!" : "Failed to update DOB.");
-    };
+    });
 
-    window.updatePassword = async function (username) {
+    document.getElementById("edit-password")?.addEventListener("click", () => {
       const value = document.getElementById("password").value;
       if (!value) {
         alert("Password cannot be empty.");
         return;
       }
-      const res = await fetch(
+      updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPassword",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password: value }),
-          credentials: "include",
-        }
+        { username, password: value },
+        "Password updated!",
+        "Failed to update password."
       );
-      alert(res.status === 200 ? "Password updated!" : "Failed to update password.");
-    };
+    });
 
-    window.updatePriv = async function (username) {
-      const value = document.getElementById("priv").value;
-      const res = await fetch(
+    document.getElementById("edit-priv")?.addEventListener("click", () => {
+      updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPriv",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, priv: value }),
-          credentials: "include",
-        }
+        { username, priv: document.getElementById("priv").value },
+        "Privacy updated!",
+        "Failed to update privacy."
       );
-      alert(res.status === 200 ? "Privacy updated!" : "Failed to update privacy.");
-    };
+    });
   });
 </script>
