@@ -4,7 +4,37 @@ This repository contains the [BloomBuddy home page](https://cscd488group3-BloomB
 
 ## Documentation
 
+### Requirements
 
+- Node.js
+  - All other reqirements are handled by the node package manager
+
+#### Accounts:
+
+In order to continue development on a fork of our project, you will need to create accounts with the following services:
+
+- Netlify (deployment & hosting)
+- Cloudflare (database integration)
+- Cloudinary (image hosting)
+- Resend (email)
+- Openweather (weather and geolocation API)
+- Perenual (plant API)
+
+Each of these services provide environment variables and/or API endpoints. In each case, you will need to replace our endpoints with the endpoints they give you, and create your own file with your environment variables.
+
+### Tech Stack
+
+Astro styled with Tailwind, DaisyUI, and custom CSS, deployed in Netlify
+
+
+### Integrations
+
+- Cloudflare D1 SQLite Database
+- Cloudflare Worker
+- Cloudinary
+- Resend
+
+### Prerequisites for a future dev team
 
 ## Gardening Website
 
