@@ -7,11 +7,11 @@ const result = await res.json();
 const comments = Array.isArray(result) ? result : result?.data ?? [];
 ---
 
-<div class="mt-2 space-y-2">
+<div class="mt-0 space-y-0">
   {comments.map(comment => (
-    <div class="bg-base-200 p-2 rounded text-sm">
+    <div class="comment bg-white-500 p-2 rounded text-sm">
       <p>{comment.content}</p>
-      <p class="text-xs text-gray-400">— User {comment.uid}</p>
+      <p class="text-xs text-gray">— {comment.uid}</p>
     </div>
   ))}
 </div>
