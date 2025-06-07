@@ -2,6 +2,10 @@
 
 This repository contains the [BloomBuddy home page](https://cscd488group3-BloomBuddy.netlify.app/).
 
+## Documentation
+
+
+
 ## Gardening Website
 
 Our main purpose for creating this website is to assist individuals who would like
@@ -26,12 +30,3 @@ Our website will be built using Astro and styled with Tailwind and DaisyUI. Thes
 fast, modular development. They are designed to handle repetitive structures and components, which will
 allow our website to dynamically display gardening information that a user needs, as well as 
 user generated content for the greater community.
-
-
-<!-- DEPRECATED; DATABASE NOW REQUIRES AUTHENTICATION
-
-### temporary public-facing database queries:
-
-[base url](https://astro-d1-integration.ecrawford4.workers.dev/)
-[admin query](https://astro-d1-integration.ecrawford4.workers.dev/api/admin?uid=1)
-[info query](https://astro-d1-integration.ecrawford4.workers.dev/api/info?uid=1) -->
