@@ -1,0 +1,65 @@
+---
+const { cid } = Astro.props;
+---
+
+<caption-form data-pid={cid}>
+  <form class="caption space-y-4 mt-4">
+    <input type="hidden" name="uid" />
+    <input type="hidden" name="cid" />
+    <label class="form-control">
+      <span class="label-text">Edit Comment</span>
+      <textarea
+        name="caption"
+        class="textarea textarea-bordered w-full"
+        placeholder="Edit Caption..."
+        required></textarea>
+    </label>
+    <button type="submit" class="btn btn-primary">Update Caption</button>
+  </form>
+</caption-form>
+
+<script type="module">
+  class CommentForm extends HTMLElement {
+    connectedCallback() {
+      const cid = this.dataset.cid;
+      this.innerHTML = `
+        <form class="comment">
+          <input type="hidden" name="uid" />
+
+          <label>Edit Comment
+            <textarea name="comment" placeholder="New comment..."required></textarea>
+          </label>
+          <button type="submit">Update Caption</button>
+        </form>
+      `;
+
+      const form = this.querySelector("form.comment");
+      const uidInput = form.querySelector('input[name="uid"]');
+
+      uidInput.value =
+        document.querySelector('meta[name="user-id"]')?.content ||
+        "unknown-user";
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        formData.append("cid", cid);
+
+        const data = Object.fromEntries(formData.entries());
+
+        const res = await fetch("/.netlify/functions/editComment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+        console.log("Result:", result);
+      });
+    }
+  }
+
+  if (!customElements.get("comment-form")) {
+    customElements.define("comment-form", CommentForm);
+  }
+</script>
