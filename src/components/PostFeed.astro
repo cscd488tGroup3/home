@@ -13,7 +13,7 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
 
 <div id="postContainer">
   {posts.map(post => (
-    <div class="post">
+    <div class="post" data-uid={post.uid}>
       <figure class="post">
         <img src={post.url} alt="Post Image" class="w-full" />
       </figure>
@@ -21,18 +21,14 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
         <h2 class="card-title">{post.caption}</h2>
         <p class="text-sm text-black-100">- {post.uid}</p>
         <details>
-          <summary class="question text-sm text-black-100 hidden">Edit or Delete your Post</summary>
+          <summary class="edit-delete-summary question text-sm text-black-100 hidden">
+            Edit or Delete your Post
+          </summary>
           <div class="flex flex-row items-center gap-4 h-auto">
             <EditPost pid={post.pid} class="h-full"/>
             <DeletePost pid={post.pid} class="h-full"/>
           </div>
         </details>
-
-        {/* <!-- Reactions Placeholder -->
-        <div class="mt-2">
-          <Reaction pid={post.pid}/>
-        </div> */}
-
         <!-- Comments -->
         <details class="mt-0">
           <summary class="question text-sm text-black-100">View Comments</summary>
@@ -44,22 +40,19 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
         </details>
       </div>
     </div>
-
-    // check if the current user and the 
-    // author of the post are the same user
-    // if so, reveal the form to edit or delete posts
-    <script type="module">
-      document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('summary').forEach(summary => {
-          const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";;
-          const author = post.uid;
-          if (uid === author) {
-            summary.classList.remove('hidden');
-          }
-        });
-      });
-    </script>
   ))}
 </div>
 
+<script type="module">
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentUser = document.querySelector('meta[name="user-id"]')?.content;
 
+    document.querySelectorAll('[data-uid]').forEach(postEl => {
+      const postAuthor = postEl.dataset.uid;
+      if (postAuthor === currentUser) {
+        const summary = postEl.querySelector('.edit-delete-summary');
+        if (summary) summary.classList.remove('hidden');
+      }
+    });
+  });
+</script>
