@@ -3,15 +3,15 @@ const { pid } = Astro.props;
 const res = await fetch(`https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getComments?pid=${pid}`);
 const result = await res.json();
 
-// Defensive fallback if the API returns something unexpected
 const comments = Array.isArray(result) ? result : result?.data ?? [];
 ---
 
 <div class="mt-0 space-y-0">
   {comments.map(comment => (
-    <div class="comment text-sm">
+    <div class="comment text-sm" data-uid={comment.uid} data-cid={comment.cid}>
       <p>{comment.content}</p>
-      <p class="text-xs">— {comment.uid} 
+      <p class="text-xs">
+        — {comment.uid}
         <button class="edit-comment-btn bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded-full hidden">Edit</button>
         <button class="delete-comment-btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full hidden">Delete</button>
       </p>
@@ -26,10 +26,8 @@ const comments = Array.isArray(result) ? result : result?.data ?? [];
     document.querySelectorAll('[data-uid]').forEach(commentEl => {
       const commentAuthor = commentEl.dataset.uid;
       if (commentAuthor === currentUser) {
-        const editBtn = commentEl.querySelector('.edit-comment-btn');
-        const deleteBtn = commentEl.querySelector('.delete-comment-btn');
-        if (editBtn) editBtn.classList.remove('hidden');
-        if (deleteBtn) deleteBtn.classList.remove('hidden');
+        commentEl.querySelector('.edit-comment-btn')?.classList.remove('hidden');
+        commentEl.querySelector('.delete-comment-btn')?.classList.remove('hidden');
       }
     });
   });
