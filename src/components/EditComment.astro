@@ -3,13 +3,13 @@ const { cid } = Astro.props;
 ---
 
 <edit-comment-form data-cid={cid}>
-  <form class="edit-comment space-y-4 mt-4">
+  <form class="editComment space-y-4 mt-4">
     <input type="hidden" name="uid" />
     <input type="hidden" name="cid" />
     <label class="form-control">
       <span class="label-text">Edit Comment</span>
       <textarea
-        name="edit-comment"
+        name="editComment"
         class="textarea textarea-bordered w-full"
         placeholder="Edit Comment..."
         required></textarea>
@@ -23,17 +23,17 @@ const { cid } = Astro.props;
     connectedCallback() {
       const cid = this.dataset.cid;
       this.innerHTML = `
-        <form class="edit-comment">
+        <form class="editComment">
           <input type="hidden" name="uid" />
 
           <label>Edit Comment
-            <textarea name="edit-comment" placeholder="New comment..."required></textarea>
+            <textarea name="editComment" placeholder="New comment..."required></textarea>
           </label>
           <button type="submit">Update Comment</button>
         </form>
       `;
 
-      const form = this.querySelector("form.edit-comment");
+      const form = this.querySelector("form.editComment");
       const uidInput = form.querySelector('input[name="uid"]');
 
       uidInput.value =
