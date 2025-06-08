@@ -2,38 +2,38 @@
 const { cid } = Astro.props;
 ---
 
-<comment-form data-cid={cid}>
-  <form class="comment space-y-4 mt-4">
+<edit-comment-form data-cid={cid}>
+  <form class="edit-comment space-y-4 mt-4">
     <input type="hidden" name="uid" />
     <input type="hidden" name="cid" />
     <label class="form-control">
       <span class="label-text">Edit Comment</span>
       <textarea
-        name="comment"
+        name="edit-comment"
         class="textarea textarea-bordered w-full"
         placeholder="Edit Comment..."
         required></textarea>
     </label>
     <button type="submit" class="btn btn-primary">Update Comment</button>
   </form>
-</comment-form>
+</edit-comment-form>
 
 <script type="module">
-  class CommentForm extends HTMLElement {
+  class EditCommentForm extends HTMLElement {
     connectedCallback() {
       const cid = this.dataset.cid;
       this.innerHTML = `
-        <form class="comment">
+        <form class="edit-comment">
           <input type="hidden" name="uid" />
 
           <label>Edit Comment
-            <textarea name="comment" placeholder="New comment..."required></textarea>
+            <textarea name="edit-comment" placeholder="New comment..."required></textarea>
           </label>
           <button type="submit">Update Comment</button>
         </form>
       `;
 
-      const form = this.querySelector("form.comment");
+      const form = this.querySelector("form.edit-comment");
       const uidInput = form.querySelector('input[name="uid"]');
 
       uidInput.value =
@@ -61,7 +61,7 @@ const { cid } = Astro.props;
     }
   }
 
-  if (!customElements.get("comment-form")) {
-    customElements.define("comment-form", CommentForm);
+  if (!customElements.get("edit-comment-form")) {
+    customElements.define("edit-comment-form", EditCommentForm);
   }
 </script>
