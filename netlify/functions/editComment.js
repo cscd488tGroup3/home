@@ -1,15 +1,15 @@
 export async function handler(event) {
   try {
-    const { cid, uid, comment } = JSON.parse(event.body);
+    const { cid, uid, editComment } = JSON.parse(event.body);
 
-    console.log("Received comment data:", { cid, uid, comment });
+    console.log("Received comment data:", { cid, uid, editComment });
 
     const USR_DB = process.env.USR_DB;
     if (!USR_DB) {
       throw new Error("Missing USR_DB environment variable");
     }
 
-    const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/post/edit?cid=${cid}&uid=${uid}&content=${encodeURIComponent(comment)}&auth=${USR_DB}`);
+    const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/post/edit?cid=${cid}&uid=${uid}&content=${encodeURIComponent(editComment)}&auth=${USR_DB}`);
 
     const text = await res.text();
 
