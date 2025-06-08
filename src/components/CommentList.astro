@@ -17,7 +17,10 @@ const comments = Array.isArray(result) ? result : result?.data ?? [];
         <button class="edit-comment-btn bg-green-500 hover:bg-green-700 text-black font-bold py-3 px-5 hidden">Edit</button>
         <button class="delete-comment-btn bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-5 hidden">Delete</button>
       </p>
-      <EditComment cid={comment.cid} class="edit-comment-form hidden"/>
+
+      <div class="edit-comment-form hidden">
+        <EditComment cid={comment.cid} />
+      </div>
     </div>
   ))}
 </div>
