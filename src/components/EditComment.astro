@@ -47,6 +47,8 @@ const { cid } = Astro.props;
 
         const data = Object.fromEntries(formData.entries());
 
+        console.log("(EditComment.astro) data: ", data);
+
         const res = await fetch("/.netlify/functions/editComment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
