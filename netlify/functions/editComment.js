@@ -9,9 +9,13 @@ export async function handler(event) {
       throw new Error("Missing USR_DB environment variable");
     }
 
-    const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/post/edit?cid=${cid}&uid=${uid}&content=${encodeURIComponent(editComment)}&auth=${USR_DB}`);
+    console.log("Auth check passed! Preparing to update comment...");
+
+    const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/comment/edit?cid=${cid}&uid=${uid}&content=${encodeURIComponent(editComment)}&auth=${USR_DB}`);
 
     const text = await res.text();
+
+    console.log(text);
 
     if (!res.ok) {
       console.error("Cloudflare Worker returned non-OK status:", text);
