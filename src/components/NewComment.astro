@@ -27,10 +27,10 @@ const { pid } = Astro.props;
         <form class="comment">
           <input type="hidden" name="uid" />
           <input type="hidden" name="cid" />
-          <label>Comment
+          <div class="flex items-center gap-2">
             <textarea name="caption" required placeholder="Your Comment..."></textarea>
-          </label>
-          <button type="submit">Post Comment</button>
+            <button type="submit">Post Comment</button>
+          </div>
         </form>
       `;
 
