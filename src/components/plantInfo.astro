@@ -141,6 +141,25 @@
       planList.parentElement.appendChild(notifyBtn);
     }
     notifyBtn.onclick = () => {
+      const emailBody = gardeningPlan
+        .map(
+          (plant) => `
+            <h1><strong>${plant.commonName}:</strong></h1>
+            <br>
+            <h3>Watering:</h3> 
+            <p>${plant.watering}</p>
+            <br>
+            <h3>Sunlight:</h3> 
+            <p>${plant.sunlight}</p>
+            <br>
+            <h3>Pruning:</h3>
+            <p>${plant.pruning}</p>
+            <br>
+            <br>
+          `
+        )
+        .join("");
+
       // send the gardening plan to a notification
       const userId = document.querySelector('meta[name="user-id"]')?.content;
       if (!userId) {
@@ -162,7 +181,7 @@
             const data = {
               email,
               subject: "Your Gardening Plan",
-              emailBody: JSON.stringify(gardeningPlan),
+              emailBody,
             };
 
             console.log("(plantInfo.astro) data: ", data);
