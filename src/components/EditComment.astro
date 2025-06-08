@@ -2,7 +2,7 @@
 const { cid } = Astro.props;
 ---
 
-<caption-form data-pid={cid}>
+<comment-form data-cid={cid}>
   <form class="comment space-y-4 mt-4">
     <input type="hidden" name="uid" />
     <input type="hidden" name="cid" />
@@ -16,7 +16,7 @@ const { cid } = Astro.props;
     </label>
     <button type="submit" class="btn btn-primary">Update Comment</button>
   </form>
-</caption-form>
+</comment-form>
 
 <script type="module">
   class CommentForm extends HTMLElement {
@@ -29,7 +29,7 @@ const { cid } = Astro.props;
           <label>Edit Comment
             <textarea name="comment" placeholder="New comment..."required></textarea>
           </label>
-          <button type="submit">Update Caption</button>
+          <button type="submit">Update Comment</button>
         </form>
       `;
 
