@@ -2,7 +2,7 @@ export async function handler(event) {
   try {
     const { cid, uid, comment } = JSON.parse(event.body);
 
-    console.log("Received post data:", { cid, uid, comment });
+    console.log("Received comment data:", { cid, uid, comment });
 
     const USR_DB = process.env.USR_DB;
     if (!USR_DB) {
