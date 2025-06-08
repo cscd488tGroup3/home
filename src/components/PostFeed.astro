@@ -45,6 +45,9 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
       </div>
     </div>
 
+    // check if the current user and the 
+    // author of the post are the same user
+    // if so, reveal the form to edit or delete posts
     <script type="module">
       document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('summary').forEach(summary => {
