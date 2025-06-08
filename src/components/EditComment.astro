@@ -3,18 +3,18 @@ const { cid } = Astro.props;
 ---
 
 <caption-form data-pid={cid}>
-  <form class="caption space-y-4 mt-4">
+  <form class="comment space-y-4 mt-4">
     <input type="hidden" name="uid" />
     <input type="hidden" name="cid" />
     <label class="form-control">
       <span class="label-text">Edit Comment</span>
       <textarea
-        name="caption"
+        name="comment"
         class="textarea textarea-bordered w-full"
-        placeholder="Edit Caption..."
+        placeholder="Edit Comment..."
         required></textarea>
     </label>
-    <button type="submit" class="btn btn-primary">Update Caption</button>
+    <button type="submit" class="btn btn-primary">Update Comment</button>
   </form>
 </caption-form>
 
