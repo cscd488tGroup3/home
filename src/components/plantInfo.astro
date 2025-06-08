@@ -162,7 +162,7 @@
             const data = {
               email,
               subject: "Your Gardening Plan",
-              emailBody: gardeningPlan,
+              emailBody: JSON.stringify(gardeningPlan),
             };
 
             console.log("(plantInfo.astro) data: ", data);
