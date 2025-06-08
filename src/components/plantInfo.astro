@@ -122,6 +122,19 @@
         deleteAllBtn.style.display = gardeningPlan.length ? 'block' : 'none';
 
         // add another button to email the plan to self
+        let notifyBtn = document.getElementById('notify-plan');
+        if (!notifyBtn) {
+            notifyBtn = document.createElement('button');
+            notifyBtn.id = 'notify-plan';
+            notifyBtn.textContent = 'Email Your Plan';
+            notifyBtn.style.marginTop = '10px';
+            planList.parentElement.appendChild(notifyBtn);
+        }
+        notifyBtn.onclick = () => {
+            // convenrt the gardening plan to html for the email
+            // send the gardening plan to /notify
+        };
+        notifyBtn.style.display = gardeningPlan.length ? 'block' : 'none';
     }
 
     async function fetchPlantInfo(plantName) {
