@@ -15,15 +15,17 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
   {posts.map(post => (
     <div class="post">
       <figure class="post">
-        <img src={post.url} alt="Post Image" class="w-full object-cover max-h-64" />
+        <img src={post.url} alt="Post Image" class="w-full" />
       </figure>
       <div class="card-body">
         <h2 class="card-title">{post.caption}</h2>
-        <p class="text-sm text-gray-400">By User {post.uid}</p>
+        <p class="text-sm text-black-100">- {post.uid}</p>
         <details>
-          <summary class="cursor-pointer text-primary">Edit or Delete your Post</summary>
-          <EditPost pid={post.pid}/>
-          <DeletePost pid={post.pid}/>
+          <summary class="question text-sm text-black-100 hidden">Edit or Delete your Post</summary>
+          <div class="flex flex-row items-center gap-4 h-auto">
+            <EditPost pid={post.pid} class="h-full"/>
+            <DeletePost pid={post.pid} class="h-full"/>
+          </div>
         </details>
 
         {/* <!-- Reactions Placeholder -->
@@ -33,14 +35,28 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
 
         <!-- Comments -->
         <details class="mt-0">
-          <summary class="cursor-pointer text-primary">View Comments</summary>
+          <summary class="question text-sm text-black-100">View Comments</summary>
           <CommentList pid={post.pid} />
           <details>
-            <summary class="cursor-pointer text-primary">Add a Comment</summary>
+            <summary class="question text-sm text-black-100">Add a Comment</summary>
             <NewComment pid={post.pid}/>
           </details>
         </details>
       </div>
     </div>
+
+    <script type="module">
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('summary').forEach(summary => {
+          const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";;
+          const author = post.uid;
+          if (uid === author) {
+            summary.classList.remove('hidden');
+          }
+        });
+      });
+    </script>
   ))}
 </div>
+
+
