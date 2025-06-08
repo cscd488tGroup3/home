@@ -518,6 +518,24 @@ img .logo {
 #delete-all-plan:hover {
   filter: brightness(0.9);
 }
+
+#notify-plan {
+  background-color: #4f35e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  margin-top: 18px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s;
+  display: block;
+}
+
+#notify-plan:hover {
+  filter: brightness(0.9);
+}
+
 /* Grid container for the layout */
 .grid-container {
   display: grid;
