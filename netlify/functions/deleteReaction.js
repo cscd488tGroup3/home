@@ -9,7 +9,7 @@ export async function handler(event) {
       throw new Error("Missing USR_DB environment variable");
     }
 
-    const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/reaction/remove?pid=${pid}&uid=${uid}&rid=${rid}&auth=${USR_DB}`);
+    const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/reaction/remove?pid=${pid}&uid=${uid}&auth=${USR_DB}`);
 
     const text = await res.text();
 

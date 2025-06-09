@@ -277,12 +277,11 @@ export default {
 
         // remove a reaction from a post
         if (url.pathname === "/reaction/remove") {
-            const rid = url.searchParams.get("rid");
             const uid = url.searchParams.get("uid");
             const pid = url.searchParams.get("pid");
 
             try {
-                const response = await deleteReaction(rid, uid, pid, env);
+                const response = await deleteReaction(uid, pid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
