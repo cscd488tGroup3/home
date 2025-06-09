@@ -65,22 +65,19 @@ const { pid } = Astro.props;
         checkIfLiked();
         try {
           const endpoint = liked ? "/.netlify/functions/deleteReaction" : "/.netlify/functions/createReaction";
-          console.log("(Reaction.astro like/unlike button pressed): ", JSON.stringify({ pid, uid, rid }));
+          console.log("(Reaction.astro) like/unlike button pressed: ", JSON.stringify({ pid, uid, rid }));
           await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ pid, uid, rid }),
           });
           liked = !liked;
-          updateButton();
+          await updateButton();
           await updateCount();
         } catch (err) {
           console.error("Reaction toggle failed:", err);
         }
       });
-      
-      await updateCount();
-      await checkIfLiked();
     }
   }
 
