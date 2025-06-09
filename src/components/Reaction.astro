@@ -38,7 +38,7 @@ const { pid } = Astro.props;
         });
         const result = await res.json();
         console.log("(Reaction.astro::updateConut): ", result);
-        const count = result[rid] ?? 0;
+        const count = result ?? 0;
         counter.textContent = `${count} likes`;
       };
 
@@ -53,7 +53,9 @@ const { pid } = Astro.props;
         });
         const result = await res.json();
         console.log("(Reaction.astro::checkIfLiked): ", result);
-        liked = result.liked === true;
+        if (result.length === 1) {
+          liked=true;
+        }
         updateButton();
       };
 

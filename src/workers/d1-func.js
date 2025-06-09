@@ -468,14 +468,14 @@ export async function getAllReactionsFromUser(uid, env) {
 }
 /**
  * deleteReaction - delete a reaction from the reaction table
- * @param {String} rid 
  * @param {String} uid 
+ * @param {String} pid 
  * @param {*} env 
  * @returns json data response
  */
-export async function deleteReaction(rid, uid, env) { 
+export async function deleteReaction(uid, pid, env) { 
     try {
-        const {results} = await env.DB.prepare("DELETE FROM reaction WHERE rid = ? AND uid = ?").bind(rid, uid).run();
+        const {results} = await env.DB.prepare("DELETE FROM reaction WHERE pid = ? AND uid = ?").bind(pid, uid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
