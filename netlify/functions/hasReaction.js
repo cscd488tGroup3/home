@@ -1,8 +1,8 @@
 export async function handler(event) {
   try {
-    const { pid, rid, uid } = JSON.parse(event.body);
+    const { pid, uid } = JSON.parse(event.body);
 
-    console.log("Received post data:", { pid, rid, uid });
+    console.log("Received post data:", { pid, uid });
 
     const USR_DB = process.env.USR_DB;
     if (!USR_DB) {

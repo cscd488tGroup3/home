@@ -490,7 +490,7 @@ export async function deleteReaction(rid, uid, env) {
  * @param {*} env 
  * @returns 
  */
-export async function checkIfPostHasReactionFromUser(pid, uid, env) {
+export async function checkIfPostHasReactionFromUser(uid, pid, env) {
     try {
         const {results} = await env.DB.prepare("SELECT rid FROM reaction WHERE uid = ? AND pid = ?").bind(uid, pid).run();
         return results;
