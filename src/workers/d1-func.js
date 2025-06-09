@@ -445,7 +445,7 @@ export async function getReactionsByPostID(pid, env) {
 export async function countReactionsByPostID(pid, env) {
     try {
         const { results } = await env.DB.prepare("SELECT COUNT(*) AS count FROM reaction WHERE pid = ?")
-            .bind(id)
+            .bind(pid)
             .all();
         return results[0]?.count ?? 0; // Return the count or 0 if no rows
     } catch (err) {

@@ -7,6 +7,9 @@ const { pid } = Astro.props;
 <script type="module" is:inline>
   let liked = false;
 
+  /**
+   * ReactionWidget class handles the reaction functionality
+   */
   class ReactionWidget extends HTMLElement {
     async connectedCallback() {
       const pid = this.dataset.pid;
@@ -24,6 +27,9 @@ const { pid } = Astro.props;
       const button = this.querySelector('button');
       const counter = this.querySelector('span');
 
+      /**
+       * 
+       */
       const updateCount = async () => {
         const res = await fetch("/.netlify/functions/aggregateReactions", {
           method: "POST",
@@ -36,6 +42,9 @@ const { pid } = Astro.props;
         counter.textContent = `${count} likes`;
       };
 
+      /**
+       * 
+       */
       const checkIfLiked = async () => {
         const res = await fetch("/.netlify/functions/hasReaction", {
           method: "POST",
@@ -48,6 +57,9 @@ const { pid } = Astro.props;
         updateButton();
       };
 
+      /**
+       * 
+       */
       const updateButton = () => {
         checkIfLiked();
         if (liked) {
