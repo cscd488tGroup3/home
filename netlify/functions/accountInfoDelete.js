@@ -35,6 +35,10 @@ export async function handler(event, context) {
     const body = JSON.parse(event.body);
     const uid = body.username;
     const hashpass = uid.hashpass;
+    
+    console.log("Data: ", body);
+    console.log("uid: ", uid);
+    console.log("hashpass: ", hashpass);
 
     // Access server-side environment variables
     const USR_DB = process.env.USR_DB;
@@ -42,7 +46,7 @@ export async function handler(event, context) {
     const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
 
     try {
-        const DOBResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/deleteuser?uid=${uid}&dob=${hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
+        const DOBResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/deleteuser?uid=${uid}&hashpass=${hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
         if (DOBResponse.ok) {
             return {
                 statusCode: 200,
