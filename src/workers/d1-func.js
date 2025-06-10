@@ -109,13 +109,19 @@ export async function writeNewPassword(uid, email, hashpass, env) {
  * @returns status message of the database
  */
 export async function deleteUser(uid, hashpass, env) {
-    try {
-        const {results} = await env.DB.prepare("DELETE FROM admin WHERE uid = ? AND hashpass = ?").bind(uid, hashpass).run();
-        return results;
-    } catch (err) {
-        throw new Error(`Database query failed: ${err.message}`);
-    }
+  try {
+    const result = await env.DB.prepare(
+      "DELETE FROM admin WHERE uid = ? AND hashpass = ?"
+    )
+      .bind(uid, hashpass)
+      .run();
+
+    return result.meta?.changes ?? 0; // This is what you want
+  } catch (err) {
+    throw new Error(`Database query failed: ${err.message}`);
+  }
 }
+
 
 /* SESSION DATABASE FUNCTIONS */
 
