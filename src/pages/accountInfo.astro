@@ -272,23 +272,21 @@ try {
     /**
      * handle clicking the delete button
      */
-    document
-      .getElementById("delete-account")
-      ?.addEventListener("click", async () => {
+    document.getElementById("delete-account")?.addEventListener("click", async () => {
         if (
           !confirm(
             "Are you sure you want to delete your account? This action cannot be undone."
           )
         )
           return;
-
+      
         const password = prompt(
           "Please enter your password to confirm account deletion:"
         );
         if (!password)
           return alert("Account deletion cancelled. Password is required.");
 
-        const hashpass = hashPassword(password);
+        const hashpass = await hashPassword(password);
 
         const res = await fetch(
           "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoDelete",
