@@ -8,7 +8,7 @@ import { getUserByUid, getInfoByUid, getPasswordByUid, getPasswordByEmail, write
  */
 function addCorsHeaders(response) {
     const headers = new Headers(response.headers);
-    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/"); 
+    headers.set("Access-Control-Allow-Origin", "https://peppy-nougat-0120f1.netlify.app/");
     headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     return new Response(response.body, { ...response, headers });
@@ -36,7 +36,7 @@ export default {
                 },
             });
         }
-        
+
         // passed in keys
         const auth = url.searchParams.get("auth");
         const wauth = url.searchParams.get("wauth");
@@ -70,7 +70,7 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
+
         // edit a post
         if (url.pathname === "/post/edit") {
             const pid = url.searchParams.get("pid");
@@ -87,7 +87,7 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
+
         // delete a post
         if (url.pathname === "/post/delete") {
             const pid = url.searchParams.get("pid");
@@ -97,7 +97,7 @@ export default {
                 const response = await deletePost(pid, uid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                 }));
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
@@ -112,7 +112,7 @@ export default {
                 const response = await getPostByID(pid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                 }));
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
@@ -127,7 +127,7 @@ export default {
                 const response = await getAllPostsFromUser(uid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                 }));
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
@@ -140,13 +140,13 @@ export default {
                 const response = await getAllPosts(env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                 }));
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
+
         // add a comment
         if (url.pathname === "/comment/create") {
             const cid = url.searchParams.get("cid");
@@ -181,7 +181,7 @@ export default {
         }
 
         // get the parent post of a comment
-        if(url.pathname === "/comment/get/c/parent") {
+        if (url.pathname === "/comment/get/c/parent") {
             const cid = url.searchParams.get("cid");
 
             try {
@@ -196,7 +196,7 @@ export default {
         }
 
         // get all comments on a post
-        if(url.pathname === "/comment/get/p/all") {
+        if (url.pathname === "/comment/get/p/all") {
             const pid = url.searchParams.get("pid");
 
             try {
@@ -209,9 +209,9 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
+
         // get all comments from a user
-        if(url.pathname === "/comment/get/u/all") {
+        if (url.pathname === "/comment/get/u/all") {
             const uid = url.searchParams.get("uid");
 
             try {
@@ -241,7 +241,7 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
+
         // delete a comment
         if (url.pathname === "/comment/delete") {
             const cid = url.searchParams.get("cid");
@@ -257,7 +257,7 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
+
         // add a reaction to a post
         if (url.pathname === "/reaction/add") {
             const rid = url.searchParams.get("rid");
@@ -321,8 +321,8 @@ export default {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
         }
-        
-        /* GROUP API */ 
+
+        /* GROUP API */
 
 
 
@@ -576,7 +576,7 @@ export default {
         if (url.pathname === "/api/priv/get") {
             const uid = url.searchParams.get("uid");
 
-            if(!uid) {
+            if (!uid) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
@@ -608,14 +608,14 @@ export default {
             const email = url.searchParams.get("email");
             const hashpass = url.searchParams.get("hashpass");
 
-            if(!uid || (!fname && !lname && !dob && !email && !hashpass)) {
+            if (!uid || (!fname && !lname && !dob && !email && !hashpass)) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
             const results = [];
 
             try {
-                if (fname) results.push(await updateFname(uid, fname, env)); 
+                if (fname) results.push(await updateFname(uid, fname, env));
                 if (lname) results.push(await updateLname(uid, lname, env));
                 if (dob) results.push(await updateDOB(uid, dob, env));
                 if (email) results.push(await updateEmail(uid, email, env));
@@ -641,7 +641,7 @@ export default {
             const uid = url.searchParams.get("uid");
             const priv = url.searchParams.get("priv");
 
-            if(!uid || !priv) {
+            if (!uid || !priv) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
@@ -660,7 +660,7 @@ export default {
         if (url.pathname === "/api/priv/init") {
             const uid = url.searchParams.get("uid");
 
-            if(!uid) {
+            if (!uid) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
@@ -686,7 +686,7 @@ export default {
             const lname = url.searchParams.get("lname");
             const dob = url.searchParams.get("dob");
             const doj = url.searchParams.get("doj");
-            if(!uid || !fname || !lname || !dob || !doj) {
+            if (!uid || !fname || !lname || !dob || !doj) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
@@ -712,7 +712,7 @@ export default {
             const uid = url.searchParams.get("uid");
             const email = url.searchParams.get("email");
             const hashpass = url.searchParams.get("hashpass");
-            if(!uid || !email || !hashpass) {
+            if (!uid || !email || !hashpass) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
 
@@ -728,19 +728,22 @@ export default {
         }
 
         // api/deleteuser - worker implementation of d1-func.deleteUser()
-        if (url.pathname === "api/deleteuser") {
+        if (url.pathname === "/api/deleteuser") {
             const uid = url.searchParams.get("uid");
             const hashpass = url.searchParams.get("hashpass");
             if (!uid || !hashpass) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
             }
-            
+
             try {
-                const response = await deleteUser(uid, hashpass, env);
-                return addCorsHeaders(new Response(JSON.stringify(response), {
-                    status: 200,
-                    headers: { "Content-Type": "application/json" },
-                }));
+                const deletedCount = await deleteUser(uid, hashpass, env);
+
+                if (deletedCount > 0) {
+                    // Optional: delete sessions here
+                    return new Response(JSON.stringify({ success: true }), { status: 200 });
+                } else {
+                    return new Response(JSON.stringify({ error: "Invalid credentials or user not found" }), { status: 401 });
+                }
             } catch (err) {
                 return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
             }
