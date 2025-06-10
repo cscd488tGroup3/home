@@ -34,7 +34,7 @@ export async function handler(event, context) {
     // prepare variables from request body
     const body = JSON.parse(event.body);
     const uid = body.username;
-    const hashpass = uid.hashpass;
+    const hashpass = body.hashpass;
     
     console.log("Data: ", body);
     console.log("uid: ", uid);
