@@ -649,7 +649,83 @@ export async function updateHashpass(uid, hashpass, env) {
 }
 
 /* GROUP DATABASE FUNCTIONS */
+/**
+ * 
+ * @param {*} gid 
+ * @param {*} gname 
+ * @param {*} priv 
+ * @param {*} env 
+ * @returns 
+ */
+export async function newGroup(gid, gname, priv, env) {
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO group_g (gid, gname, priv) VALUES (?, ?, ?)").bind(gid, gname, priv).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+} 
 
+/**
+ * 
+ * @param {*} gid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getGroupName(gid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT gname FROM group_g WHERE gid = ?").bind(priv, gid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
 
+/**
+ * 
+ * @param {*} gid 
+ * @param {*} priv 
+ * @param {*} env 
+ * @returns 
+ */
+export async function editGroupPriv(gid, priv, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE group_g SET priv = ? WHERE gid = ?").bind(priv, gid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * 
+ * @param {*} gid 
+ * @param {*} gname 
+ * @param {*} env 
+ * @returns 
+ */
+export async function editGroupName(gid, gname, env) {
+    try {
+        const {results} = await env.DB.prepare("UPDATE group_g SET gname = ? WHERE gid = ?").bind(gname, gid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * 
+ * @param {string} gid 
+ * @param {*} env
+ * @returns 
+ */
+export async function deleteGroup(gid, env) {
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM group_g WHERE gid = ?").bind(gid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
 
 /*  */
