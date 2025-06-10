@@ -1,52 +1,58 @@
-const fetch = require("node-fetch");
-
-exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ message: "Method Not Allowed" }),
-    };
-  }
-
-  try {
-    const { username } = JSON.parse(event.body || "{}");
-
-    if (!username || username === "Guest") {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: "Invalid username" }),
-      };
-    }
-
-    // Delete from all relevant tables/APIs
-    const endpoints = [
-      `https://astro-d1-integration.ecrawford4.workers.dev/api/delete?uid=${username}&auth=${process.env.USR_DB_W}`,
-      `https://astro-d1-integration.ecrawford4.workers.dev/api/admin/delete?uid=${username}&auth=${process.env.USR_DB_W}`,
-      `https://astro-d1-integration.ecrawford4.workers.dev/api/priv/delete?uid=${username}&auth=${process.env.USR_DB_W}`,
+export async function handler(event, context) {
+    console.log("Incoming request origin:", event.headers.origin);
+    // headers
+    const allowedOrigins = [
+        "https://astro-d1-integration.ecrawford4.workers.dev",
+        //"http://localhost:4321", // For local development
+        "https://*--cscd488group3-bloombuddy.netlify.app" // For Netlify deployment
     ];
 
-    // Run all deletes in parallel
-    const results = await Promise.all(
-      endpoints.map((url) => fetch(url, { method: "DELETE" }))
-    );
+    const origin = event.headers.origin;
 
-    // Check if all deletes succeeded
-    if (results.every((res) => res.status === 200)) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Account deleted" }),
-      };
-    } else {
-      const errors = await Promise.all(results.map((res) => res.text()));
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Failed to delete account", errors }),
-      };
-    }
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: "Server error", error: err.message }),
+    const headers = {
+        "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://cscd488group3-bloombuddy.netlify.app", // Default to the first allowed origin
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
     };
-  }
-};
+
+    // handle prefilght request
+    if (event.httpMethod === "OPTIONS") {
+        return {
+            statusCode: 204,
+            headers,
+            body: "",
+        };
+    }
+
+    if (event.httpMethod !== "POST") {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: "Method Not Allowed" }),
+        };
+    }
+
+    // prepare variables from request body
+    const body = JSON.parse(event.body);
+    const uid = body.username;
+    const hashpass = uid.hashpass;
+
+    // Access server-side environment variables
+    const USR_DB = process.env.USR_DB;
+    const USR_DB_W = process.env.USR_DB_W;
+    const USR_DB_W_ADMIN = process.env.USR_DB_W_ADMIN;
+
+    try {
+        const DOBResponse = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/deleteuser?uid=${uid}&dob=${hashpass}&auth=${USR_DB}&wauth=${USR_DB_W}&aauth=${USR_DB_W_ADMIN}`);
+        if (DOBResponse.ok) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify(DOBResponse),
+            }
+        }
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
+    }
+}

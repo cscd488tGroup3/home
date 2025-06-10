@@ -72,7 +72,7 @@ try {
 ---
 
 <head>
-  <meta name="user-id" content="{username}">
+  <meta name="user-id" content="{username}" />
 </head>
 
 <Layout>
@@ -109,8 +109,8 @@ try {
               {accountInfo[0]?.priv === 0
                 ? "Public"
                 : accountInfo[0]?.priv === 1
-                ? "Private"
-                : "Invalid"}
+                  ? "Private"
+                  : "Invalid"}
             </span>
           </div>
         </div>
@@ -120,31 +120,41 @@ try {
           <label>
             First Name:
             <input type="text" id="fname" />
-            <button id="edit-fname" type="button">Save</button>
+            <button id="edit-fname" type="button">
+              Save
+            </button>
           </label>
 
           <label>
             Last Name:
             <input type="text" id="lname" />
-            <button id="edit-lname" type="button">Save</button>
+            <button id="edit-lname" type="button">
+              Save
+            </button>
           </label>
 
           <label>
             Email:
             <input type="email" id="email" />
-            <button id="edit-email" type="button">Save</button>
+            <button id="edit-email" type="button">
+              Save
+            </button>
           </label>
 
           <label>
             Date of Birth:
             <input type="date" id="dob" />
-            <button id="edit-dob" type="button">Save</button>
+            <button id="edit-dob" type="button">
+              Save
+            </button>
           </label>
 
           <label>
             Password:
             <input type="password" id="password" />
-            <button id="edit-password" type="button">Save</button>
+            <button id="edit-password" type="button">
+              Save
+            </button>
           </label>
 
           <label>
@@ -153,11 +163,19 @@ try {
               <option value="0">Public</option>
               <option value="1">Private</option>
             </select>
-            <button id="edit-priv" type="button">Save</button>
+            <button id="edit-priv" type="button">
+              Save
+            </button>
           </label>
-          <br />
-          <button id="delete-account" type="button" style="margin-top: 16px;">Delete Account</button>
+          <button
+            id="delete-account"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded"
+            type="button"
+          >
+            Delete Account
+          </button>
         </form>
+        <br />
       </div>
     ) : (
       <p id="error-badge" style="white-space: pre-line;">
@@ -186,7 +204,7 @@ try {
         credentials: "include",
       });
       alert(res.status === 200 ? successMsg : failMsg);
-      window.location.href = '/accountInfo'; // reload the page after the user dismisses the alert
+      window.location.href = "/accountInfo"; // reload the page after the user dismisses the alert
     }
 
     document.getElementById("edit-fname")?.addEventListener("click", () => {
@@ -239,6 +257,9 @@ try {
       );
     });
 
+    /**
+     * handle editing the user privacy
+     */
     document.getElementById("edit-priv")?.addEventListener("click", () => {
       updateField(
         "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoEditPriv",
@@ -248,23 +269,56 @@ try {
       );
     });
 
-    document.getElementById("delete-account")?.addEventListener("click", async () => {
-      if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
-      const res = await fetch("/.netlify/functions/accountInfoDelete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
-        credentials: "include",
+    /**
+     * handle clicking the delete button
+     */
+    document
+      .getElementById("delete-account")
+      ?.addEventListener("click", async () => {
+        if (
+          !confirm(
+            "Are you sure you want to delete your account? This action cannot be undone."
+          )
+        )
+          return;
+
+        const password = prompt(
+          "Please enter your password to confirm account deletion:"
+        );
+        if (!password)
+          return alert("Account deletion cancelled. Password is required.");
+
+        const hashpass = hashPassword(password);
+
+        const res = await fetch(
+          "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoDelete",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, hashpass }),
+            credentials: "include",
+          }
+        );
+
+        if (res.status === 200) {
+          alert("Account deleted.");
+          window.location.href = "/";
+        } else {
+          alert("Failed to delete account.");
+        }
       });
-      if (res.status === 200) {
-        // Clear session/cookies if needed
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        localStorage.clear();
-        alert("Account deleted.");
-        window.location.href = "/login"; // or your homepage
-      } else {
-        alert("Failed to delete account.");
-      }
-    });
+
+    /**
+     *
+     * @param password
+     */
+    async function hashPassword(password: FormDataEntryValue | undefined) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password as string);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
   });
 </script>
