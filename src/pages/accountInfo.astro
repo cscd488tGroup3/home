@@ -151,6 +151,8 @@ try {
             </select>
             <button id="edit-priv" type="button">Save</button>
           </label>
+          <br />
+          <button id="delete-account" type="button" style="margin-top: 16px;">Delete Account</button>
         </form>
       </div>
     ) : (
@@ -240,6 +242,25 @@ try {
         "Privacy updated!",
         "Failed to update privacy."
       );
+    });
+
+    document.getElementById("delete-account")?.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
+      const res = await fetch(
+        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoDelete",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+          credentials: "include",
+        }
+      );
+      if (res.status === 200) {
+        alert("Account deleted.");
+        window.location.href = "/";
+      } else {
+        alert("Failed to delete account.");
+      }
     });
   });
 </script>
