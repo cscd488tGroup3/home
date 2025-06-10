@@ -250,18 +250,18 @@ try {
 
     document.getElementById("delete-account")?.addEventListener("click", async () => {
       if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
-      const res = await fetch(
-        "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/accountInfoDelete",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username }),
-          credentials: "include",
-        }
-      );
+      const res = await fetch("/.netlify/functions/accountInfoDelete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+        credentials: "include",
+      });
       if (res.status === 200) {
+        // Clear session/cookies if needed
+        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        localStorage.clear();
         alert("Account deleted.");
-        window.location.href = "/";
+        window.location.href = "/login"; // or your homepage
       } else {
         alert("Failed to delete account.");
       }
