@@ -100,6 +100,23 @@ export async function writeNewPassword(uid, email, hashpass, env) {
     }
 }
 
+/**
+ * deletUser - removes a user from the database based on the user id
+ *             deletion of all user data cascades from the deletion of 
+ *             the user from the admin table.
+ * @param {String} uid representing the username of the account to be deleted 
+ * @param {*} env 
+ * @returns status message of the database
+ */
+export async function deleteUser(uid, hashpass, env) {
+    try {
+        const {results} = await env.DB.prepare("DELETE FROM admin WHERE uid = ? AND hashpass = ?").bind(uid, hashpass).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
 /* SESSION DATABASE FUNCTIONS */
 
 /**
@@ -632,5 +649,7 @@ export async function updateHashpass(uid, hashpass, env) {
 }
 
 /* GROUP DATABASE FUNCTIONS */
+
+
 
 /*  */
