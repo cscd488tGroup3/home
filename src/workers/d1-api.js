@@ -324,7 +324,7 @@ export default {
         
         /* GROUP API */ 
 
-        
+
 
         /* SESSION API */
 
@@ -718,6 +718,25 @@ export default {
 
             try {
                 const response = await writeNewPassword(uid, email, hashpass, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // api/deleteuser - worker implementation of d1-func.deleteUser()
+        if (url.pathname === "api/deleteuser") {
+            const uid = url.searchParams.get("uid");
+            const hashpass = url.searchParams.get("hashpass");
+            if (!uid || !hashpass) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: "bad params" }), { status: 400 }));
+            }
+            
+            try {
+                const response = await deleteUser(uid, hashpass, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
