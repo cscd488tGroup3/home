@@ -5,14 +5,19 @@ Astro.props.pageTitle = "Groups";
 import Layout from '../layouts/Layout.astro';
 import PostFeed from "../components/PostFeed.astro"
 import NewPost from '../components/NewPost.astro';
+import NewGroup from '../components/NewGroup.astro';
+import GroupInfo from '../components/GroupInfo.astro';
+import JoinGroup from '../components/JoinGroup.astro'
+import Invite from '../components/Invite.astro'
+import GroupMembership from '../components/GroupMembership.astro'
 ---
 
 <Layout>
     <div class="grid-container">
         <!-- Left Column: Plant Info -->
         <div class="left-column">
-            <!-- <NewGroup />
-            <GroupInfo /> -->
+            <NewGroup />
+            <GroupInfo />
         </div>
         
         <!-- Center Column: Post Feed -->
@@ -23,7 +28,9 @@ import NewPost from '../components/NewPost.astro';
 
         <!-- Right Column: City Info -->
         <div class="right-column">
-            <!-- <GroupMembership /> -->
+            <JoinGroup />
+            <Invite />
+            <GroupMembership />
         </div>
     </div>
 </Layout>

@@ -1,0 +1,67 @@
+---
+// No frontmatter needed unless you're passing props
+---
+
+<br />
+<section id="createGroup" class="backdrop-blur-md bg-[#56b9064d]">
+  <h1 id="createGroupHeader">Create a Group</h1>
+  <form id="createGroupForm">
+    <input
+      type="text"
+      id="groupName"
+      name="groupName"
+      placeholder="Name the group"
+      required
+    />
+
+    <select id="priv" class="backdrop-blur-md border rounded-sm bg-gray-300">
+      <option value="3">Public</option>
+      <option value="2">Protected</option>
+      <option value="1">Mod-Private</option>
+      <option value="0">Private</option>
+    </select>
+
+    <button type="submit">Create Group</button>
+  </form>
+</section>
+
+<script type="module">
+  document
+    .getElementById("createGroupForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const groupName = document.getElementById("groupName").value;
+      const priv = document.getElementById("priv").value;
+
+      const gid = crypto.randomUUID(); // generates a v4 UUID
+
+      const payload = {
+        gid,
+        gname: groupName,
+        priv,
+      };
+
+      try {
+        const res = await fetch("/.netlify/functions/createGroup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(result.error || "Failed to create group");
+        }
+
+        alert("Group created successfully!");
+        console.log(result); // Optionally display or redirect
+      } catch (err) {
+        console.error("Error creating group:", err);
+        alert("Error creating group: " + err.message);
+      }
+    });
+</script>
