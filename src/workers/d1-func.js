@@ -744,7 +744,8 @@ export async function deleteGroup(gid, env) {
  */
 export async function newGroupMember(gmid, uid, gid, role_g, priv, env) {
     try {
-        const {results} = await env.DB.prepare("INSERT INTO group_member (gmid, uid, gid, role_g, priv) VALUES (?, ?, ?, ?, ?)").bind(gmid, uid, gid, role_g, priv)
+        const {results} = await env.DB.prepare("INSERT INTO group_member (gmid, uid, gid, role_g, priv) VALUES (?, ?, ?, ?, ?)").bind(gmid, uid, gid, role_g, priv).run();
+        return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
     }
