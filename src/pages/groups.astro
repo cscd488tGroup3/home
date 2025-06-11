@@ -153,11 +153,22 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
             }
         });
 
+        // Show selected file name
+        const imagesInput = document.getElementById('images');
+        const fileLabel = document.getElementById('fileLabel');
+        imagesInput.addEventListener('change', function() {
+            if (imagesInput.files.length > 0) {
+                fileLabel.textContent = imagesInput.files[0].name;
+            } else {
+                fileLabel.textContent = "Choose File";
+            }
+        });
+
         // Handle post creation (with image upload)
         document.getElementById('postForm').onsubmit = async function(e) {
             e.preventDefault();
             const formData = new FormData(e.target);
-            formData.append('gid', currentGroupId); // Ensure group context
+            formData.append('gid', currentGroupId);
 
             try {
                 const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
@@ -168,6 +179,7 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
                     alert("Post created successfully!");
                     e.target.reset();
                     document.getElementById('postForm').style.display = 'none';
+                    fileLabel.textContent = "Choose File";
                     loadGroupPosts();
                 } else {
                     alert("Failed to create post.");
@@ -646,7 +658,7 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
 
         // Render saved posts (if any)
         window.addEventListener('DOMContentLoaded', () => {
-            setupFormHandlers(currentGroupId); // Pass group ID to filter posts
+            setupFormHandlers(currentGroupId); // Use the same handler as index.astro
             renderSavedPosts(currentGroupId);  // Only show posts for this group
         });
     </script>
