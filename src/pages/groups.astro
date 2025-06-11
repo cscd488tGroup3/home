@@ -254,6 +254,7 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
             }
         }
 
+        // Group delete handler
         deleteGroupButton.addEventListener('click', async () => {
             if (!currentGroupId) {
                 alert("No group to delete.");
@@ -264,16 +265,20 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
             if (!confirmDelete) return;
 
             try {
-                const res = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/api/groups/${currentGroupId}`, {
-                    method: 'DELETE',
+                const res = await fetch('/.netlify/functions/groupDelete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ gid: currentGroupId }),
                 });
                 if (res.status === 200) {
                     alert("Group deleted successfully.");
                     createdGroupSection.style.display = "none";
                     groupPostsSection.style.display = "none";
                     currentGroupId = null;
+                    renderAllGroups();
                 } else {
-                    alert("Failed to delete the group.");
+                    const data = await res.json();
+                    alert("Failed to delete the group: " + (data.message || "Unknown error"));
                 }
             } catch (err) {
                 alert("An error occurred while deleting the group.");
@@ -629,37 +634,10 @@ import { setupFormHandlers, renderSavedPosts } from '../lib/feed/ui.js';
             document.getElementById('createGroupHeader').style.display = "block";
         }
 
-        document.getElementById('createPostForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const postData = {
-                gid: currentGroupId,
-                caption: formData.get("postCaption"),
-                content: formData.get("postContent"),
-            };
-
-            try {
-                const res = await fetch('https://astro-d1-integration.ecrawford4.workers.dev/api/posts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(postData),
-                });
-                if (res.status === 200) {
-                    alert("Post created successfully!");
-                    e.target.reset();
-                    loadGroupPosts();
-                } else {
-                    alert("Failed to create post.");
-                }
-            } catch (err) {
-                alert("An error occurred while creating the post.");
-            }
-        };
-
         // Render saved posts (if any)
         window.addEventListener('DOMContentLoaded', () => {
-            setupFormHandlers(currentGroupId); // Use the same handler as index.astro
-            renderSavedPosts(currentGroupId);  // Only show posts for this group
+            setupFormHandlers(currentGroupId);
+            renderSavedPosts(currentGroupId);
         });
     </script>
 </Layout>
