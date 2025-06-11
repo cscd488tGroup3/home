@@ -219,6 +219,7 @@ form {
   border-radius: 1em;
 }
 
+
 label {
   font-weight: bold;
   margin-bottom: 0.3125em;
@@ -776,3 +777,27 @@ label[for="caption"] {
   color: #555;
   text-align: center;
 }
+
+ #createGroupForm,
+ #joinGroupForm,
+ #inviteForm {
+    background-color: #00000000;
+    border: 0px solid #00000000;
+  }
+
+  #groupInfo,
+  #createGroup,
+  #joinGroup,
+  #invite, 
+  #groupMembership {
+    border: #0073e6 1px solid;
+    border-radius: 10px;
+    padding-top: .5em;
+  }
+
+  #groupInfo,
+  #groupMembership {
+    padding-bottom: 1.5em;
+    padding-left: 2.5em;
+    padding-right: 2.5em;
+  }
