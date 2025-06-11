@@ -734,4 +734,20 @@ export async function deleteGroup(gid, env) {
     }
 }
 
+/**
+ * 
+ * @param {String} gmid 
+ * @param {String} uid 
+ * @param {String} gid 
+ * @param {int} role_g 
+ * @param {int} priv 
+ */
+export async function newGroupMember(gmid, uid, gid, role_g, priv, env) {
+    try {
+        const {results} = await env.DB.prepare("INSERT INTO group_member (gmid, uid, gid, role_g, priv) VALUES (?, ?, ?, ?, ?)").bind(gmid, uid, gid, role_g, priv)
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
 /*  */

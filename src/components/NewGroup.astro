@@ -42,6 +42,16 @@
         priv,
       };
 
+      const gmid = crypto.randomUUID(); // generate the gmid for the creator of the group
+      const uid = form.querySelector('input[name="uid"]');
+      const payload2 = {
+        gmid,
+        uid,
+        gid,
+        role_g: 0, // creator of the group
+        priv: 0,   // inherit the privacy setting of the group you created
+      }
+
       try {
         const res = await fetch("/.netlify/functions/createGroup", {
           method: "POST",
@@ -55,6 +65,25 @@
 
         if (!res.ok) {
           throw new Error(result.error || "Failed to create group");
+        }
+
+        try {
+          const res2 = await fetch("/.netlify/functions/createGroupMember", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const result2 = await res2.json();
+
+          if (!res2.ok) {
+            throw new Error(result2.error || "Failed to add the group creator to the database.");
+          }
+        } catch (err) {
+            console.error("Error adding group creator to the database:", err);
+            alert("Error adding group creator to the database: " + err.message);
         }
 
         alert("Group created successfully!");

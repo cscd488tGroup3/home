@@ -44,7 +44,7 @@ export default {
         const sauth = url.searchParams.get("sauth");
         const pauth = url.searchParams.get("pauth");
 
-        if (!auth && !wauth && !aauth && !sauth) {
+        if (!auth && !wauth && !aauth && !sauth && !pauth) {
             return addCorsHeaders(new Response("Unauthorized", { status: 401 }));
         }
 
@@ -324,6 +324,7 @@ export default {
 
         /* GROUP API */
 
+        // create a new group
         if (url.pathname === "/groups/new") {
             const gid = url.searchParams.get("gid");
             const gname = url.searchParams.get("gname");
@@ -331,6 +332,25 @@ export default {
 
             try {
                 const response = await newGroup(gid, gname, priv, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        // create a new group member
+        if (url.pathname === "/groups/member/new") {
+            const gmid = url.searchParams.get("gmid");
+            const uid = url.searchParams.get("uid");
+            const gid = url.searchParams.get("gid");
+            const role_g = url.searchParams.get("role_g");
+            const priv = url.searchParams.get("priv");
+
+            try {
+                const response = await newGroupMember(gmid, uid, gid, role_g, priv, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
