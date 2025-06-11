@@ -43,7 +43,7 @@
       };
 
       const gmid = crypto.randomUUID(); // generate the gmid for the creator of the group
-      const uid = form.querySelector('input[name="uid"]');
+      const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
       const payload2 = {
         gmid,
         uid,
@@ -73,7 +73,7 @@
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload2),
           });
 
           const result2 = await res2.json();
