@@ -33,9 +33,7 @@
 
       const groupName = document.getElementById("groupName").value;
       const priv = document.getElementById("priv").value;
-
       const gid = crypto.randomUUID(); // generates a v4 UUID
-
       const payload = {
         gid,
         gname: groupName,
