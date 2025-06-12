@@ -1,8 +1,8 @@
 # Home
 
-This repository contains the [BloomBuddy website](https://cscd488group3-BloomBuddy.netlify.app/).
+This repository contains the [BloomBuddy website](https://cscd488group3-BloomBuddy.netlify.app/). Developed by Ethan Crawford, Jared Diaz, and Daniel Montes.
 
-## Documentation
+## Documentation for future development of forks of this project
 
 ### Requirements
 
