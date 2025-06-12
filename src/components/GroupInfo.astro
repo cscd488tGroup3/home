@@ -7,6 +7,17 @@ const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/f
         });
 const data = await res.json();
 console.log("(GroupInfo.astro): ", data);
+
+// make the privacy label human-readable
+function getPrivacyLabel(priv: number) {
+  switch (priv) {
+    case 0: return "Private";
+    case 1: return "Mods Only";
+    case 2: return "Protected";
+    case 3: return "Public";
+    default: return "Unknown";
+  }
+}
 ---
 
 <br>
@@ -27,7 +38,7 @@ console.log("(GroupInfo.astro): ", data);
   <div class="info-row">
     <strong>Visibility:</strong>
     <span class="right">
-      {data[0]?.priv}
+      {getPrivacyLabel(Number(data[0]?.priv))}
     </span>
   </div>
   <div class="info-row">
