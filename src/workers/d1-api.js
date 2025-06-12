@@ -375,6 +375,21 @@ export default {
             }
         }
 
+        // get group membership
+        if (url.pathname === "/groups/membership/get") {
+            const uid = url.searchParams.get("uid");
+
+            try {
+                const response = await getGroupMembership(uid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
         /* SESSION API */
 
         // create a new session

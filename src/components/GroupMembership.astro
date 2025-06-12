@@ -1,11 +1,41 @@
 ---
 
 ---
-
 <br>
 <section id="groupMembership" class="backdrop-blur-md bg-[#56b9064d]">
   <h1>Your Groups:</h1>
+  <ul id="groupList" class="list-disc pl-5"></ul>
 </section>
 
+<script type="module">
+  const uid = document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
 
+  const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupMembership', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ uid }),
+  });
 
+  const data = await res.json();
+  console.log("(GroupInfo.astro): ", data);
+
+  const list = document.getElementById("groupList");
+
+  list.innerHTML = ""; // clear loading fallback
+
+  if (Array.isArray(data) && data.length > 0) {
+    for (const group of data) {
+      const li = document.createElement("li");
+
+      const link = document.createElement("a");
+      link.href = `https://cscd488group3-bloombuddy.netlify.app/groups?gid=${group.gid}`;
+      link.textContent = `${group.gname} (ID: ${group.gid})`;
+      link.className = "text-blue-600 hover:underline"; // optional styling
+
+      li.appendChild(link);
+      list.appendChild(li);
+    }
+  } else {
+    list.innerHTML = "<li>You are not in any groups.</li>";
+  }
+</script>
