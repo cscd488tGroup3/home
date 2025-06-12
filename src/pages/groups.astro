@@ -1,6 +1,9 @@
 ---
 Astro.props.pageTitle = "Groups";
 
+const url = new URL(Astro.url);
+const gid = url.searchParams.get('gid');
+
 // Components
 import Layout from '../layouts/Layout.astro';
 import PostFeed from "../components/PostFeed.astro"
@@ -17,7 +20,7 @@ import GroupMembership from '../components/GroupMembership.astro'
         <!-- Left Column: Group Creation / Current Group Info -->
         <div class="left-column">
             <NewGroup />
-            <GroupInfo />
+            <GroupInfo gid={gid}/>
         </div>
         
         <!-- Center Column: Group Post Feed -->
@@ -29,8 +32,8 @@ import GroupMembership from '../components/GroupMembership.astro'
         <!-- Right Column: Group Membership -->
         <div class="right-column">
             <JoinGroup />
-            <Invite />
-            <GroupMembership />
+            <Invite gid={gid}/>
+            <GroupMembership gid={gid}/>
         </div>
     </div>
 </Layout>
