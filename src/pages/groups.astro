@@ -14,19 +14,19 @@ import GroupMembership from '../components/GroupMembership.astro'
 
 <Layout>
     <div class="grid-container">
-        <!-- Left Column: Plant Info -->
+        <!-- Left Column: Group Creation / Current Group Info -->
         <div class="left-column">
             <NewGroup />
             <GroupInfo />
         </div>
         
-        <!-- Center Column: Post Feed -->
+        <!-- Center Column: Group Post Feed -->
         <div class="center-column">
             <NewPost />
             <PostFeed />
         </div>
 
-        <!-- Right Column: City Info -->
+        <!-- Right Column: Group Membership -->
         <div class="right-column">
             <JoinGroup />
             <Invite />
@@ -34,5 +34,3 @@ import GroupMembership from '../components/GroupMembership.astro'
         </div>
     </div>
 </Layout>
-
-
