@@ -774,7 +774,7 @@ export async function getGroupInfo(gid, env) {
  */
 export async function getGroupMembership(uid, env) {
     try {
-    const { results } = await env.DB.prepare("SELECT gm.gid, g.gname FROM group_member gm INNER JOIN group_g g ON gm.gid = g.gid WHERE gm.uid = ?").bind(uid).run();
+        const { results } = await env.DB.prepare("SELECT gm.gid, g.gname FROM group_member gm INNER JOIN group_g g ON gm.gid = g.gid WHERE gm.uid = ?").bind(uid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
@@ -789,7 +789,23 @@ export async function getGroupMembership(uid, env) {
  */
 export async function getGroupMembersByRole(gid, role_g, env) {
     try {
-    const { results } = await env.DB.prepare("SELECT gm.uid, u.fname, u.lname, a.email FROM group_member gm INNER JOIN info u ON gm.uid = u.uid INNER JOIN admin a ON gm.uid = a.uid WHERE gm.gid = ? AND gm.role_g = ?").bind(gid, role_g).run();
+        const { results } = await env.DB.prepare("SELECT gm.uid, u.fname, u.lname, a.email FROM group_member gm INNER JOIN info u ON gm.uid = u.uid INNER JOIN admin a ON gm.uid = a.uid WHERE gm.gid = ? AND gm.role_g = ?").bind(gid, role_g).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * 
+ * @param {*} pid 
+ * @param {*} gid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function createGroupPost(pid, gid, env) {
+    try {
+        const { results } = await env.DB.prepare("INSERT INTO group_post (pid, gid) VALUES (?, ?)").bind(pid, gid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
