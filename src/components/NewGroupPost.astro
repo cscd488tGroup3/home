@@ -1,0 +1,125 @@
+---
+const { gid } = Astro.props;
+---
+
+<section class="p-4" data-gid={gid}>
+  <button id="newPostBtn" class="btn btn-primary">New Post</button>
+
+  <form id="postForm" class="hidden mt-4 space-y-4" method="POST">
+    <label class="form-control">
+      <span class="label-text">Caption</span>
+      <input
+        type="text"
+        id="caption"
+        name="caption"
+        class="input input-bordered"
+        required
+      />
+    </label>
+
+    <label class="form-control">
+      <span class="label-text">Upload Image</span>
+      <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+        class="file-input file-input-bordered"
+        required
+      />
+    </label>
+
+    <button type="submit" class="btn btn-success">Post</button>
+  </form>
+
+  <script type="module">
+    const gid = document.querySelector("section[data-gid]")?.dataset.gid;
+    console.log("(NewGroupPost.astro) gid:", gid);
+
+    const cloud_name = "dlokiaff2";
+    console.log("(NewGroupPost.astro) cloud_name:", cloud_name);
+    const upload_preset = "bloombuddy-image-uploads";
+    console.log("(NewGroupPost.astro) upload_preset:", upload_preset);
+
+    const newPostBtn = document.getElementById("newPostBtn");
+    const postForm = document.getElementById("postForm");
+    const imageInput = document.getElementById("imageInput");
+    const captionInput = document.getElementById("caption");
+
+    const uid =
+      document.querySelector('meta[name="user-id"]')?.content || "unknown-user";
+    console.log("(NewGroupPost.astro) uid:", uid);
+
+    newPostBtn.addEventListener("click", () => {
+      postForm.classList.toggle("hidden");
+    });
+
+    postForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const randomPid = crypto.randomUUID();
+
+      const file = imageInput.files[0];
+      if (!file) return alert("Please select an image.");
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", upload_preset);
+
+      const cloudRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      console.log("(NewGroupPost.astro) cloudRes:", cloudRes);
+
+      const cloudData = await cloudRes.json();
+      console.log("(NewGroupPost.astro) cloudData:", cloudData);
+      const imageUrl = cloudData.secure_url;
+      console.log("(NewGroupPost.astro) imageUrl:", imageUrl);
+
+      const payload = {
+        pid: randomPid,
+        uid: uid,
+        caption: captionInput.value,
+        url: imageUrl,
+      };
+
+      console.log("(NewGroupPost.astro) payload:", payload);
+
+      const postRes = await fetch("/.netlify/functions/createPost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (postRes.ok) {
+        const payload2 = {
+          pid: randomPid,
+          gid,
+        };
+
+        console.log("(NewGroupPost.astro) payload2:", payload2);
+
+        const gPostRes = await fetch("/.netlify/functions/createGroupPost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload2),
+        });
+
+        if (gPostRes.ok) {
+          alert("Post created!");
+          postForm.reset();
+          postForm.classList.add("hidden");
+        } else {
+          const err = await gPostRes.json();
+          alert("Failed to create post: " + (err?.error || "Unknown error"));
+        }
+      } else {
+        const err = await postRes.json();
+        alert("Failed to create post: " + (err?.error || "Unknown error"));
+      }
+    });
+  </script>
+</section>

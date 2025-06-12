@@ -1,0 +1,267 @@
+---
+const { gid } = Astro.props;
+---
+
+<!-- Plant Display -->
+<section id="plant" class="backdrop-blur-md bg-[#56b9064d]">
+  <p>Plant Name: <span class="plant-name">Plant</span></p>
+  <p>
+    Scientific Name: <span class="plant-scientific-name">Scientific Name</span>
+  </p>
+  <p>Type: <span class="plant-type">Type</span></p>
+  <p>Cycle: <span class="plant-cycle">Cycle</span></p>
+  <p>Watering: <span class="plant-watering">Watering</span></p>
+  <p>Sunlight: <span class="plant-sunlight">Sunlight</span></p>
+  <p>Pruning: <span class="plant-pruning">Pruning</span></p>
+  <p>Description: <span class="plant-description">Description</span></p>
+  <img
+    id="plant-image"
+    src=""
+    alt="Plant Image"
+    style="max-width:200px;display:block;margin-top:10px;"
+  />
+  <button id="add-to-plan">Add to Gardening Plan</button>
+</section>
+
+<section id="gardening-plan" class="backdrop-blur-md bg-[#56b9064d]">
+  <h3>Your Gardening Plan</h3>
+  <ul id="gardening-plan-list"></ul>
+</section>
+
+<script type="module">
+  let currentPlant = null;
+  let gardeningPlan = JSON.parse(localStorage.getItem("gardeningPlan") || "[]");
+  let editingIndex = null;
+
+  const plantNameElement = document.querySelector(".plant-name");
+  const plantScientificNameElement = document.querySelector(
+    ".plant-scientific-name"
+  );
+  const plantTypeElement = document.querySelector(".plant-type");
+  const plantCycleElement = document.querySelector(".plant-cycle");
+  const plantWateringElement = document.querySelector(".plant-watering");
+  const plantSunlightElement = document.querySelector(".plant-sunlight");
+  const plantPruningElement = document.querySelector(".plant-pruning");
+  const plantDescriptionElement = document.querySelector(".plant-description");
+  const plantImageElement = document.getElementById("plant-image");
+
+  function updateGardeningPlanUI() {
+    const planList = document.getElementById("gardening-plan-list");
+    planList.innerHTML = "";
+    gardeningPlan.forEach((plant, idx) => {
+      const li = document.createElement("li");
+
+      if (editingIndex === idx) {
+        // Inline edit form with textarea for longer input and extra line breaks
+        li.innerHTML = `
+                    <form id="edit-form-${idx}">
+                        <strong>${plant.commonName}</strong><br>
+                        Watering:<br>
+                        <textarea name="watering" rows="3" style="width:95%;">${plant.watering || ""}</textarea><br><br>
+                        Sunlight:<br>
+                        <textarea name="sunlight" rows="3" style="width:95%;">${plant.sunlight || ""}</textarea><br><br>
+                        Pruning:<br>
+                        <textarea name="pruning" rows="3" style="width:95%;">${plant.pruning || ""}</textarea><br><br>
+                        <button type="submit">Save</button>
+                        <button type="button" class="cancel-edit">Cancel</button>
+                    </form>
+                `;
+        planList.appendChild(li);
+
+        // Save handler
+        li.querySelector("form").onsubmit = (e) => {
+          e.preventDefault();
+          const form = e.target;
+          plant.watering = form.watering.value;
+          plant.sunlight = form.sunlight.value;
+          plant.pruning = form.pruning.value;
+          localStorage.setItem("gardeningPlan", JSON.stringify(gardeningPlan));
+          editingIndex = null;
+          updateGardeningPlanUI();
+        };
+        // Cancel handler
+        li.querySelector(".cancel-edit").onclick = () => {
+          editingIndex = null;
+          updateGardeningPlanUI();
+        };
+      } else {
+        li.innerHTML = `
+                    <strong>${plant.commonName}</strong>:<br>
+                    <b>Watering</b> - ${plant.watering}<br><br>
+                    <b>Sunlight</b> - ${plant.sunlight}<br><br>
+                    <b>Pruning</b> - ${plant.pruning}<br><br>
+                    <button class="gardening-plan-btn edit-plant" data-idx="${idx}">Edit</button>
+                    <button class="gardening-plan-btn delete-plant" data-idx="${idx}">Delete</button>
+                `;
+        planList.appendChild(li);
+
+        // Edit button
+        li.querySelector(".edit-plant").onclick = () => {
+          editingIndex = idx;
+          updateGardeningPlanUI();
+        };
+        // Delete button
+        li.querySelector(".delete-plant").onclick = () => {
+          gardeningPlan.splice(idx, 1);
+          localStorage.setItem("gardeningPlan", JSON.stringify(gardeningPlan));
+          editingIndex = null;
+          updateGardeningPlanUI();
+        };
+      }
+    });
+
+    // Add "Delete All" button if plan is not empty
+    let deleteAllBtn = document.getElementById("delete-all-plan");
+    if (!deleteAllBtn) {
+      deleteAllBtn = document.createElement("button");
+      deleteAllBtn.id = "delete-all-plan";
+      deleteAllBtn.textContent = "Delete Entire Plan";
+      deleteAllBtn.style.marginTop = "10px";
+      planList.parentElement.appendChild(deleteAllBtn);
+    }
+    deleteAllBtn.onclick = () => {
+      if (
+        confirm("Are you sure you want to delete your entire gardening plan?")
+      ) {
+        gardeningPlan = [];
+        localStorage.removeItem("gardeningPlan");
+        editingIndex = null;
+        updateGardeningPlanUI();
+      }
+    };
+    deleteAllBtn.style.display = gardeningPlan.length ? "block" : "none";
+
+    // add another button to email the plan to self
+    let notifyBtn = document.getElementById("notify-plan");
+    if (!notifyBtn) {
+      notifyBtn = document.createElement("button");
+      notifyBtn.id = "notify-plan";
+      notifyBtn.textContent = "Email Your Plan";
+      notifyBtn.style.marginTop = "10px";
+      planList.parentElement.appendChild(notifyBtn);
+    }
+    notifyBtn.onclick = () => {
+      const emailBody = gardeningPlan
+        .map(
+          (plant) => `
+            <h1><strong>${plant.commonName}:</strong></h1>
+            <br>
+            <h3>Watering:</h3> 
+            <p>${plant.watering}</p>
+            <br>
+            <h3>Sunlight:</h3> 
+            <p>${plant.sunlight}</p>
+            <br>
+            <h3>Pruning:</h3>
+            <p>${plant.pruning}</p>
+            <br>
+            <br>
+          `
+        )
+        .join("");
+
+      // send the gardening plan to a notification
+      const userId = document.querySelector('meta[name="user-id"]')?.content;
+      if (!userId) {
+        console.error("User ID not found in meta tag");
+      } else {
+        fetch(
+          "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getEmailByUID",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ uid: userId }),
+          }
+        )
+          .then((res) => res.json())
+          .then(async (response) => {
+            const email = response[0]?.email;
+            if (!email) throw new Error("Email not returned from database");
+
+            const data = {
+              email,
+              subject: "Your Gardening Plan",
+              emailBody,
+            };
+
+            console.log("(plantInfo.astro) data: ", data);
+
+            await fetch(
+              "https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/notify",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include",
+              }
+            );
+
+            //window.location.href = "/";
+          })
+          .catch((err) => {
+            console.error("Error sending notification:", err);
+          });
+      }
+    };
+    notifyBtn.style.display = gardeningPlan.length ? "block" : "none";
+  }
+
+  async function fetchPlantInfo(plantName) {
+    if (!plantName) {
+      alert("Please enter a plant name.");
+      return;
+    }
+    try {
+      const res = await fetch(
+        `/.netlify/functions/plant?name=${encodeURIComponent(plantName)}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch plant info");
+      const plantDetails = await res.json();
+
+      if (plantNameElement)
+        plantNameElement.textContent = plantDetails.commonName || "Unknown";
+      if (plantScientificNameElement)
+        plantScientificNameElement.textContent =
+          plantDetails.scientificName || "Unknown";
+      if (plantTypeElement)
+        plantTypeElement.textContent = plantDetails.type || "Unknown";
+      if (plantCycleElement)
+        plantCycleElement.textContent = plantDetails.cycle || "Unknown";
+      if (plantWateringElement)
+        plantWateringElement.textContent =
+          plantDetails.watering || "No watering info.";
+      if (plantSunlightElement)
+        plantSunlightElement.textContent =
+          plantDetails.sunlight || "No sunlight info.";
+      if (plantPruningElement)
+        plantPruningElement.textContent =
+          plantDetails.pruning || "No pruning info.";
+      if (plantDescriptionElement)
+        plantDescriptionElement.textContent =
+          plantDetails.description || "No description available.";
+      if (plantImageElement)
+        plantImageElement.src = plantDetails.default_image?.regular_url || "";
+      currentPlant = plantDetails;
+    } catch (error) {
+      console.error("Error fetching plant info:", error);
+      alert("Failed to fetch plant information.");
+    }
+  }
+
+  document.getElementById("add-to-plan").onclick = () => {
+    if (currentPlant) {
+      gardeningPlan.push(JSON.parse(JSON.stringify(currentPlant))); // deep copy
+      localStorage.setItem("gardeningPlan", JSON.stringify(gardeningPlan));
+      updateGardeningPlanUI();
+    }
+  };
+
+  // On load, show any saved plan
+  updateGardeningPlanUI();
+
+  // Listen for custom event to trigger plant info fetch
+  window.addEventListener("plantSearch", (event) => {
+    const customEvent = event;
+    fetchPlantInfo(customEvent.detail.plantName);
+  });
+</script>
