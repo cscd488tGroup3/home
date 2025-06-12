@@ -2,6 +2,9 @@
 
 export async function handler(event, context) {
     const { gid } = JSON.parse(event.body);
+
+    console.log("Recieved data: ", { gid });
+
     const USR_DB = process.env.USR_DB
 
     try {
