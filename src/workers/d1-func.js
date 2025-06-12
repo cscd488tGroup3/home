@@ -789,7 +789,7 @@ export async function getGroupMembership(uid, env) {
  */
 export async function getGroupMembersByRole(gid, role_g, env) {
     try {
-    const { results } = await env.DB.prepare("SELECT gm.uid, u.fname, u.lname FROM group_member gm INNER JOIN info u ON gm.uid = u.uid WHERE gm.gid = ? AND gm.role_g = ?").bind(gid, role_g).run();
+    const { results } = await env.DB.prepare("SELECT gm.uid, u.fname, u.lname, a.email FROM group_member gm INNER JOIN info u ON gm.uid = u.uid INNER JOIN admin a ON gm.uid = a.uid WHERE gm.gid = ? AND gm.role_g = ?").bind(gid, role_g).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
