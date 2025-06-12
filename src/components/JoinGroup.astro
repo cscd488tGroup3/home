@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <br />
@@ -13,7 +14,7 @@
       required
     />
 
-    <button class="" type="submit">Join Group</button>
+    <button class="joinButton" type="submit">Join Group</button>
   </form>
 </section>
 
@@ -23,8 +24,12 @@
     .addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      const button = e.target.querySelector("button.joinButton");
+      button.disabled = true;
+      button.textContent = "Joining...";
+
       // prepare user data for payload
-      const gid = document.getElementById("gid");
+      const gid = document.getElementById("gid").value.trim();
       const uid =
         document.querySelector('meta[name="user-id"]')?.content ||
         "unknown-user";
@@ -55,11 +60,18 @@
             result.error || "Failed to add the group creator to the database."
           );
         }
+
         alert("Group joined successfully!");
-        window.location.href(`/groups?gid=${gid}`);
+        window.location.href = `/groups?gid=${gid}`;
+
+        // window.location.href(`/groups?gid=${gid}`);
       } catch (err) {
         console.error("Error adding group creator to the database:", err);
         alert("Error adding group creator to the database: " + err.message);
       }
+
+      // After success or failure
+      button.disabled = false;
+      button.textContent = "Join Group";
     });
 </script>
