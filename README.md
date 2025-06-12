@@ -1,6 +1,6 @@
 # Home
 
-This repository contains the [BloomBuddy home page](https://cscd488group3-BloomBuddy.netlify.app/).
+This repository contains the [BloomBuddy website](https://cscd488group3-BloomBuddy.netlify.app/).
 
 ## Documentation
 
