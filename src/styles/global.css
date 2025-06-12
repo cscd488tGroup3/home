@@ -199,7 +199,7 @@ button:active {
 section#plant,
 section#city,
 section#gardening-plan,
-group-membership, {
+group-membership {
   padding: 1.25em; /* 20px */
   border-radius: 0.625em; /* 10px */
   box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1); /* 4px 8px */

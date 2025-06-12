@@ -196,7 +196,7 @@ try {
       return;
     }
 
-    async function updateField(url, body, successMsg, failMsg) {
+    async function updateField(url: string | URL | Request, body: { username: string; fname?: any; lname?: any; email?: any; dob?: any; password?: any; priv?: any; }, successMsg: string, failMsg: string) {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

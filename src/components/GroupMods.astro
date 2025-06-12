@@ -1,0 +1,18 @@
+---
+const { gid } = Astro.props;
+const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupMembersByRole', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({gid , role_g: 1 }),
+        });
+const data = await res.json();
+console.log("(GroupInfo.astro): ", data);
+---
+
+<ul>
+  {data.map((moderator: { fname: unknown; lname: unknown; uid: unknown; }) => (
+    <li>
+      {moderator.fname} {moderator.lname} ({moderator.uid})
+    </li>
+  ))}
+</ul>

@@ -1,4 +1,8 @@
 ---
+import GroupCreator from "./GroupCreator.astro";
+import GroupMembers from "./GroupMembers.astro";
+import GroupMods from "./GroupMods.astro";
+
 const { gid } = Astro.props;
 const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupInfo', {
           method: "POST",
@@ -12,7 +16,7 @@ console.log("(GroupInfo.astro): ", data);
 function getPrivacyLabel(priv: number) {
   switch (priv) {
     case 0: return "Private";
-    case 1: return "Mods Only";
+    case 1: return "Mods-Only";
     case 2: return "Protected";
     case 3: return "Public";
     default: return "Unknown";
@@ -44,19 +48,19 @@ function getPrivacyLabel(priv: number) {
   <div class="info-row">
     <strong>Creator:</strong>
     <span class="right">
-      <!-- <GroupCreator gid={gid} /> -->
+      <GroupCreator gid={gid} />
     </span>
   </div>
   <div class="info-row">
     <strong>Moderators:</strong>
     <span class="right">
-      <!-- <GroupMods gid={gid} /> -->
+      <GroupMods gid={gid} /> 
     </span>
   </div>
   <div class="info-row">
     <strong>Members:</strong>
     <span class="right">
-      <!-- <GroupMembers gid={gid} /> -->
+      <GroupMembers gid={gid} /> 
     </span>
   </div>
 </section>

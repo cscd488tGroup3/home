@@ -781,4 +781,19 @@ export async function getGroupMembership(uid, env) {
     }
 }
 
+/**
+ * 
+ * @param {*} gid 
+ * @param {*} role_g 
+ * @param {*} env 
+ */
+export async function getGroupMembersByRole(gid, role_g, env) {
+    try {
+    const { results } = await env.DB.prepare("SELECT gm.uid, u.fname, u.lname FROM group_member gm INNER JOIN info u ON gm.uid = u.uid WHERE gm.gid = ? AND gm.role_g = ?").bind(gid, role_g).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
 /*  */
