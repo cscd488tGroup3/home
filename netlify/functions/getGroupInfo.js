@@ -8,7 +8,7 @@ export async function handler(event, context) {
     const USR_DB = process.env.USR_DB
 
     try {
-        const response = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/groups/get/?gid=${gid}auth=${USR_DB}`);
+        const response = await fetch(`https://astro-d1-integration.ecrawford4.workers.dev/groups/get/?gid=${gid}&auth=${USR_DB}`);
         const data = await response.json();
 
         return {
