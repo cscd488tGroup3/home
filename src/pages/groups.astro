@@ -14,6 +14,8 @@ import JoinGroup from '../components/JoinGroup.astro'
 import Invite from '../components/Invite.astro'
 import GroupMembership from '../components/GroupMembership.astro'
 import GroupDuties from '../components/GroupDuties.astro';
+import NewGroupPost from '../components/NewGroupPost.astro';
+import GroupPostFeed from '../components/GroupPostFeed.astro';
 ---
 
 <Layout>
@@ -27,8 +29,8 @@ import GroupDuties from '../components/GroupDuties.astro';
         
         <!-- Center Column: Group Post Feed -->
         <div class="center-column">
-            <NewPost />
-            <PostFeed />
+            <NewGroupPost gid={gid}/>
+            <GroupPostFeed gid={gid}/>
         </div>
 
         <!-- Right Column: Group Membership -->
