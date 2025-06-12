@@ -1,13 +1,69 @@
 ---
-
+const { gid } = Astro.props;
 ---
 
 <br>
-<section id="invite" class="backdrop-blur-md bg-[#56b9064d]">
-    <h1 id="inviteHeader">Send an Invite</h1>
+<section id="invite" class="backdrop-blur-md bg-[#56b9064d]" data-gid={gid}>
+    <h1 id="inviteHeader">Add a New Member</h1>
     <form id="inviteForm">
         <input type="text" id="uid" name="uid" placeholder="Enter a User ID..." required />
         
-        <button class="" type="submit">Invite to Group</button>
+        <button class="" type="submit">Add Member</button>
     </form>
 </section>
+
+<script type="module">
+  document
+    .getElementById("inviteForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const button = e.target.querySelector("button.joinButton");
+      button.disabled = true;
+      button.textContent = "Adding New Member...";
+
+      // prepare user data for payload 
+      const uid = document.getElementById("uid").value.trim();
+      const gid = document.getElementById("invite").dataset.gid;
+      const gmid = crypto.randomUUID(); // generate the gmid for the new member
+      const role_g = 2;
+      const priv = 0;
+      const payload = {
+        gmid,
+        uid,
+        gid,
+        role_g,
+        priv,
+      };
+
+      try {
+        const res = await fetch("/.netlify/functions/createGroupMember", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(
+            result.error || "Failed to add the group creator to the database."
+          );
+        }
+
+        alert("Group joined successfully!");
+        window.location.href = `/groups?gid=${gid}`;
+
+        // window.location.href(`/groups?gid=${gid}`);
+      } catch (err) {
+        console.error("Error adding group creator to the database:", err);
+        alert("Error adding group creator to the database: " + err.message);
+      }
+
+      // After success or failure
+      button.disabled = false;
+      button.textContent = "Add Member";
+    });
+</script>
