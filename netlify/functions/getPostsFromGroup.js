@@ -1,4 +1,4 @@
-// netlify/functions/getPosts.js
+// netlify/functions/getPostsFromGroup.js
 
 export async function handler(event, context) {
     const { gid } = JSON.parse(event.body);

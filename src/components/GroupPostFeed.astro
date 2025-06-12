@@ -9,7 +9,7 @@ import Reaction from "./Reaction.astro";
 const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getPostsFromGroup', {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(gid),
+    body: JSON.stringify({gid}),
     credentials: "include",
 }); 
 const result = await res.json();
