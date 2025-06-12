@@ -741,10 +741,26 @@ export async function deleteGroup(gid, env) {
  * @param {String} gid 
  * @param {int} role_g 
  * @param {int} priv 
+ * @param {*} env 
  */
 export async function newGroupMember(gmid, uid, gid, role_g, priv, env) {
     try {
         const {results} = await env.DB.prepare("INSERT INTO group_member (gmid, uid, gid, role_g, priv) VALUES (?, ?, ?, ?, ?)").bind(gmid, uid, gid, role_g, priv).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
+/**
+ * 
+ * @param {String} gid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getGroupInfo(gid, env) {
+    try {
+        const {results} = await env.DB.prepare("SELECT * FROM group_g WHERE gid = ?").bind(gid).run();
         return results;
     } catch (err) {
         throw new Error(`Database query failed: ${err.message}`);
