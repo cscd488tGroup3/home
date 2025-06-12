@@ -1,13 +1,65 @@
 ---
-
 ---
 
-<br>
+<br />
 <section id="joinGroup" class="backdrop-blur-md bg-[#56b9064d]">
-    <h1 id="joinGroupHeader">Join a Group</h1>
-    <form id="joinGroupForm">
-        <input type="text" id="gid" name="gid" placeholder="Enter Group ID..." required />
-        
-        <button class="" type="submit">Join Group</button>
-    </form>
+  <h1 id="joinGroupHeader">Join a Group</h1>
+  <form id="joinGroupForm">
+    <input
+      type="text"
+      id="gid"
+      name="gid"
+      placeholder="Enter Group ID..."
+      required
+    />
+
+    <button class="" type="submit">Join Group</button>
+  </form>
 </section>
+
+<script type="module">
+  document
+    .getElementById("joinGroupForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // prepare user data for payload
+      const gid = document.getElementById("gid");
+      const uid =
+        document.querySelector('meta[name="user-id"]')?.content ||
+        "unknown-user";
+      const gmid = crypto.randomUUID(); // generate the gmid for the new member
+      const role_g = 2;
+      const priv = 0;
+      const payload = {
+        gmid,
+        uid,
+        gid,
+        role_g,
+        priv,
+      };
+
+      try {
+        const res = await fetch("/.netlify/functions/createGroupMember", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(
+            result.error || "Failed to add the group creator to the database."
+          );
+        }
+        alert("Group joined successfully!");
+        window.location.href(`/groups?gid=${gid}`);
+      } catch (err) {
+        console.error("Error adding group creator to the database:", err);
+        alert("Error adding group creator to the database: " + err.message);
+      }
+    });
+</script>
