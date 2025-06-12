@@ -12,7 +12,7 @@ const posts = Array.isArray(result) ? result : result?.data ?? [];
 ---
 
 <div id="postContainer">
-  {posts.map(post => (
+  {posts.map((post: { uid: unknown; url: string | null | undefined; caption: unknown; pid: unknown; }) => (
     <div class="post" data-uid={post.uid}>
       <figure class="post">
         <img src={post.url} alt="Post Image" class="w-full" />
