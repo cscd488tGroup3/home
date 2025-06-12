@@ -52,7 +52,7 @@ You will need to build a `.env` file with the following fields:
 In your codebase, you will need to build a `wrangler.toml` file. This will contain the
 configuration for your cloudflare database worker:
 
-```
+```[TOML]
 # wrangler.toml (wrangler v3.88.0^)
 name = "" # the name of your database
 main = "src/workers/d1-api.js" # the location of the api in our repository
@@ -99,7 +99,7 @@ Check if you are logged in:
 
 In Cloudflare's dashboard, you will need to build a D1 database using SQLite. This can be done using the following script in Cloudflare's terminal:
 
-```
+```[SQLite]
 DROP TABLE IF EXISTS user_session;
 DROP TABLE IF EXISTS user_priv;
 DROP TABLE IF EXISTS group_post;
@@ -208,5 +208,5 @@ new things about gardening, and make the experience enjoyable and rewarding.
 
 Our website will be built using Astro and styled with Tailwind and DaisyUI. These frameworks allow for
 fast, modular development. They are designed to handle repetitive structures and components, which will
-allow our website to dynamically display gardening information that a user needs, as well as 
+allow our website to dynamically display gardening information that a user needs, as well as
 user generated content for the greater community.
