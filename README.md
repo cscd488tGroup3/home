@@ -121,6 +121,8 @@ Check if you are logged in:
 
 - `npm wrangler whoami`.
 
+All of the source code for the Cloudflare Worker is in `/src/workers/d1-api.js` and `/src/workers/d1-func.js` 
+
 #### Cloudflare Dashboard
 
 In Cloudflare's dashboard, you will need to build a D1 database using SQLite. This can be done using the following script in Cloudflare's terminal:
@@ -204,11 +206,170 @@ CREATE TABLE user_session (
 );
 ```
 
-After setting up the database, you can deploy your worker in Cloudflare's dashboard, or at the terminal using `npx wrangler deploy`. You will get an active deployment URL. You will need to replace all instances of our deployment URL with yours.
+After setting up the database, you can deploy your worker in Cloudflare's dashboard, or at the terminal using `npx wrangler deploy`. You will get an active deployment URL. You will need to replace all instances of our deployment URL in functions that call the worker with yours.
 
 #### Netlify
 
 In order for our `process.env` calls to work, environment variables also need to be stored in Netlify. These can be imported from the `.env` file or added manually.
+
+All of our serverless functions are run using Netlify. They are stored in `/netlify/functions`. Many of them have calls to the database worker which will need to be refactored. 
+
+## General Project Structure
+
+Throughout this README there have been notes about where certain source code is located.
+
+Here is the current project structure: 
+
+```
+https://github.com/cscd488tGroup3/home
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── .gitignore
+├── .vscode
+│   ├── extensions.json
+│   └── launch.json
+├── README.md
+├── astro.config.mjs
+├── env.d.ts
+├── eslint.config.cjs
+├── netlify.toml
+├── netlify
+│   └── functions
+│       ├── accountInfoDelete.js
+│       ├── accountInfoEditDOB.js
+│       ├── accountInfoEditEmail.js
+│       ├── accountInfoEditFName.js
+│       ├── accountInfoEditLName.js
+│       ├── accountInfoEditPassword.js
+│       ├── accountInfoEditPriv.js
+│       ├── aggregateReactions.js
+│       ├── authenticate.ts
+│       ├── createAccount.js
+│       ├── createComment.js
+│       ├── createGroup.js
+│       ├── createGroupMember.js
+│       ├── createGroupPost.js
+│       ├── createPost.js
+│       ├── createReaction.js
+│       ├── deleteComment.js
+│       ├── deletePost.js
+│       ├── deleteReaction.js
+│       ├── editComment.js
+│       ├── editPost.js
+│       ├── getComments.js
+│       ├── getEmailByUID.js
+│       ├── getGroupInfo.js
+│       ├── getGroupMembersByRole.js
+│       ├── getGroupMembership.js
+│       ├── getPosts.js
+│       ├── getPostsFromGroup.js
+│       ├── hasReaction.js
+│       ├── login.ts
+│       ├── logout.ts
+│       ├── notificationsEmail.js
+│       ├── notify.js
+│       ├── plant.js
+│       └── weather.js
+├── package-lock.json
+├── package.json
+├── public
+│   ├── DanielPic.jpeg
+│   ├── EthansPic.webp
+│   ├── JaredPic.jpg
+│   ├── bloom_buddy1.png
+│   ├── favicon.svg
+│   └── js
+│       └── user.js
+├── src
+│   ├── assets
+│   │   ├── astro.svg
+│   │   └── background.svg
+│   ├── components
+│   │   ├── CityInput.astro
+│   │   ├── CommentList.astro
+│   │   ├── Date.astro
+│   │   ├── DeletePost.astro
+│   │   ├── EditComment.astro
+│   │   ├── EditPost.astro
+│   │   ├── GroupCreator.astro
+│   │   ├── GroupDuties.astro
+│   │   ├── GroupInfo.astro
+│   │   ├── GroupMembers.astro
+│   │   ├── GroupMembership.astro
+│   │   ├── GroupMods.astro
+│   │   ├── GroupPostFeed.astro
+│   │   ├── Invite.astro
+│   │   ├── JoinGroup.astro
+│   │   ├── NewComment.astro
+│   │   ├── NewGroup.astro
+│   │   ├── NewGroupPost.astro
+│   │   ├── NewPost.astro
+│   │   ├── Plant.astro
+│   │   ├── PostFeed.astro
+│   │   ├── Reaction.astro
+│   │   ├── Time.astro
+│   │   ├── Weather.astro
+│   │   └── plantInfo.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   ├── lib
+│   │   ├── authenticate.ts
+│   │   ├── corsPolicy.js
+│   │   ├── handlePlantRequests.js
+│   │   ├── queryAPIs.js
+│   │   └── recommendations.js
+│   ├── pages
+│   │   ├── about.astro
+│   │   ├── accountInfo.astro
+│   │   ├── createAccount.astro
+│   │   ├── groups.astro
+│   │   ├── index.astro
+│   │   ├── login.astro
+│   │   ├── logout.astro
+│   │   └── notify.astro
+│   ├── styles
+│   │   └── global.css
+│   ├── utils
+│   │   └── getSession.ts
+│   └── workers
+│       ├── d1-api.js
+│       └── d1-func.js
+├── tests
+│   └── mainPage.test.jsx
+├── tsconfig.json
+└── vitest.config.js
+
+sitemap generated using sitemap-generator at: 2025-06-12 13:08:53 UTC
+```
+
+One of the advantages of using the Astro framework is decomposition. Our broadest features are handled in Layouts and Pages, and our more granular features are handled in Components.
+
+- Our base layout is `/src/layouts/Layout.astro`. This file defines the layout and metadata across the entire website, and it also handles validating user sessions, which makes the login/logout functionality extensible.
+- Each Astro page is contained in `/src/pages`. 
+- Our reusable Astro components are contained in `/src/components`.
+
+Astro also supports the use of custom JavaScript and TypeScript, which we used frequently. Taken together, JavaScript and TypeScript comprise the majority of our codebase.
+There is also plenty of JavaScript and TypeScript embedded in our Astro files.
+
+- Our client side JS/TS is stored in `/src/utils/getSession.ts`, `/src/lib`, and `/public/js/user.js`.
+- Our "server" side JS/TS is stored in `/netlify/functions`,
+- And our database functions are stored in `/src/workers`.
+
+All of our custom styles are in `/src/styles/global.css`
+
+The `/public` directory contains files that will be made public on deploy. `/src/assets` only works at runtime, after which it is discarded from the build; any files that we need to host (mostly images for the About page) go here.
+
+Miscellaneous files:
+
+- astro.config.mjs : Configuration file for Astro integrations
+- env.d.ts : Configuration file for our environment variables
+- eslint.config.cjs : Configuration for linting
+- netlify.toml : Configuration for Netlify
+- package-lock.json : Node
+- package.json : Node
+- tsconfig.json : Configuration for TypeScript
+- vitest.config.js : Configuration for our Continuous Integration testing (see also `/.github/workflows/ci.yaml` and `/tests/mainPage.test.jsx`).
 
 ## About
 
