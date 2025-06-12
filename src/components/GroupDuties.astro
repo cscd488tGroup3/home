@@ -1,0 +1,99 @@
+---
+const { gid } = Astro.props;
+const memberRes = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupMembersByRole', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({gid , role_g: 2 }),
+        });
+const memberData = await memberRes.json();
+console.log("(GroupInfo.astro): ", memberData);
+const modRes = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupMembersByRole', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({gid , role_g: 1 }),
+        });
+const modData = await modRes.json();
+console.log("(GroupInfo.astro): ", modData);
+const creatorRes = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupMembersByRole', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({gid , role_g: 0 }),
+        });
+const creatorData = await creatorRes.json();
+console.log("(GroupInfo.astro): ", creatorData);
+
+// Tag each with role for label sorting
+const allMembers = [
+  ...creatorData.map((user: any) => ({ ...user, role: "Creator" })),
+  ...modData.map((user: any) => ({ ...user, role: "Moderator" })),
+  ...memberData.map((user: any) => ({ ...user, role: "Member" })),
+];
+---
+<br>
+<section id="duties" class="backdrop-blur-md bg-[#56b9064d] p-4 rounded-lg">
+  <h2 class="text-lg font-bold mb-2">Assign Duties</h2>
+  
+  <form id="dutyForm" class="space-y-4">
+    <textarea 
+      id="dutyText" 
+      class="backdrop-blur-md bg-white-500 p-4 rounded-lg"
+      placeholder="Write duty instructions here..." 
+      required 
+      class="w-full p-2 rounded border border-gray-300"
+    ></textarea>
+
+    <select id="recipientSelect" required class="w-full p-2 backdrop-blur-md bg-white-500 rounded border border-gray-300">
+      <option value="">Select a recipient</option>
+      {allMembers.map(user => (
+        <option value={user.email}>
+          {user.fname} {user.lname} ({user.uid}) – {user.role}
+        </option>
+      ))}
+    </select>
+
+    <button 
+      type="submit" 
+      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+    >
+      Send Duty
+    </button>
+  </form>
+
+  <script type="module">
+    const form = document.getElementById('dutyForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = form.recipientSelect.value;
+      const emailBody = form.dutyText.value;
+
+      const data = {
+        email,
+        subject: "Your Gardening Duties",
+        emailBody,
+      };
+
+      console.log("(SendDuties.astro) data:", data);
+
+      try {
+        const res = await fetch("https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          alert("Duty sent successfully!");
+          form.reset();
+        } else {
+          alert("Failed to send duty.");
+        }
+      } catch (err) {
+        console.error("Error sending duty:", err);
+        alert("Error sending duty.");
+      }
+    });
+  </script>
+</section>

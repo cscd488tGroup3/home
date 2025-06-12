@@ -778,6 +778,7 @@ label[for="caption"] {
   text-align: center;
 }
 
+#dutyForm,
  #createGroupForm,
  #joinGroupForm,
  #inviteForm {
@@ -790,6 +791,7 @@ label[for="caption"] {
   #joinGroup,
   #invite, 
   #groupMembership,
+  #duties,
   group-membership {
     border: #0073e6 1px solid;
     border-radius: 10px;
