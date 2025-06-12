@@ -8,7 +8,7 @@ const { gid } = Astro.props;
     <form id="inviteForm">
         <input type="text" id="uid" name="uid" placeholder="Enter a User ID..." required />
         
-        <button class="" type="submit">Add Member</button>
+        <button class="inviteButton" type="submit">Add Member</button>
     </form>
 </section>
 
@@ -18,7 +18,7 @@ const { gid } = Astro.props;
     .addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const button = e.target.querySelector("button.joinButton");
+      const button = e.target.querySelector("button.inviteButton");
       button.disabled = true;
       button.textContent = "Adding New Member...";
 
