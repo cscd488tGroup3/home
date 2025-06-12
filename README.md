@@ -10,7 +10,7 @@ This repository contains the [BloomBuddy home page](https://cscd488group3-BloomB
   - All other reqirements are (should be) handled by the node package manager:
   - After verifying your Node.js installation, run `npm run build` to build the project from the package.
 
-#### Accounts:
+#### Accounts
 
 In order to continue development on a fork of our project, you will need to create accounts with the following services:
 
