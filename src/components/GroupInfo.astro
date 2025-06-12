@@ -1,41 +1,51 @@
 ---
-
+const { gid } = Astro.props;
+const res = await fetch('https://cscd488group3-bloombuddy.netlify.app/.netlify/functions/getGroupInfo', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({gid}),
+        });
+const data = await res.json();
+console.log("(GroupInfo.astro): ", data);
 ---
 
 <br>
-<section id="groupInfo" class="backdrop-blur-md bg-[#56b9064d]">
+<section id="groupInfo" class="backdrop-blur-md bg-[#56b9064d]" data-gid={gid}>
   <h1>Group Info</h1>
-  <div class="info-row">
+  <div class="text-sm info-row">
     <strong>Group ID:</strong>
     <span class="right">
-      Sample
-      <!-- {gid} -->
+      {gid} 
     </span>
   </div>
   <div class="info-row">
     <strong>Group Name:</strong>
     <span class="right">
-      Sample
-      <!-- {groupInfo[0]?.gname} -->
+      {data[0]?.gname}
     </span>
   </div>
   <div class="info-row">
     <strong>Visibility:</strong>
     <span class="right">
-      Sample
-      <!-- {groupInfo[0]?.priv} -->
+      {data[0]?.priv}
     </span>
   </div>
   <div class="info-row">
     <strong>Creator:</strong>
-    <!-- <GroupCreator /> -->
+    <span class="right">
+      <!-- <GroupCreator gid={gid} /> -->
+    </span>
   </div>
   <div class="info-row">
     <strong>Moderators:</strong>
-    <!-- <GroupMods /> -->
+    <span class="right">
+      <!-- <GroupMods gid={gid} /> -->
+    </span>
   </div>
   <div class="info-row">
     <strong>Members:</strong>
-    <!-- <GroupMembers /> -->
+    <span class="right">
+      <!-- <GroupMembers gid={gid} /> -->
+    </span>
   </div>
 </section>
