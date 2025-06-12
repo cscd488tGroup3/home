@@ -339,8 +339,6 @@ https://github.com/cscd488tGroup3/home
 │   └── mainPage.test.jsx
 ├── tsconfig.json
 └── vitest.config.js
-
-sitemap generated using sitemap-generator at: 2025-06-12 13:08:53 UTC
 ```
 
 One of the advantages of using the Astro framework is decomposition. Our broadest features are handled in Layouts and Pages, and our more granular features are handled in Components.
