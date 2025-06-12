@@ -7,7 +7,7 @@ This repository contains the [BloomBuddy website](https://cscd488group3-BloomBud
 ### Requirements
 
 - Node.js
-  - All other reqirements are (should be) handled by the node package manager:
+  - All other requirements are (should be) handled by the node package manager:
   - After verifying your Node.js installation, run `npm run build` to build the project from the package.
 
 #### Accounts
@@ -22,6 +22,32 @@ In order to continue development on a fork of our project, you will need to crea
 - Perenual (plant API)
 
 Each of these services provide environment variables and/or API endpoints. In each case, you will need to replace our endpoints with the endpoints they give you, and create your own file with your environment variables.
+
+### APIs
+
+The Perenual plant API used in this project has paid services but the free plan was utilized here, keep in mind that the free plan limits developers to only 100 API requests per day. Some of the information available in the free plan includes:
+
+- Access to 3000 plant species data
+- Recommendations on plant watering cycles
+- Sunlight requirements
+- Pruning recommendations
+- Plant care guides
+
+This information is sufficient for most basic use cases. However, for more advanced implementations, developers could pay for Perenual's "premium" or "supreme" services. The paid version provides even more detailed information about each plant including access to the API's plant hardiness map. This map can help determine whether a specific plant species is suitable for growth in a given geographic location, which would significantly enhance this project's ability to make more personalized and efficient plant recommendations.
+
+The OpenWeather API utilized in this project is also available for free to developers, as long as the project does not exceed 1,000 API calls per day. It also includes paid versions, but just like the plant API, the free plan is sufficient for most cases. The weather information provided by the OpenWeather API includes:
+
+- Current weather and forecasts
+  - 1 hour, minute forecast
+  - hourly forecast for 48 hours
+  - daily forecasts for 8 days
+
+- weather alerts
+- Historical data (46+ years back)
+- UV index (strength of sun ultraviolet radiation)
+- Dew point (the point where water droplets begin to condence)
+
+The information provided by the weather API can be very beneficial to users to help them plan their gardening routines as they see fit, further increasing the project's efficiency. The paid versions of this API include extended weather forecasting, such as instead of a daily forecast of 8 days, developers would receive a daily forecast of 16 days. Other services such as air pollution and weather maps become available if the developers wish to invest in this API. Keep in mind that most of these services only become available with specific subscription plans. 
 
 ### Tech Stack
 
