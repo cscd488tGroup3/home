@@ -812,4 +812,19 @@ export async function createGroupPost(pid, gid, env) {
     }
 }
 
+/**
+ * 
+ * @param {*} gid 
+ * @param {*} env 
+ * @returns 
+ */
+export async function getPostsByGid(gid, env) {
+    try {
+        const { results } = await env.DB.prepare("SELECT * FROM post p INNER JOIN group_post gp ON p.pid = gp.pid WHERE gp.gid = ?").bind(gid).run();
+        return results;
+    } catch (err) {
+        throw new Error(`Database query failed: ${err.message}`);
+    }
+}
+
 /*  */

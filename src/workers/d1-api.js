@@ -1,5 +1,5 @@
 // D1-powered Cloudflare API worker
-import { getUserByUid, getInfoByUid, getPasswordByUid, getPasswordByEmail, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, addPost, getPostByID, getAllPostsFromUser, getAllPosts, editPost, deletePost, addComment, getComment, getParentPostByCommentID, getAllCommentsFromPost, getAllCommentsFromUser, editComment, deleteComment, addReaction, getReactionsByPostID, checkIfPostHasReactionFromUser, countReactionsByPostID, getAllReactionsFromUser, deleteReaction, getUserPriv, setUserPriv, updateUserPriv, updateFname, updateLname, updateDOB, updateEmail, updateHashpass, deleteUser, newGroup, newGroupMember, getGroupInfo, getGroupMembership, getGroupMembersByRole, createGroupPost } from './d1-func.js';
+import { getUserByUid, getInfoByUid, getPasswordByUid, getPasswordByEmail, writeNewUser, writeNewPassword, addSession, getSession, getAllSessions, deleteSession, deleteAllSessions, renewSession, deleteExpiredSessions, addPost, getPostByID, getAllPostsFromUser, getAllPosts, editPost, deletePost, addComment, getComment, getParentPostByCommentID, getAllCommentsFromPost, getAllCommentsFromUser, editComment, deleteComment, addReaction, getReactionsByPostID, checkIfPostHasReactionFromUser, countReactionsByPostID, getAllReactionsFromUser, deleteReaction, getUserPriv, setUserPriv, updateUserPriv, updateFname, updateLname, updateDOB, updateEmail, updateHashpass, deleteUser, newGroup, newGroupMember, getGroupInfo, getGroupMembership, getGroupMembersByRole, createGroupPost, getPostsByGid } from './d1-func.js';
 
 /**
  * addCorsHeaders - add CORS headers to the response
@@ -411,6 +411,20 @@ export default {
 
             try {
                 const response = await createGroupPost(pid, gid, env);
+                return addCorsHeaders(new Response(JSON.stringify(response), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }));
+            } catch (err) {
+                return addCorsHeaders(new Response(JSON.stringify({ error: err.message }), { status: 500 }));
+            }
+        }
+
+        if (url.pathname === "/groups/posts/get/a") {
+            const gid = url.searchParams.get("gid");
+
+            try {
+                const response = await getPostsByGid(gid, env);
                 return addCorsHeaders(new Response(JSON.stringify(response), {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
